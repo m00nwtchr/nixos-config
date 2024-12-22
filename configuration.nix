@@ -28,9 +28,39 @@
 
 	boot.kernelPackages = pkgs.linuxPackages_zen;
 
+	boot.kernelParams = [
+		"quiet"
+		"splash"
+		"systemd.show_status=auto"
+		"udev.log_level=3"
+		"vt.global_cursor_default=0"
+
+		"nowatchdogs"
+		"nmi_watchdog=0"
+		# "tsc=unstable"
+	];
+
+	boot.consoleLogLevel = 3;
+	boot.initrd.verbose = false;
+
+	boot.kernel.sysctl = {
+		"kernel.printk" = "3 3 3 3";
+	};
+
+	security.apparmor = {
+		enable = true;
+		enableCache = true;
+	};
+
 	boot.plymouth = {
 		enable = true;
-		theme = "bgrt";
+		theme = "dna";
+
+		themePackages = with pkgs; [
+			(adi1090x-plymouth-themes.override {
+					selected_themes = ["dna"];
+				})
+		];
 	};
 
 	nix.gc = {
@@ -102,7 +132,22 @@
 		keyMap = "pl";
 	};
 
-	services.tlp.enable = true;
+	services.tlp = {
+		enable = true;
+		settings = {
+			CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+			PLATFORM_PROFILE_ON_BAT = "low-power";
+			CPU_BOOST_ON_BAT = 0;
+			CPU_HWP_DYN_BOOST_ON_BAT = 0;
+			AMDGPU_ABM_LEVEL_ON_BAT = 3;
+
+			CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+			PLATFORM_PROFILE_ON_AC = "performance";
+
+			START_CHARGE_THRESH_BAT0 = 75;
+			STOP_CHARGE_THRESH_BAT0 = 80;
+		};
+	};
 
 	# Enable CUPS to print documents.
 	# services.printing.enable = true;
@@ -115,6 +160,12 @@
 	};
 
 	hardware.bluetooth.enable = true;
+
+	services.usbguard = {
+		enable = true;
+		dbus.enable = true;
+		IPCAllowedGroups = ["wheel"];
+	};
 
 	# Enable touchpad support (enabled default in most desktopManager).
 	# services.libinput.enable = true;
@@ -133,14 +184,18 @@
 		meslo-lgs-nf
 	];
 
+	qt = {
+		enable = true;
+		platformTheme = "qt5ct";
+		style = "adwaita-dark";
+	};
+
 	# List packages installed in system profile. To search, run:
 	# $ nix search wget
 	environment.systemPackages = with pkgs; [
 		helix # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
 		wget
 		sbctl
-
-		librewolf
 	];
 
 	programs.zsh.enable = true;
@@ -155,17 +210,7 @@
 	programs.sway = {
 		enable = true;
 		xwayland.enable = false;
-		extraPackages = with pkgs; [
-			dunst
-			alacritty
-			fuzzel
-			brightnessctl
-			playerctl
-			grim
-			swayidle
-			bemenu
-			swaylock
-		];
+		extraPackages = [];
 	};
 	programs.waybar.enable = true;
 
@@ -175,6 +220,18 @@
 			xdg-desktop-portal-gtk
 		];
 	};
+
+	services.gvfs.enable = true;
+	services.udisks2.enable = true;
+	programs.thunar = {
+		enable = true;
+		plugins = with pkgs.xfce; [
+			thunar-archive-plugin
+			thunar-volman
+			thunar-media-tags-plugin
+		];
+	};
+	services.tumbler.enable = true;
 
 	# Some programs need SUID wrappers, can be configured further or are
 	# started in user sessions.
@@ -196,6 +253,12 @@
 	# networking.firewall.enable = false;
 
 	networking.nftables.enable = true;
+
+	programs.steam = {
+		enable = true;
+		remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+		localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+	};
 
 	# This option defines the first version of NixOS you have installed on this particular machine,
 	# and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.

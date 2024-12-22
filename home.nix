@@ -1,5 +1,6 @@
 {
 	config,
+	lib,
 	pkgs,
 	...
 }: {
@@ -22,6 +23,28 @@
 	home.packages = with pkgs; [
 		yadm
 
+		ansible
+
+		lutris
+		prismlauncher
+
+		mpv
+
+		yt-dlp
+		ffmpegthumbnailer
+
+		dunst
+		alacritty
+		fuzzel
+		brightnessctl
+		playerctl
+		grim
+		bemenu
+		swaylock
+
+		slurp
+		wluma
+
 		gh
 
 		tree
@@ -31,7 +54,6 @@
 		# feel free to add your own or remove some of them
 
 		neofetch
-		nnn # terminal file manager
 
 		# archives
 		zip
@@ -55,6 +77,9 @@
 		socat # replacement of openbsd-netcat
 		nmap # A utility for network discovery and security auditing
 		ipcalc # it is a calculator for the IPv4/v6 addresses
+
+		usbguard-notifier
+		adwaita-qt
 
 		# misc
 		cowsay
@@ -150,8 +175,65 @@
 		# EDITOR = "emacs";
 	};
 
+	programs.librewolf.enable = true;
+
+	dconf = {
+		enable = true;
+		settings = {
+			"org/gnome/desktop/interface" = {
+				color-scheme = "prefer-dark";
+			};
+		};
+	};
+
+	gtk = {
+		enable = true;
+		iconTheme = {
+			name = "Papirus-Dark";
+			package =
+				pkgs.papirus-icon-theme.override {
+					color = "red";
+				};
+		};
+		theme.name = "Adwaita";
+		cursorTheme = {
+			name = "Adwaita";
+			package = pkgs.adwaita-icon-theme;
+		};
+		gtk4.extraConfig = {
+			gtk-application-prefer-dark-theme = 1;
+		};
+		gtk3.extraConfig = {
+			gtk-application-prefer-dark-theme = 1;
+		};
+	};
 	programs.git = {
 		enable = true;
+		userName = "m00nwtchr";
+		userEmail = "m00nwtchr@duck.com";
+		signing = {
+			key = "0x276CAB3DFFD6903D";
+			signByDefault = true;
+		};
+		lfs.enable = true;
+		extraConfig = {
+			pull.rebase = false;
+			init.defaultBranch = "master";
+			submodule.recurse = true;
+			push.autoSetupRemote = true;
+		};
+	};
+
+	services.ssh-agent.enable = true;
+	programs.ssh = {
+		enable = true;
+		addKeysToAgent = "yes";
+		compression = false;
+		controlMaster = "auto";
+		controlPath = "\${XDG_RUNTIME_DIR}/ssh/socket-%C";
+		controlPersist = "60";
+		serverAliveInterval = 15;
+		serverAliveCountMax = 3;
 	};
 
 	programs.zsh = {
@@ -163,9 +245,15 @@
 
 		initExtraFirst = ''
 		  (cat ${config.xdg.cacheHome}/wallust/sequences &)
-		  if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-m00n.zsh" ]]; then
-		   source "${config.xdg.cacheHome}/p10k-instant-prompt-m00n.zsh"
+		  if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
+		   source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
 		  fi
+		'';
+
+		completionInit = ''
+		  zstyle :compinstall filename "$ZDOTDIR/zshrc"
+		  zstyle ':completion:*' cache-path "${config.xdg.cacheHome}/zsh/zcompcache"
+		  autoload -U compinit && compinit -d "${config.xdg.cacheHome}/zsh/zcompdump-$ZSH_VERSION"
 		'';
 
 		initExtra = ''
@@ -179,7 +267,7 @@
 		};
 		history = {
 			size = 10000;
-			path = "${config.xdg.dataHome}/zsh/history";
+			path = "${config.xdg.stateHome}/zsh/history";
 		};
 	};
 
@@ -224,7 +312,16 @@
 			}
 		];
 	};
-	systemd.user.services.swayidle.Service.Slice = "background-graphical.slice"; # Assign to UWSM slice
+	systemd.user.services.swayidle = {
+		Service = {
+			Type = lib.mkForce "exec";
+			Slice = "background-graphical.slice"; # Assign to UWSM slice
+		};
+		Unit = {
+			After = "graphical-session.target";
+			PartOf = lib.mkForce [];
+		};
+	};
 
 	# Let Home Manager install and manage itself.
 	programs.home-manager.enable = true;
