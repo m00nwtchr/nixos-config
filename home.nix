@@ -18,10 +18,25 @@
 	# release notes.
 	home.stateVersion = "24.11"; # Please read the comment before changing.
 
+	home.file.".cargo/config.toml".text = ''
+	  [target.x86_64-unknown-linux-gnu]
+	  linker = "clang"
+	  rustflags = ["-C", "link-arg=-fuse-ld=${pkgs.mold}/bin/mold"]
+	'';
+
 	# The home.packages option allows you to install Nix packages into your
 	# environment.
 	home.packages = with pkgs; [
 		yadm
+
+		yubioath-flutter
+		yubikey-manager
+
+		mold
+		keepassxc
+
+		nheko
+		cinny-desktop
 
 		ansible
 
@@ -41,6 +56,7 @@
 		grim
 		bemenu
 		swaylock
+		swaybg
 
 		slurp
 		wluma
@@ -49,9 +65,6 @@
 
 		tree
 		powertop
-
-		# here is some command line tools I use frequently
-		# feel free to add your own or remove some of them
 
 		neofetch
 
@@ -175,7 +188,23 @@
 		# EDITOR = "emacs";
 	};
 
-	programs.librewolf.enable = true;
+	programs.gpg = {
+		enable = true;
+		scdaemonSettings = {
+			card-timeout = "5";
+			disable-ccid = true;
+		};
+	};
+
+	programs.librewolf = {
+		enable = true;
+		package =
+			pkgs.librewolf.override {
+				nativeMessagingHosts = with pkgs; [
+					pywalfox-native
+				];
+			};
+	};
 
 	dconf = {
 		enable = true;
@@ -212,7 +241,7 @@
 		userName = "m00nwtchr";
 		userEmail = "m00nwtchr@duck.com";
 		signing = {
-			key = "0x276CAB3DFFD6903D";
+			key = "0x800214724BE3A82F";
 			signByDefault = true;
 		};
 		lfs.enable = true;
@@ -320,6 +349,55 @@
 		Unit = {
 			After = "graphical-session.target";
 			PartOf = lib.mkForce [];
+		};
+	};
+	systemd.user.services."swaybg@" = {
+		Unit = {
+			Description = "Sway wallpaper";
+			Documentation = "man:swaybg";
+			After = "graphical-session.target";
+		};
+		Service = {
+			Type = "exec";
+			ExecStart = "${pkgs.swaybg}/bin/swaybg";
+			Restart = "always";
+			Slice = "background-graphical.slice"; # Assign to UWSM slice
+		};
+		Install = {
+			WantedBy = ["graphical-session.target"];
+		};
+	};
+
+	systemd.user.services.ssh-tpm-agent = {
+		Unit = {
+			ConditionEnvironment = "!SSH_AGENT_PID";
+			Description = "ssh-tpm-agent service";
+			Documentation = "man:ssh-agent(1) man:ssh-add(1) man:ssh(1)";
+			Requires = "ssh-tpm-agent.socket";
+		};
+		Service = {
+			Environment = "SSH_TPM_AUTH_SOCK=%t/ssh-tpm-agent.sock";
+			ExecStart = "${pkgs.ssh-tpm-agent}/bin/ssh-tpm-agent";
+			PassEnvironment = "SSH_AGENT_PID";
+			SuccessExitStatus = 2;
+			Type = "simple";
+		};
+		Install = {
+			Also = "ssh-agent.socket";
+		};
+	};
+	systemd.user.sockets.ssh-tpm-agent = {
+		Unit = {
+			Description = "SSH TPM agent socket";
+			Documentation = "man:ssh-agent(1) man:ssh-add(1) man:ssh(1)";
+		};
+		Socket = {
+			ListenStream = "%t/ssh-tpm-agent.sock";
+			SocketMode = 0600;
+			Service = "ssh-tpm-agent.service";
+		};
+		Install = {
+			WantedBy = ["sockets.target"];
 		};
 	};
 

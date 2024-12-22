@@ -1,6 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 {
 	config,
 	lib,
@@ -13,6 +10,11 @@
 	];
 
 	nixpkgs.config.allowUnfree = true;
+	nixpkgs.config.permittedInsecurePackages = [
+		"olm-3.2.16"
+		"cinny-4.2.3"
+		"cinny-unwrapped-4.2.3"
+	];
 
 	# Use the systemd-boot EFI boot loader.
 	# boot.loader.systemd-boot.enable = true;
@@ -25,6 +27,12 @@
 		pkiBundle = "/var/lib/sbctl";
 	};
 	boot.loader.efi.canTouchEfiVariables = true;
+	# boot.uki.settings = {
+	# 	"PCRSignature:default" = {
+	# 		PCRPrivateKey = "/var/lib/tpm2-pcr-private-key.pem";
+	# 		PCRPublicKey = "/var/lib/tpm2-pcr-public-key.pem";
+	# 	};
+	# };
 
 	boot.kernelPackages = pkgs.linuxPackages_zen;
 
@@ -175,8 +183,14 @@
 	# Define a user account. Don't forget to set a password with ‘passwd’.
 	users.users.m00n = {
 		isNormalUser = true;
-		extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
+		extraGroups = ["wheel" "tss"]; # Enable ‘sudo’ for the user.
 		shell = pkgs.zsh;
+	};
+
+	security.tpm2 = {
+		enable = true;
+		applyUdevRules = true;
+		pkcs11.enable = true;
 	};
 
 	fonts.packages = with pkgs; [
@@ -196,6 +210,8 @@
 		helix # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
 		wget
 		sbctl
+
+		ssh-tpm-agent
 	];
 
 	programs.zsh.enable = true;
@@ -236,10 +252,11 @@
 	# Some programs need SUID wrappers, can be configured further or are
 	# started in user sessions.
 	# programs.mtr.enable = true;
-	# programs.gnupg.agent = {
-	#   enable = true;
-	#   enableSSHSupport = true;
-	# };
+	programs.gnupg.agent = {
+		enable = true;
+		# enableSSHSupport = true;
+	};
+	services.pcscd.enable = true;
 
 	# List services that you want to enable:
 
