@@ -63,10 +63,18 @@ in {
 
     networking.firewall.enable = lib.mkForce false;
 
-    services.tailscale.extraSetFlags = [
-      "--advertise-routes=${nodePodCIDRs}"
-      "--accept-routes"
-    ];
+    networking.localCommands = ''
+      NETDEV=$(ip -o route get 8.8.8.8 | cut -f 5 -d " ")
+      ${pkgs.ethtool}/bin/ethtool -K $NETDEV rx-udp-gro-forwarding on rx-gro-list off
+    '';
+
+    services.tailscale = {
+      enable = true;
+      extraSetFlags = [
+        "--advertise-routes=${nodePodCIDRs}"
+        "--accept-routes"
+      ];
+    };
 
     boot.kernelModules = [
       "ip6_tables"
