@@ -7,6 +7,7 @@
 }: {
   imports = [
     ./default.nix
+    ../home-manager.nix
   ];
 
   nixpkgs.config.allowUnfree = true;

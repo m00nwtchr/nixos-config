@@ -38,6 +38,7 @@
 					system = "x86_64-linux";
 					modules = [
 						lanzaboote.nixosModules.lanzaboote
+						home-manager.nixosModules.home-manager
 						./hosts/m00n
 						({pkgs, ...}: {
 								nixpkgs.overlays = [
@@ -49,14 +50,6 @@
 									# pkgs.rust-bin.stable.latest.default
 								];
 							})
-						home-manager.nixosModules.home-manager
-						{
-							home-manager.useGlobalPkgs = true;
-							home-manager.useUserPackages = true;
-							home-manager.users.m00n = import ./home;
-
-							home-manager.backupFileExtension = "bak";
-						}
 					];
 				};
 

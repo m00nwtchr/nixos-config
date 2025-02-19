@@ -19,8 +19,6 @@
   nixpkgs.config.rocmSupport = true;
   nixpkgs.config.permittedInsecurePackages = [
     "olm-3.2.16"
-    "cinny-4.2.3"
-    "cinny-unwrapped-4.2.3"
   ];
 
   nixpkgs.overlays = [];
@@ -33,7 +31,7 @@
 
   networking.hostName = "m00n"; # Define your hostname.
   networking.hosts = {
-    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "idm.m00nlit.dev" "git.m00nlit.dev"];
+    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev"];
     "100.116.45.53" = ["m00nlit.dev"];
   };
 
