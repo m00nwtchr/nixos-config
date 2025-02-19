@@ -75,6 +75,7 @@ in {
         "--accept-routes"
       ];
     };
+    systemd.services.tailscaled.serviceConfig.Environment = ["TS_DEBUG_MTU=1420"];
 
     boot.kernelModules = [
       "ip6_tables"
