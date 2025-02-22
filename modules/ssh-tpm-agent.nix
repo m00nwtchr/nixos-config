@@ -13,7 +13,7 @@
 
   config = {
     services.openssh.settings =
-      if config.services.sshTpmAgent.enable && config.services.sshTpmAgent.hostKeys
+      if config.services.sshTpmAgent.enable
       then {
         HostKeyAgent = "/var/tmp/ssh-tpm-agent.sock";
         HostKey = [
@@ -24,7 +24,7 @@
       else {};
 
     systemd.services."ssh-tpm-genkeys" = {
-      enable = config.services.sshTpmAgent.enable && config.services.sshTpmAgent.hostKeys;
+      enable = config.services.sshTpmAgent.enable;
       description = "SSH TPM Key Generation";
       unitConfig = {
         ConditionPathExists = [
@@ -43,7 +43,7 @@
     };
 
     systemd.services."ssh-tpm-agent" = {
-      enable = config.services.sshTpmAgent.enable && config.services.sshTpmAgent.hostKeys;
+      enable = config.services.sshTpmAgent.enable;
       description = "ssh-tpm-agent service";
       documentation = "man:ssh-agent(1) man:ssh-add(1) man:ssh(1)";
       wants = ["ssh-tpm-genkeys.service"];
@@ -66,7 +66,7 @@
     };
 
     systemd.sockets."ssh-tpm-agent" = {
-      enable = config.services.sshTpmAgent.enable && config.services.sshTpmAgent.hostKeys;
+      enable = config.services.sshTpmAgent.enable;
       description = "SSH TPM agent socket";
       documentation = "man:ssh-agent(1) man:ssh-add(1) man:ssh(1)";
       listenStreams = ["/var/tmp/ssh-tpm-agent.sock"];
