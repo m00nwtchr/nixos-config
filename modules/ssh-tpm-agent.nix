@@ -47,7 +47,7 @@
       description = "ssh-tpm-agent service";
       documentation = "man:ssh-agent(1) man:ssh-add(1) man:ssh(1)";
       wants = ["ssh-tpm-genkeys.service"];
-      afters = [
+      after = [
         "ssh-tpm-genkeys.service"
         "network.target"
         "sshd.target"
