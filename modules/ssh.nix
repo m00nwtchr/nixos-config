@@ -4,17 +4,16 @@
   lib,
   ...
 }: {
-  environment.systemPackages =
-    []
-    ++ (
-      if config.security.tpm2.enable
-      then [pkgs.ssh-tpm-agent]
-      else []
-    );
+  imports = [
+    ./ssh-tpm-agent.nix
+  ];
+
+  services.sshTpmAgent.hostKeys = true;
 
   services.openssh = {
     enable = true;
     startWhenNeeded = true;
+    openFirewall = true;
     settings = {
       PermitRootLogin = "prohibit-password"; # disable root login
       PubkeyAuthentication = true;
@@ -22,6 +21,5 @@
       KbdInteractiveAuthentication = false;
       PermitEmptyPasswords = false;
     };
-    openFirewall = true;
   };
 }
