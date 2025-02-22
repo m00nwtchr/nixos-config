@@ -68,9 +68,9 @@
       description = "SSH TPM agent socket";
       documentation = ["man:ssh-agent(1) man:ssh-add(1) man:ssh(1)"];
       listenStreams = ["/var/tmp/ssh-tpm-agent.sock"];
-      socketConfig = ''
-        SocketMode=0600
-      '';
+      socketConfig = {
+        SocketMode = "0600";
+      };
     };
   };
 }
