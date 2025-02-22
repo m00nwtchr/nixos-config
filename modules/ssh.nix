@@ -8,7 +8,7 @@
     ./ssh-tpm-agent.nix
   ];
 
-  services.sshTpmAgent.hostKeys = false;
+  services.sshTpmAgent.enable = true;
 
   services.openssh = {
     enable = true;
