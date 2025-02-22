@@ -12,14 +12,21 @@
   };
 
   config = {
-    services.openssh.extraConfig =
-      if config.services.sshTpmAgent.enable
-      then ''
-        HostKeyAgent /var/tmp/ssh-tpm-agent.sock
-        HostKey /etc/ssh/ssh_tpm_host_ecdsa_key.pub
-        HostKey /etc/ssh/ssh_tpm_host_rsa_key.pub
-      ''
-      else "";
+    services.openssh = {
+      hostKeys =
+        if config.services.sshTpmAgent.enable
+        then lib.mkForce []
+        else [];
+
+      extraConfig =
+        if config.services.sshTpmAgent.enable
+        then ''
+          HostKeyAgent /var/tmp/ssh-tpm-agent.sock
+          HostKey /etc/ssh/ssh_tpm_host_ecdsa_key.pub
+          HostKey /etc/ssh/ssh_tpm_host_rsa_key.pub
+        ''
+        else "";
+    };
 
     systemd.services."ssh-tpm-genkeys" = {
       enable = config.services.sshTpmAgent.enable;
