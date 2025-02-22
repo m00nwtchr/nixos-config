@@ -67,6 +67,8 @@
 
   services.ollama.enable = true;
 
+  virtualisation.containers.storage.settings.driver = "overlay";
+
   # virtualisation = {
   # 	containers.enable = true;
   # 	oci-containers.backend = "podman";

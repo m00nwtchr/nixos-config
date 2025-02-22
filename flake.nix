@@ -53,6 +53,22 @@
 					];
 				};
 
+	      m00nsrv =
+				nixpkgs.lib.nixosSystem rec {
+					system = "x86_64-linux";
+					modules = [
+						lanzaboote.nixosModules.lanzaboote
+						{
+							# environment.systemPackages = [alejandra.defaultPackage.${system}];
+						}
+						./hosts/m00nsrv
+						# {
+						#   nixpkgs.overlays = [
+						#     (self: super: {cni-plugin-cilium = super.callPackage ./pkgs/cni-plugin-cilium.nix {};})
+						#   ];
+						# }
+					];
+				};
 			bastion =
 				nixpkgs.lib.nixosSystem rec {
 					system = "aarch64-linux";

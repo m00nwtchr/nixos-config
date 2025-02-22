@@ -9,6 +9,39 @@
   nodePodCIDRs = lib.strings.concatStringsSep "," config.services.k3s.node.podCIDRs;
   nodeIPs = lib.strings.concatStringsSep "," config.services.k3s.node.ips;
   nodeExternalIPs = lib.strings.concatStringsSep "," config.services.k3s.node.externalIPs;
+
+  k3sConfig = (pkgs.formats.yaml {}).generate "k3s-config" ({
+    disable = ["traefik" "metrics-server"];
+
+    cluster-cidr = clusterCIDRs;
+    service-cidr = serviceCIDRs;
+
+    node-ip = nodeIPs;
+    advertise-address = "fd7a:115c:a1e0::f201:2d35";
+    node-external-ip = nodeExternalIPs;
+
+    tls-san = "k8s.m00nlit.dev";
+
+    flannel-backend = "none";
+    disable-network-policy = true;
+    disable-kube-proxy = true;
+
+    container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
+
+    kube-apiserver-arg = [
+     "oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
+     "oidc-client-id=kubernetes"
+     "oidc-signing-algs=ES256"
+     "oidc-username-prefix=oidc:"
+     "oidc-groups-prefix=oidc:"
+     "oidc-username-claim=name"
+     "oidc-groups-claim=groups"
+    ];
+
+    kubelet-arg = [
+      "make-iptables-util-chains=false"
+    ];
+  }); 
 in {
   imports = [
     ./server.nix
@@ -86,6 +119,8 @@ in {
 
     virtualisation.cri-o = {
       enable = true;
+
+      storageDriver = config.virtualisation.containers.storage.settings.driver;
       settings = {
         crio.network.plugin_dirs = [
           "/usr/lib/cni"
@@ -97,19 +132,13 @@ in {
     services.k3s = {
       enable = true;
       token = "K103fe7e5786fff566ecee42be1c1ae502a68f73fe116aeb4adfaaa23d6eec12e26::server:9f32a9df53404822b836974b916460fe";
-      extraFlags = lib.strings.concatStringsSep " " ([
-          "--container-runtime-endpoint=unix:///run/crio/crio.sock"
-          "--node-ip=${nodeIPs}"
-          "--node-external-ip=${nodeExternalIPs}"
-        ]
-        ++ (
-          if config.services.k3s.role == "server"
-          then [
-            "--cluster-cidr=${clusterCIDRs}"
-            "--service-cidr=${serviceCIDRs}"
-          ]
-          else []
-        ));
+      # extraFlags = lib.strings.concatStringsSep " " [];
+      gracefulNodeShutdown.enable = true;
+
+      configPath = k3sConfig;
+      extraKubeletConfig = {
+        memorySwap.swapBehavior = "LimitedSwap";
+      };
     };
   };
 }

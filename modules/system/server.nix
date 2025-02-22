@@ -33,6 +33,10 @@ in {
     chmod 0755 /opt/kanidm_ssh_authorizedkeys
   '';
 
+  virtualisation.containers.storage.settings = {
+    driver = "btrfs";
+  };
+
   services = {
     kanidm = {
       # enableClient = true;
