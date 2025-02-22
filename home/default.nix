@@ -38,6 +38,7 @@
 
     gnome-calculator
     overskride
+    helvum
 
     yubioath-flutter
     yubikey-manager
@@ -110,6 +111,8 @@
       };
     };
   };
+
+  services.easyeffects.enable = true;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

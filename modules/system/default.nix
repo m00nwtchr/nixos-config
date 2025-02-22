@@ -75,7 +75,10 @@
       ];
     };
 
-    tailscale.enable = lib.mkDefault true;
+    tailscale = {
+      enable = lib.mkDefault true;
+      openFirewall = true;
+    };
 
     dbus.implementation = "broker";
   };

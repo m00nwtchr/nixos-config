@@ -7,6 +7,7 @@
   home.packages = with pkgs; [
     # DevOps
     ansible
+    kanidm
 
     # Kubernetes
     kubectl

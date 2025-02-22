@@ -33,6 +33,9 @@
   environment.systemPackages = with pkgs;
     [
       xdg-user-dirs
+
+      papers
+      libreoffice-qt6-fresh
     ]
     ++ (
       if config.security.tpm2.enable
