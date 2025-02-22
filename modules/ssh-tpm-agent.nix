@@ -43,7 +43,7 @@
     systemd.services."ssh-tpm-agent" = {
       enable = config.services.sshTpmAgent.enable;
       description = "ssh-tpm-agent service";
-      documentation = "man:ssh-agent(1) man:ssh-add(1) man:ssh(1)";
+      documentation = ["man:ssh-agent(1) man:ssh-add(1) man:ssh(1)"];
       wants = ["ssh-tpm-genkeys.service"];
       after = [
         "ssh-tpm-genkeys.service"
@@ -66,7 +66,7 @@
     systemd.sockets."ssh-tpm-agent" = {
       enable = config.services.sshTpmAgent.enable;
       description = "SSH TPM agent socket";
-      documentation = "man:ssh-agent(1) man:ssh-add(1) man:ssh(1)";
+      documentation = ["man:ssh-agent(1) man:ssh-add(1) man:ssh(1)"];
       listenStreams = ["/var/tmp/ssh-tpm-agent.sock"];
       socketConfig = ''
         SocketMode=0600
