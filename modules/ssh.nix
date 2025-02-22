@@ -1,8 +1,17 @@
 {
   pkgs,
+  config,
   lib,
   ...
 }: {
+  environment.systemPackages =
+    []
+    ++ (
+      if config.security.tpm2.enable
+      then [pkgs.ssh-tpm-agent]
+      else []
+    );
+
   services.openssh = {
     enable = true;
     startWhenNeeded = true;

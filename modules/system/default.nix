@@ -42,21 +42,15 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs;
-    [
-      helix
-      nil
-      htop
-      wget
-      curl
-      git
-      neofetch
-    ]
-    ++ (
-      if config.security.tpm2.enable
-      then [pkgs.ssh-tpm-agent]
-      else []
-    );
+  environment.systemPackages = with pkgs; [
+    helix
+    nil
+    htop
+    wget
+    curl
+    git
+    neofetch
+  ];
 
   programs.zsh.enable = true;
 

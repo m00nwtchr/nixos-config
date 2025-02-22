@@ -44,7 +44,7 @@
 
     address = ["192.168.0.10/24"];
     gateway = ["192.168.0.1"];
-  
+
     ipv6AcceptRAConfig = {
       Token = "prefixstable";
       UseDNS = "no";
@@ -54,9 +54,9 @@
   # Gitea
   users.groups.git = {};
   users.users.git = let
-  giteaShell = pkgs.writeShellScriptBin "gitea-shell" ''
-    exec ${pkgs.kubectl}/bin/kubectl --client-certificate=/var/lib/git/git.crt --client-key=/var/lib/git/git.key --certificate-authority=/var/lib/git/server-ca.crt -s "https://localhost:6443" -n gitea exec -i deployment/gitea -c gitea -- env SSH_ORIGINAL_COMMAND="$SSH_ORIGINAL_COMMAND" sh "$@"
-  '';
+    giteaShell = pkgs.writeShellScriptBin "gitea-shell" ''
+      exec ${pkgs.kubectl}/bin/kubectl --client-certificate=/var/lib/git/git.crt --client-key=/var/lib/git/git.key --certificate-authority=/var/lib/git/server-ca.crt -s "https://localhost:6443" -n gitea exec -i deployment/gitea -c gitea -- env SSH_ORIGINAL_COMMAND="$SSH_ORIGINAL_COMMAND" sh "$@"
+    '';
   in {
     group = "git";
     isSystemUser = true;
@@ -82,6 +82,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [];
+
+  security.tpm2.enable = true;
 
   services.k3s = {
     enable = lib.mkForce true;
