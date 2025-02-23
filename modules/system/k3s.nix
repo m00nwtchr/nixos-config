@@ -12,19 +12,8 @@
 
   k3sConfig =
     (pkgs.formats.yaml {}).generate "k3s-config" {
-      disable = ["traefik" "metrics-server"];
-
-      cluster-cidr = clusterCIDRs;
-      service-cidr = serviceCIDRs;
-
       node-ip = nodeIPs;
       node-external-ip = nodeExternalIPs;
-
-      tls-san = "k8s.m00nlit.dev";
-
-      flannel-backend = "none";
-      disable-network-policy = true;
-      disable-kube-proxy = true;
 
       container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
 
@@ -35,7 +24,18 @@
     // (
       if config.services.k3s.role == "server"
       then {
+        disable = ["traefik" "metrics-server"];
+
+        cluster-cidr = clusterCIDRs;
+        service-cidr = serviceCIDRs;
+
         advertise-address = builtins.elemAt config.services.k3s.node.ips 0;
+
+        flannel-backend = "none";
+        disable-network-policy = true;
+        disable-kube-proxy = true;
+
+        tls-san = "k8s.m00nlit.dev";
 
         kube-apiserver-arg = [
           "oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
