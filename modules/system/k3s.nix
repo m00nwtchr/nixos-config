@@ -33,7 +33,7 @@
       ];
     }
     // (
-      if config.k3s.role == "server"
+      if config.services.k3s.role == "server"
       then {
         advertise-address = builtins.elemAt config.services.k3s.node.ips 0;
 
