@@ -10,14 +10,14 @@
   nodeIPs = lib.strings.concatStringsSep "," config.services.k3s.node.ips;
   nodeExternalIPs = lib.strings.concatStringsSep "," config.services.k3s.node.externalIPs;
 
-  k3sConfig = (pkgs.formats.yaml {}).generate "k3s-config" ({
+  k3sConfig = (pkgs.formats.yaml {}).generate "k3s-config" {
     disable = ["traefik" "metrics-server"];
 
     cluster-cidr = clusterCIDRs;
     service-cidr = serviceCIDRs;
 
     node-ip = nodeIPs;
-    advertise-address = "fd7a:115c:a1e0::f201:2d35";
+    advertise-address = builtins.elemAt config.services.k3s.node.ips 0;
     node-external-ip = nodeExternalIPs;
 
     tls-san = "k8s.m00nlit.dev";
@@ -29,19 +29,19 @@
     container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
 
     kube-apiserver-arg = [
-     "oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
-     "oidc-client-id=kubernetes"
-     "oidc-signing-algs=ES256"
-     "oidc-username-prefix=oidc:"
-     "oidc-groups-prefix=oidc:"
-     "oidc-username-claim=name"
-     "oidc-groups-claim=groups"
+      "oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
+      "oidc-client-id=kubernetes"
+      "oidc-signing-algs=ES256"
+      "oidc-username-prefix=oidc:"
+      "oidc-groups-prefix=oidc:"
+      "oidc-username-claim=name"
+      "oidc-groups-claim=groups"
     ];
 
     kubelet-arg = [
       "make-iptables-util-chains=false"
     ];
-  }); 
+  };
 in {
   imports = [
     ./server.nix
