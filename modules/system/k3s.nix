@@ -3,53 +3,7 @@
   lib,
   pkgs,
   ...
-}: let
-  clusterCIDRs = lib.strings.concatStringsSep "," config.services.k3s.clusterCIDRs;
-  serviceCIDRs = lib.strings.concatStringsSep "," config.services.k3s.serviceCIDRs;
-  nodePodCIDRs = lib.strings.concatStringsSep "," config.services.k3s.node.podCIDRs;
-  nodeIPs = lib.strings.concatStringsSep "," config.services.k3s.node.ips;
-  nodeExternalIPs = lib.strings.concatStringsSep "," config.services.k3s.node.externalIPs;
-
-  k3sConfig =
-    (pkgs.formats.yaml {}).generate "k3s-config" {
-      node-ip = nodeIPs;
-      node-external-ip = nodeExternalIPs;
-
-      container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
-
-      kubelet-arg = [
-        "make-iptables-util-chains=false"
-      ];
-    }
-    // (
-      if config.services.k3s.role == "server"
-      then {
-        disable = ["traefik" "metrics-server"];
-
-        cluster-cidr = clusterCIDRs;
-        service-cidr = serviceCIDRs;
-
-        advertise-address = builtins.elemAt config.services.k3s.node.ips 0;
-
-        flannel-backend = "none";
-        disable-network-policy = true;
-        disable-kube-proxy = true;
-
-        tls-san = "k8s.m00nlit.dev";
-
-        kube-apiserver-arg = [
-          "oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
-          "oidc-client-id=kubernetes"
-          "oidc-signing-algs=ES256"
-          "oidc-username-prefix=oidc:"
-          "oidc-groups-prefix=oidc:"
-          "oidc-username-claim=name"
-          "oidc-groups-claim=groups"
-        ];
-      }
-      else {}
-    );
-in {
+}: {
   imports = [
     ./server.nix
   ];
@@ -90,7 +44,53 @@ in {
     };
   };
 
-  config = {
+  config = let
+    clusterCIDRs = lib.strings.concatStringsSep "," config.services.k3s.clusterCIDRs;
+    serviceCIDRs = lib.strings.concatStringsSep "," config.services.k3s.serviceCIDRs;
+    nodePodCIDRs = lib.strings.concatStringsSep "," config.services.k3s.node.podCIDRs;
+    nodeIPs = lib.strings.concatStringsSep "," config.services.k3s.node.ips;
+    nodeExternalIPs = lib.strings.concatStringsSep "," config.services.k3s.node.externalIPs;
+
+    k3sConfig =
+      {
+        node-ip = nodeIPs;
+        node-external-ip = nodeExternalIPs;
+
+        container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
+
+        kubelet-arg = [
+          "make-iptables-util-chains=false"
+        ];
+      }
+      // (
+        if config.services.k3s.role == "server"
+        then {
+          disable = ["traefik" "metrics-server"];
+
+          cluster-cidr = clusterCIDRs;
+          service-cidr = serviceCIDRs;
+
+          advertise-address = builtins.elemAt config.services.k3s.node.ips 0;
+
+          flannel-backend = "none";
+          disable-network-policy = true;
+          disable-kube-proxy = true;
+
+          tls-san = "k8s.m00nlit.dev";
+
+          kube-apiserver-arg = [
+            "oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
+            "oidc-client-id=kubernetes"
+            "oidc-signing-algs=ES256"
+            "oidc-username-prefix=oidc:"
+            "oidc-groups-prefix=oidc:"
+            "oidc-username-claim=name"
+            "oidc-groups-claim=groups"
+          ];
+        }
+        else {}
+      );
+  in {
     # boot.kernelPatches = [
     #   {
     #     name = "rt-group-sched";
@@ -142,7 +142,7 @@ in {
       # extraFlags = lib.strings.concatStringsSep " " [];
       gracefulNodeShutdown.enable = true;
 
-      configPath = k3sConfig;
+      configPath = (pkgs.formats.yaml {}).generate "k3s-config" k3sConfig;
       extraKubeletConfig = {
         memorySwap.swapBehavior = "LimitedSwap";
       };
