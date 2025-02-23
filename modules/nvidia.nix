@@ -8,6 +8,7 @@
   ];
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.nvidia.acceptLicense = true;
 
   hardware.nvidia = {
     modesetting.enable = true;
