@@ -8,6 +8,7 @@
   imports = [
     ../../modules/efi/secureboot.nix
     ../../modules/system/k3s.nix
+    ../../modules/nvidia.nix
 
     ./hardware-configuration.nix
   ];
@@ -16,6 +17,8 @@
   boot.kernelPackages = pkgs.linuxPackages_hardened;
   boot.kernelParams = [
   ];
+
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
 
   zramSwap.enable = true;
 
@@ -85,26 +88,37 @@
 
   security.tpm2.enable = true;
 
-  services.k3s = {
-    enable = lib.mkForce true;
-    role = "server";
-    # serverAddr = "https://m00nsrv:6443";
+  services = {
+    btrfs.autoScrub = {
+      enable = true;
+      fileSystems = ["/" "/mnt/hdd"];
+    };
+    # beesd.filesystems.root = {
+    #   spec = "/";
+    #   hashTableSizeMB = 512;
+    # };
 
-    node = {
-      podCIDRs = [
-        "2001:cafe:42::/64"
-        "10.42.0.0/24"
-      ];
+    k3s = {
+      enable = lib.mkForce true;
+      role = "server";
+      # serverAddr = "https://m00nsrv:6443";
 
-      ips = [
-        "fd7a:115c:a1e0::f201:2d35"
-        "100.116.45.53"
-      ];
+      node = {
+        podCIDRs = [
+          "2001:cafe:42::/64"
+          "10.42.0.0/24"
+        ];
 
-      externalIPs = [
-        "2a02:a313:43e4:7080::7dc5"
-        "192.168.0.10"
-      ];
+        ips = [
+          "fd7a:115c:a1e0::f201:2d35"
+          "100.116.45.53"
+        ];
+
+        externalIPs = [
+          "2a02:a313:43e4:7080::7dc5"
+          "192.168.0.10"
+        ];
+      };
     };
   };
 
