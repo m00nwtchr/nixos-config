@@ -10,38 +10,45 @@
   nodeIPs = lib.strings.concatStringsSep "," config.services.k3s.node.ips;
   nodeExternalIPs = lib.strings.concatStringsSep "," config.services.k3s.node.externalIPs;
 
-  k3sConfig = (pkgs.formats.yaml {}).generate "k3s-config" {
-    disable = ["traefik" "metrics-server"];
+  k3sConfig =
+    (pkgs.formats.yaml {}).generate "k3s-config" {
+      disable = ["traefik" "metrics-server"];
 
-    cluster-cidr = clusterCIDRs;
-    service-cidr = serviceCIDRs;
+      cluster-cidr = clusterCIDRs;
+      service-cidr = serviceCIDRs;
 
-    node-ip = nodeIPs;
-    advertise-address = builtins.elemAt config.services.k3s.node.ips 0;
-    node-external-ip = nodeExternalIPs;
+      node-ip = nodeIPs;
+      node-external-ip = nodeExternalIPs;
 
-    tls-san = "k8s.m00nlit.dev";
+      tls-san = "k8s.m00nlit.dev";
 
-    flannel-backend = "none";
-    disable-network-policy = true;
-    disable-kube-proxy = true;
+      flannel-backend = "none";
+      disable-network-policy = true;
+      disable-kube-proxy = true;
 
-    container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
+      container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
 
-    kube-apiserver-arg = [
-      "oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
-      "oidc-client-id=kubernetes"
-      "oidc-signing-algs=ES256"
-      "oidc-username-prefix=oidc:"
-      "oidc-groups-prefix=oidc:"
-      "oidc-username-claim=name"
-      "oidc-groups-claim=groups"
-    ];
+      kubelet-arg = [
+        "make-iptables-util-chains=false"
+      ];
+    }
+    // (
+      if config.k3s.role == "server"
+      then {
+        advertise-address = builtins.elemAt config.services.k3s.node.ips 0;
 
-    kubelet-arg = [
-      "make-iptables-util-chains=false"
-    ];
-  };
+        kube-apiserver-arg = [
+          "oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
+          "oidc-client-id=kubernetes"
+          "oidc-signing-algs=ES256"
+          "oidc-username-prefix=oidc:"
+          "oidc-groups-prefix=oidc:"
+          "oidc-username-claim=name"
+          "oidc-groups-claim=groups"
+        ];
+      }
+      else {}
+    );
 in {
   imports = [
     ./server.nix
