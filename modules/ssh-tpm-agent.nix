@@ -68,6 +68,8 @@
         KillMode = "process";
         Restart = "always";
       };
+
+      wantedBy = ["multi-user.target"];
     };
 
     systemd.sockets."ssh-tpm-agent" = {
@@ -78,6 +80,8 @@
       socketConfig = {
         SocketMode = "0600";
       };
+
+      wantedBy = ["sockets.target"];
     };
   };
 }
