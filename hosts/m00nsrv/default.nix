@@ -49,7 +49,6 @@
     gateway = ["192.168.0.1"];
 
     ipv6AcceptRAConfig = {
-      Token = "prefixstable";
       UseDNS = "no";
     };
   };
