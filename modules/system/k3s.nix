@@ -145,7 +145,7 @@
       configPath = (pkgs.formats.yaml {}).generate "k3s-config" k3sConfig;
       extraKubeletConfig = {
         memorySwap.swapBehavior = "LimitedSwap";
-        imageMaximumGCAge = "1d";
+        imageMaximumGCAge = "12h";
       };
     };
   };
