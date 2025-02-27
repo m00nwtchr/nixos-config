@@ -1,5 +1,18 @@
 {
-  "nix": {
-    "enabled": true
-  }
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"config:recommended",
+		":disableRateLimiting",
+        // ":automergeBranch",
+		":dependencyDashboard",
+		":semanticCommits",
+		":timezone(Europe/Warsaw)"
+	],
+    "lockFileMaintenance": {
+      "enabled": true,
+      "schedule": ["* 0-3 * * *"]
+    },
+	"nix": {
+		"enabled": true
+	}
 }
