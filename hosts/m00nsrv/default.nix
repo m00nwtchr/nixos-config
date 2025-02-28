@@ -45,11 +45,10 @@
       MulticastDNS = "yes";
     };
 
-    address = ["192.168.0.10/24"];
+    address = ["192.168.0.10/24" "2a02:a313:43e4:7080::7dc5/128"];
     gateway = ["192.168.0.1"];
 
     ipv6AcceptRAConfig = {
-      Token = "prefixstable";
       UseDNS = "no";
     };
   };
