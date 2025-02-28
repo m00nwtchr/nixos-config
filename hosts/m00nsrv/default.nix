@@ -83,11 +83,14 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    gnupg
-  ];
+  environment.systemPackages = with pkgs; [];
 
   security.tpm2.enable = true;
+
+  programs.gnupg.agent = {
+    enable = true;
+    pinentryFlavor = "curses";
+  };
 
   services = {
     btrfs.autoScrub = {
