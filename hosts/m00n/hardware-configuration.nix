@@ -18,10 +18,9 @@
     "ahci"
     "usbhid"
     "rtsx_usb_sdmmc"
-    "amdgpu"
     "asus_wmi"
   ];
-  boot.initrd.kernelModules = [];
+  boot.initrd.kernelModules = ["amdgpu"];
   boot.kernelModules = ["kvm-amd"];
   boot.extraModulePackages = [];
 

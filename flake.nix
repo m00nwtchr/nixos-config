@@ -1,6 +1,18 @@
 {
 	description = "A simple NixOS flake";
 
+	nixConfig = {
+		extra-substituters = [
+			# nix community's cache server
+			"https://nix-community.cachix.org"
+		];
+
+		extra-trusted-public-keys = [
+			# nix community's cache server public key
+			"nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+		];
+	};
+
 	inputs = {
 		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 		lanzaboote = {
@@ -17,6 +29,12 @@
 			url = "github:nix-community/home-manager";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
+
+		zen-browser = {
+			url = "github:0xc000022070/zen-browser-flake";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
+
 		rust-overlay = {
 			url = "github:oxalica/rust-overlay";
 			inputs.nixpkgs.follows = "nixpkgs";
@@ -29,6 +47,7 @@
 		lanzaboote,
 		alejandra,
 		home-manager,
+		zen-browser,
 		rust-overlay,
 		...
 	} @ inputs: {
@@ -41,19 +60,23 @@
 						home-manager.nixosModules.home-manager
 						./hosts/m00n
 						({pkgs, ...}: {
+								home-manager.extraSpecialArgs = {
+									inherit inputs;
+									inherit system;
+								};
 								nixpkgs.overlays = [
 									(import ./overlays/lens.nix)
 									rust-overlay.overlays.default
 								];
 								environment.systemPackages = [
 									alejandra.defaultPackage.${system}
-									# pkgs.rust-bin.stable.latest.default
+									pkgs.rust-bin.stable.latest.default
 								];
 							})
 					];
 				};
 
-	      m00nsrv =
+			m00nsrv =
 				nixpkgs.lib.nixosSystem rec {
 					system = "x86_64-linux";
 					modules = [

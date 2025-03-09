@@ -41,6 +41,14 @@
     wantedBy = ["graphical-session.target"];
   };
 
+  services.logind = {
+    powerKey = "suspend-then-hibernate";
+    lidSwitch = "suspend-then-hibernate";
+    extraConfig = ''
+      HibernateDelaySec=900
+    '';
+  };
+
   services.auto-cpufreq = {
     enable = true;
     settings = {

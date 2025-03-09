@@ -2,6 +2,8 @@
   config,
   lib,
   pkgs,
+  system,
+  inputs,
   ...
 }: {
   imports = [
@@ -25,16 +27,16 @@
   # release notes.
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
-  home.file.".cargo/config.toml".text = ''
-    [target.x86_64-unknown-linux-gnu]
-    linker = "clang"
-    rustflags = ["-C", "link-arg=-fuse-ld=${pkgs.mold}/bin/mold"]
-  '';
+  # home.file.".cargo/config.toml".text = ''
+  #   [target.x86_64-unknown-linux-gnu]
+  #   rustflags = ["-C", "link-arg=-fuse-ld=${pkgs.mold}/bin/mold"]
+  # '';
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
     ungoogled-chromium
+    inputs.zen-browser.packages."${system}".default
 
     gnome-calculator
     overskride
@@ -112,8 +114,14 @@
     };
   };
 
-  services.easyeffects.enable = true;
+  services = {
+    easyeffects.enable = true;
 
+    syncthing = {
+      enable = true;
+      tray.enable = true;
+    };
+  };
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }

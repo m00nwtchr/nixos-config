@@ -27,7 +27,7 @@
     "tsc=unstable"
     "clocksource=hpet"
   ];
-  boot.plymouth.enable = false;
+  # boot.plymouth.enable = false;
 
   networking.hostName = "m00n"; # Define your hostname.
   networking.hosts = {
