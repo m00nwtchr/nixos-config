@@ -38,6 +38,7 @@
   };
 
   security.tpm2.enable = lib.mkForce false;
+  services.sshTpmAgent.enable = lib.mkForce false;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
