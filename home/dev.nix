@@ -4,6 +4,10 @@
   pkgs,
   ...
 }: {
+  imports = [
+    ./rust.nix
+  ];
+
   home.packages = with pkgs; [
     # DevOps
     ansible
@@ -25,7 +29,6 @@
 
     # IDE
     jetbrains.idea-ultimate
-    jetbrains.rust-rover
   ];
 
   programs.git = {

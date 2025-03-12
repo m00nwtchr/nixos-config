@@ -68,10 +68,6 @@
 									(import ./overlays/lens.nix)
 									rust-overlay.overlays.default
 								];
-								environment.systemPackages = [
-									alejandra.defaultPackage.${system}
-									pkgs.rust-bin.stable.latest.default
-								];
 							})
 					];
 				};

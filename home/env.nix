@@ -106,10 +106,5 @@
     BROWSER = "librewolf";
     CALCULATOR = "gnome-calculator";
     EDITOR = "hx";
-
-    ######################################################################
-    # Compiler and Build Tools
-    ######################################################################
-    RUSTC_WRAPPER = "${pkgs.sccache}/bin/sccache";
   };
 }

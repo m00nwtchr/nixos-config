@@ -31,8 +31,8 @@
 
   networking.hostName = "m00n"; # Define your hostname.
   networking.hosts = {
-    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev"];
-    "100.116.45.53" = ["m00nlit.dev"];
+    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "matrix.m00nlit.dev"];
+    "100.116.45.53" = ["m00nlit.dev" "matrix.m00nlit.dev"];
   };
 
   security.tpm2.enable = true;
