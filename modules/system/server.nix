@@ -10,6 +10,7 @@ in {
   imports = [
     ./default.nix
     ../ssh.nix
+    ../chrony.nix
   ];
 
   # List packages installed in system profile. To search, run:
@@ -37,19 +38,7 @@ in {
     driver = "btrfs";
   };
 
-  networking.timeServers = [
-    "time.cloudflare.com"
-    "ntp.zeitgitter.net"
-    "ptbtime1.ptb.de"
-    "ntp2.glypnod.com"
-  ];
-
   services = {
-    chrony = {
-      enable = true;
-      enableNTS = true;
-    };
-
     kanidm = {
       # enableClient = true;
       enablePam = true;

@@ -7,6 +7,7 @@
 }: {
   imports = [
     ./desktop.nix
+    ../chrony.nix
   ];
 
   networking.wireless.iwd.enable = true;
