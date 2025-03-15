@@ -39,7 +39,7 @@ in {
 
   networking.timeServers = [
     "time.cloudflare.com"
-    "ntp3.fau.de"
+    "ntp.zeitgitter.net"
     "ptbtime1.ptb.de"
     "ntp2.glypnod.com"
   ];
