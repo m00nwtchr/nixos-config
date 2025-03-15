@@ -38,6 +38,11 @@ in {
   };
 
   services = {
+    chrony = {
+      enable = true;
+      enableNTS = true;
+    };
+
     kanidm = {
       # enableClient = true;
       enablePam = true;
