@@ -83,13 +83,19 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [];
+  environment.systemPackages = with pkgs; [
+    tpm2-tools
+  ];
 
-  security.tpm2.enable = true;
+  services.sshTpmAgent.enable = lib.mkForce false;
+  security.tpm2 = {
+    enable = true;
+    tctiEnvironment.enable = true;
+  };
 
   programs.gnupg.agent = {
     enable = true;
-    pinentryFlavor = "curses";
+    pinentryPackage = pkgs.pinentry-curses;
   };
 
   services = {
@@ -101,6 +107,10 @@
     #   spec = "/";
     #   hashTableSizeMB = 512;
     # };
+
+    cockpit = {
+      # enable = true;
+    };
 
     k3s = {
       enable = lib.mkForce true;
