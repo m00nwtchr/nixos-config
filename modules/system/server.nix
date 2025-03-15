@@ -37,6 +37,13 @@ in {
     driver = "btrfs";
   };
 
+  networking.timeServers = [
+    "time.cloudflare.com"
+    "ntp3.fau.de"
+    "ptbtime1.ptb.de"
+    "ntp2.glypnod.com"
+  ];
+
   services = {
     chrony = {
       enable = true;
