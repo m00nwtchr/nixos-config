@@ -11,6 +11,7 @@
     "ntp.zeitgitter.net"
     "ptbtime1.ptb.de"
     "ntp2.glypnod.com"
+    "162.159.200.123"
   ];
 
   services.chrony = {

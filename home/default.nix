@@ -8,7 +8,7 @@
 }: {
   imports = [
     ./env.nix
-    ./sway.nix
+    ./wayland.nix
     ./shell.nix
     ./dev.nix
   ];
@@ -38,9 +38,9 @@
     ungoogled-chromium
     inputs.zen-browser.packages."${system}".default
 
-    gnome-calculator
     overskride
     helvum
+    pavucontrol
 
     yubioath-flutter
     yubikey-manager
@@ -52,10 +52,13 @@
     vesktop
 
     imv
+    gimp
+
+    gnome-calculator
+    obsidian
 
     yt-dlp
-
-    obsidian
+    pwgen
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

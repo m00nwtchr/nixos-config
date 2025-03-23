@@ -105,6 +105,7 @@
     ######################################################################
     BROWSER = "librewolf";
     CALCULATOR = "gnome-calculator";
-    EDITOR = "hx";
+
+    APP2UNIT_SLICES = "a=app-graphical.slice b=background-graphical.slice s=session-graphical.slice";
   };
 }

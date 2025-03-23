@@ -9,6 +9,12 @@
     ./gpg.nix
   ];
 
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    enableZshIntegration = false;
+  };
+
   programs.zsh = {
     enable = true;
     dotDir = ".config/zsh";
@@ -18,6 +24,9 @@
 
     initExtraFirst = ''
       (cat ${config.xdg.cacheHome}/wallust/sequences &)
+
+      eval "$(${lib.getExe pkgs.direnv} hook zsh)"
+
       if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
        source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
       fi

@@ -3,15 +3,14 @@
   lib,
   pkgs,
   ...
-}: let
-  uwsm-shell = pkgs.writeShellScriptBin "uwsm-shell" ''
-    exec ${pkgs.uwsm}/bin/uwsm-app -- $(getent passwd $USER | cut -d: -f7)
-  '';
-in {
+}: {
+  imports = [
+    ./uwsm.nix
+  ];
+
   home.packages = with pkgs; [
     wl-clipboard
     dunst
-    alacritty
 
     bemenu
     fuzzel
@@ -50,17 +49,18 @@ in {
 
   gtk = {
     enable = true;
+    theme.name = "Adwaita";
     iconTheme = {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme.override {
         color = "red";
       };
     };
-    theme.name = "Adwaita";
     cursorTheme = {
       name = "Adwaita";
       package = pkgs.adwaita-icon-theme;
     };
+
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
     };
@@ -87,8 +87,12 @@ in {
       };
 
       window.opacity = 0.8;
-      terminal.shell = "${uwsm-shell}/bin/uwsm-shell";
     };
+  };
+
+  programs.waybar = {
+    enable = true;
+    systemd.enable = true;
   };
 
   services.swayidle = {
@@ -119,60 +123,60 @@ in {
       }
     ];
   };
-  systemd.user.services.swayidle = {
-    Service = {
-      Type = lib.mkForce "exec";
-      Slice = "background-graphical.slice"; # Assign to UWSM slice
-    };
-    Unit = {
-      After = lib.mkForce ["graphical-session.target"];
-      PartOf = lib.mkForce [];
-    };
-  };
-  # systemd.user.services."swaybg@" = {
-  # 	Unit = {
-  # 		Description = "Sway wallpaper";
-  # 		Documentation = "man:swaybg";
-  # 		After = "graphical-session.target";
-  # 	};
-  # 	Service = {
-  # 		Type = "exec";
-  # 		ExecStart = "${pkgs.swaybg}/bin/swaybg";
-  # 		Restart = "always";
-  # 		Slice = "background-graphical.slice"; # Assign to UWSM slice
-  # 	};
-  # 	Install = {
-  # 		WantedBy = ["graphical-session.target"];
-  # 	};
-  # };
 
-  programs.waybar = {
-    enable = true;
-    systemd.enable = true;
+  systemd.user.targets.tray.Unit = {
+    Requires = ["waybar.service"];
   };
-  systemd.user.services.waybar = {
-    Service = {
-      Type = lib.mkForce "exec";
-      Slice = "app-graphical.slice"; # Assign to UWSM slice
-    };
+
+  systemd.user.services.keepassxc = {
     Unit = {
-      After = lib.mkForce "graphical-session.target";
-      PartOf = lib.mkForce [];
+      Description = "KeePassXC";
+      PartOf = ["graphical-session.target"];
+      After = ["graphical-session.target"];
+    };
+    Service = {
+      Type = "exec";
+      ExitType = "cgroup";
+      ExecStart = ":${pkgs.keepassxc}/bin/keepassxc";
+      Restart = "no";
+      TimeoutStopSec = "5s";
+      Slice = "app-graphical.slice";
     };
   };
 
-  services.cliphist = {
-    enable = true;
-  };
-  systemd.user.services.cliphist = {
-    Service = {
-      Slice = "background-graphical.slice"; # Assign to UWSM slice
-    };
+  systemd.user.services.wluma = {
     Unit = {
-      After = lib.mkForce "graphical-session.target";
-      PartOf = lib.mkForce [];
+      Description = "Adjusting screen brightness based on screen contents and amount of ambient light";
+      After = "graphical-session.target";
+      PartOf = "graphical-session.target";
     };
+    Service = {
+      ExecStart = "${pkgs.wluma}/bin/wluma";
+      Slice = "background-graphical.slice";
+      Restart = "always";
+      PrivateNetwork = true;
+      PrivateMounts = false;
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+      ProtectSystem = "strict";
+      ProtectKernelTunables = true;
+      ProtectKernelModules = true;
+      ProtectControlGroups = true;
+      MemoryDenyWriteExecute = true;
+      RestrictSUIDSGID = true;
+      LockPersonality = true;
+    };
+    Install.WantedBy = ["graphical-session.target"];
   };
 
-  services.mpris-proxy.enable = true;
+  services = {
+    gammastep = {
+      enable = true;
+      provider = "manual";
+      latitude = 51.9;
+      longitude = 15.5;
+    };
+    cliphist.enable = true;
+    mpris-proxy.enable = true;
+  };
 }

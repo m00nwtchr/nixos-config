@@ -66,6 +66,7 @@
 								};
 								nixpkgs.overlays = [
 									(import ./overlays/lens.nix)
+									(import ./packages)
 									rust-overlay.overlays.default
 								];
 							})

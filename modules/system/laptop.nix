@@ -21,26 +21,7 @@
     "149.112.112.112#dns.quad9.net"
   ];
 
-  environment.systemPackages = with pkgs; [
-    # wluma
-  ];
-
-  systemd.user.services.wluma = {
-    description = "Adjusting screen brightness based on screen contents and amount of ambient light";
-    partOf = ["graphical-session.target"];
-    after = ["graphical-session.target"];
-
-    serviceConfig = {
-      ExecStart = "${pkgs.wluma}/bin/wluma";
-      Restart = "always";
-      PrivateNetwork = true;
-      PrivateMounts = false;
-
-      Slice = "app-graphical.slice";
-    };
-
-    wantedBy = ["graphical-session.target"];
-  };
+  environment.systemPackages = with pkgs; [];
 
   services.logind = {
     powerKey = "suspend-then-hibernate";
