@@ -132,7 +132,7 @@
     Unit = {
       Description = "KeePassXC";
       PartOf = ["graphical-session.target"];
-      After = ["graphical-session.target"];
+      After = ["graphical-session.target" "tray.target"];
     };
     Service = {
       Type = "exec";
@@ -141,6 +141,9 @@
       Restart = "no";
       TimeoutStopSec = "5s";
       Slice = "app-graphical.slice";
+    };
+    Install = {
+      WantedBy = ["graphical-session.target"];
     };
   };
 
