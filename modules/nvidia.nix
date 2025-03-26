@@ -19,5 +19,5 @@
   boot.initrd.kernelModules = ["nvidia"];
   boot.extraModulePackages = [config.hardware.nvidia.package];
 
-  envitonment.systemPackages = [config.hardware.nvidia.package];
+  environment.systemPackages = [config.hardware.nvidia.package];
 }
