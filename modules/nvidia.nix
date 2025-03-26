@@ -18,6 +18,7 @@
 
   boot.initrd.kernelModules = ["nvidia"];
   boot.extraModulePackages = [config.hardware.nvidia.package];
+  boot.blacklistedKernelModules = ["nouveau"];
 
   environment.systemPackages = [config.hardware.nvidia.package];
 }
