@@ -34,6 +34,10 @@ in {
       Service.Slice = "background-graphical.slice"; # Assign to UWSM slice
       Unit.After = ["graphical-session.target"];
     };
+    cliphist-images = {
+      Service.Slice = "background-graphical.slice"; # Assign to UWSM slice
+      Unit.After = ["graphical-session.target"];
+    };
     # wluma.Service.Slice = "background-graphical.slice"; # Assign to UWSM slice
     gammastep.Service.Slice = "background-graphical.slice"; # Assign to UWSM slice
   };
