@@ -65,7 +65,7 @@
       // (
         if config.services.k3s.role == "server"
         then {
-          disable = ["traefik" "metrics-server"];
+          disable = ["traefik" "metrics-server" "servicelb"];
 
           cluster-cidr = clusterCIDRs;
           service-cidr = serviceCIDRs;
