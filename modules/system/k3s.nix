@@ -134,6 +134,7 @@
         ];
       };
     };
+    hardware.nvidia-container-toolkit.enable = config.hardware.nvidia.enabled;
 
     systemd.services.k3s.path = [pkgs.nftables];
     services.k3s = {
