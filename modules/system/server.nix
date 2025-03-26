@@ -40,6 +40,7 @@ in {
 
   services = {
     kanidm = {
+      package = pkgs.kanidm;
       # enableClient = true;
       enablePam = true;
       clientSettings = {
