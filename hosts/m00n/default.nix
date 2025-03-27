@@ -43,6 +43,17 @@
     jdk
   ];
 
+  # systemd.services."beesd@root" = {
+  #   # overrideStrategy = "asDropin";
+  #   wantedBy = ["ac.target"];
+  #   unitConfig = {
+  #     BindsTo = ["ac.target"];
+  #   };
+  #   serviceConfig = {
+  #     CPUQuota = "25%";
+  #   };
+  # };
+
   # List services that you want to enable:
   services = {
     # tlp.enable = false;
@@ -51,10 +62,12 @@
       enable = true;
       fileSystems = ["/"];
     };
-    # beesd.filesystems.root = {
-    #   spec = "/";
-    #   hashTableSizeMB = 512;
-    # };
+    beesd.filesystems = {
+      # root = {
+      #   spec = "/";
+      #   hashTableSizeMB = 256;
+      # };
+    };
 
     tailscale.enable = true;
 

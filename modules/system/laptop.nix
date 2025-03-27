@@ -21,52 +21,78 @@
     "149.112.112.112#dns.quad9.net"
   ];
 
-  environment.systemPackages = with pkgs; [];
+  # environment.systemPackages = with pkgs; [];
 
-  services.logind = {
-    powerKey = "suspend-then-hibernate";
-    lidSwitch = "suspend-then-hibernate";
-    extraConfig = ''
-      HibernateDelaySec=900
-    '';
-  };
-
-  services.auto-cpufreq = {
-    enable = true;
-    settings = {
-      battery = {
-        governor = "powersave";
-        turbo = "never";
+  systemd.targets = {
+    ac = {
+      description = "AC power";
+      unitConfig = {
+        Conflicts = ["battery.target"];
+        DefaultDependencies = false;
+        # StopWhenUnneeded = true;
       };
-      charger = {
-        governor = "performance";
-        turbo = "auto";
+    };
+    battery = {
+      description = "Battery power";
+      unitConfig = {
+        Conflicts = ["ac.target"];
+        DefaultDependencies = false;
+        # StopWhenUnneeded = true;
       };
     };
   };
 
-  services.tlp = {
-    # enable = lib.mkDefault true;
-    enable = false;
-    settings = {
-      CPU_SCALING_GOVERNOR_ON_AC = "performance";
-      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+  services.udev.extraRules = ''
+    SUBSYSTEM=="power_supply", KERNEL=="AC?", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl start battery.target"
+    SUBSYSTEM=="power_supply", KERNEL=="AC?", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl start ac.target"
+  '';
 
-      CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-      CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+  services = {
+    logind = {
+      powerKey = "suspend-then-hibernate";
+      lidSwitch = "suspend-then-hibernate";
+      extraConfig = ''
+        HibernateDelaySec=900
+      '';
+    };
 
-      PLATFORM_PROFILE_ON_BAT = "low-power";
-      PLATFORM_PROFILE_ON_AC = "performance";
+    auto-cpufreq = {
+      enable = true;
+      settings = {
+        battery = {
+          governor = "powersave";
+          turbo = "never";
+        };
+        charger = {
+          governor = "performance";
+          turbo = "auto";
+        };
+      };
+    };
 
-      USB_AUTOSUSPEND = 0;
+    tlp = {
+      # enable = lib.mkDefault true;
+      enable = false;
+      settings = {
+        CPU_SCALING_GOVERNOR_ON_AC = "performance";
+        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
 
-      CPU_MIN_PERF_ON_AC = 0;
-      CPU_MAX_PERF_ON_AC = 100;
-      CPU_MIN_PERF_ON_BAT = 0;
-      CPU_MAX_PERF_ON_BAT = 20;
+        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+        CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
 
-      START_CHARGE_THRESH_BAT0 = 40;
-      STOP_CHARGE_THRESH_BAT0 = 80;
+        PLATFORM_PROFILE_ON_BAT = "low-power";
+        PLATFORM_PROFILE_ON_AC = "performance";
+
+        USB_AUTOSUSPEND = 0;
+
+        CPU_MIN_PERF_ON_AC = 0;
+        CPU_MAX_PERF_ON_AC = 100;
+        CPU_MIN_PERF_ON_BAT = 0;
+        CPU_MAX_PERF_ON_BAT = 20;
+
+        START_CHARGE_THRESH_BAT0 = 40;
+        STOP_CHARGE_THRESH_BAT0 = 80;
+      };
     };
   };
 }

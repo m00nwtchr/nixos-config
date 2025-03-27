@@ -131,6 +131,7 @@
   xdg.configFile."systemd/user/app-io.github.slgobinath.SafeEyes@autostart.service.d/override.conf".text = ''
     [Unit]
     Requires=tray.target
+    After=tray.target
   '';
 
   systemd.user.services.keepassxc = {
