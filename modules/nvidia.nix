@@ -4,21 +4,26 @@
   lib,
   ...
 }: {
-  imports = [
-  ];
-
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.nvidia.acceptLicense = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    nvidia.acceptLicense = true;
+  };
 
   hardware.nvidia = {
     modesetting.enable = true;
-
+    nvidiaSettings = lib.mkDefault false;
     package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.latest;
   };
-
-  boot.initrd.kernelModules = ["nvidia"];
-  boot.extraModulePackages = [config.hardware.nvidia.package];
-  boot.blacklistedKernelModules = ["nouveau"];
-
   environment.systemPackages = [config.hardware.nvidia.package];
+
+  boot = {
+    initrd.kernelModules = ["nvidia"];
+    blacklistedKernelModules = ["nouveau"];
+    extraModulePackages = [config.hardware.nvidia.package];
+  };
+
+  services.xserver = {
+    enable = lib.mkDefault false;
+    videoDrivers = ["nvidia"];
+  };
 }
