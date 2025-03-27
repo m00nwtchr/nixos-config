@@ -14,6 +14,7 @@
     nvidiaSettings = lib.mkDefault false;
     package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.latest;
   };
+  hardware.nvidia-container-toolkit.enable = config.virtualisation.containers.enable;
   environment.systemPackages = [config.hardware.nvidia.package];
 
   boot = {
