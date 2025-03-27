@@ -68,7 +68,7 @@
 
   services.ollama.enable = true;
 
-  virtualisation.containers.storage.settings.driver = lib.mkForce "overlay";
+  virtualisation.containers.storage.settings.storage.driver = lib.mkForce "overlay";
 
   # virtualisation = {
   # 	containers.enable = true;

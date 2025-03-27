@@ -127,14 +127,14 @@
     virtualisation.cri-o = {
       enable = true;
 
-      storageDriver = config.virtualisation.containers.storage.settings.driver;
+      storageDriver = config.virtualisation.containers.storage.settings.storage.driver;
       settings = {
         crio.network.plugin_dirs = [
           "/usr/lib/cni"
         ];
       };
     };
-    hardware.nvidia-container-toolkit.enable = config.hardware.nvidia.enabled;
+    hardware.nvidia-container-toolkit.enable = config.hardware.nvidia.modesetting.enable;
 
     systemd.services.k3s.path = [pkgs.nftables];
     services.k3s = {
