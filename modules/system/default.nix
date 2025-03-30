@@ -25,6 +25,8 @@
     optimise.automatic = true;
   };
 
+  boot.tmp.cleanOnBoot = true;
+
   # Set your time zone.
   time.timeZone = lib.mkDefault "Europe/Warsaw";
 

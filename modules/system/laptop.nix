@@ -57,7 +57,7 @@
     };
 
     auto-cpufreq = {
-      enable = true;
+      # enable = true;
       settings = {
         battery = {
           governor = "powersave";
