@@ -8,6 +8,7 @@
   imports = [
     ./default.nix
     ../home-manager.nix
+    ../../users/m00n.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -22,17 +23,8 @@
     "nmi_watchdog=0"
   ];
 
-  users.users.m00n = {
-    isNormalUser = true;
-    extraGroups =
-      ["wheel"]
-      ++ (
-        if config.security.tpm2.enable
-        then ["tss"]
-        else []
-      );
-    shell = pkgs.zsh;
-  };
+  sops.secrets."passwords/root".neededForUsers = true;
+  users.users.root.hashedPasswordFile = config.sops.secrets."passwords/root".path;
 
   environment.systemPackages = with pkgs;
     [
@@ -60,9 +52,9 @@
     tctiEnvironment.enable = true;
   };
   security.pam.services = {
-    login.u2fAuth = true;
-    sudo.u2fAuth = true;
-    swaylock.u2fAuth = true;
+    # login.u2fAuth = true;
+    # sudo.u2fAuth = true;
+    # swaylock.u2fAuth = true;
   };
   security.rtkit.enable = true;
 

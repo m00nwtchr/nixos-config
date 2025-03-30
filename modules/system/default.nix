@@ -48,7 +48,7 @@
     "2620:fe::9#dns.quad9.net"
   ];
 
-  users.mutableUsers = true;
+  users.mutableUsers = false;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
