@@ -23,6 +23,8 @@
     "nmi_watchdog=0"
   ];
 
+  hardware.graphics.enable = true;
+
   sops.secrets."passwords/root".neededForUsers = true;
   users.users.root.hashedPasswordFile = config.sops.secrets."passwords/root".path;
 
