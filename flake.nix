@@ -60,6 +60,7 @@
 			m00n =
 				nixpkgs.lib.nixosSystem rec {
 					system = "x86_64-linux";
+					specialArgs = {inherit inputs;};
 					modules = [
 						./hosts/m00n
 						sops-nix.nixosModules.sops
@@ -83,6 +84,7 @@
 			m00nsrv =
 				nixpkgs.lib.nixosSystem rec {
 					system = "x86_64-linux";
+					specialArgs = {inherit inputs;};
 					modules = [
 						./hosts/m00nsrv
 						sops-nix.nixosModules.sops
@@ -95,6 +97,7 @@
 			bastion =
 				nixpkgs.lib.nixosSystem rec {
 					system = "aarch64-linux";
+					specialArgs = {inherit inputs;};
 					modules = [
 						./hosts/bastion
 						sops-nix.nixosModules.sops
