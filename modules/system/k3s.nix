@@ -135,13 +135,14 @@
       };
     };
 
+    sops.secrets."k3s/token".sopsFile = ../../secrets/k3s.yaml;
+
     systemd.services.k3s.path = [pkgs.nftables];
     services.k3s = {
       enable = true;
-      token = "K103fe7e5786fff566ecee42be1c1ae502a68f73fe116aeb4adfaaa23d6eec12e26::server:9f32a9df53404822b836974b916460fe";
-      # extraFlags = lib.strings.concatStringsSep " " [];
-      gracefulNodeShutdown.enable = true;
+      tokenFile = config.sops.secrets."k3s/token".path;
 
+      gracefulNodeShutdown.enable = true;
       configPath = (pkgs.formats.yaml {}).generate "k3s-config" k3sConfig;
       extraKubeletConfig = {
         memorySwap.swapBehavior = "LimitedSwap";

@@ -2,11 +2,7 @@
   pkgs,
   lib,
   ...
-}: let
-  authorizedKeys = [
-    "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIMiN+HEhea2/1MMqp5ao55NHZzIg11TyeUGIHhnRxfwJAAAABHNzaDo= m00n@yubikey"
-  ];
-in {
+}: {
   imports = [
     ./default.nix
     ../ssh.nix
@@ -19,7 +15,7 @@ in {
     nnn # terminal file manager
   ];
 
-  users.users.root.openssh.authorizedKeys.keys = authorizedKeys;
+  users.users.root.openssh.authorizedKeys.keyFiles = [../../secrets/authorized_keys];
   services.openssh = {
     authorizedKeysCommand = "/opt/kanidm_ssh_authorizedkeys %u";
     authorizedKeysCommandUser = "nobody";

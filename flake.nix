@@ -25,6 +25,10 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
+		sops-nix = {
+			url = "github:Mic92/sops-nix";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 		home-manager = {
 			url = "github:nix-community/home-manager";
 			inputs.nixpkgs.follows = "nixpkgs";
@@ -46,6 +50,7 @@
 		nixpkgs,
 		lanzaboote,
 		alejandra,
+		sops-nix,
 		home-manager,
 		zen-browser,
 		rust-overlay,
@@ -56,9 +61,10 @@
 				nixpkgs.lib.nixosSystem rec {
 					system = "x86_64-linux";
 					modules = [
+						./hosts/m00n
+						sops-nix.nixosModules.sops
 						lanzaboote.nixosModules.lanzaboote
 						home-manager.nixosModules.home-manager
-						./hosts/m00n
 						({pkgs, ...}: {
 								home-manager.extraSpecialArgs = {
 									inherit inputs;
@@ -78,31 +84,23 @@
 				nixpkgs.lib.nixosSystem rec {
 					system = "x86_64-linux";
 					modules = [
+						./hosts/m00nsrv
+						sops-nix.nixosModules.sops
 						lanzaboote.nixosModules.lanzaboote
 						{
 							# environment.systemPackages = [alejandra.defaultPackage.${system}];
 						}
-						./hosts/m00nsrv
-						# {
-						#   nixpkgs.overlays = [
-						#     (self: super: {cni-plugin-cilium = super.callPackage ./pkgs/cni-plugin-cilium.nix {};})
-						#   ];
-						# }
 					];
 				};
 			bastion =
 				nixpkgs.lib.nixosSystem rec {
 					system = "aarch64-linux";
 					modules = [
-						{
-							environment.systemPackages = [alejandra.defaultPackage.${system}];
-						}
 						./hosts/bastion
-						# {
-						#   nixpkgs.overlays = [
-						#     (self: super: {cni-plugin-cilium = super.callPackage ./pkgs/cni-plugin-cilium.nix {};})
-						#   ];
-						# }
+						sops-nix.nixosModules.sops
+						{
+							# environment.systemPackages = [alejandra.defaultPackage.${system}];
+						}
 					];
 				};
 		};

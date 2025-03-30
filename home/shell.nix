@@ -56,6 +56,8 @@
   home.packages = with pkgs; [
     zsh-powerlevel10k
 
+    sops
+
     ripgrep
     jq
     yq-go

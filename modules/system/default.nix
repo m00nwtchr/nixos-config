@@ -5,18 +5,25 @@
   username,
   ...
 }: {
-  nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
-    use-xdg-base-directories = true;
-  };
+  imports = [
+    # ../upg.nix
+    ../sops-nix.nix
+  ];
 
-  # do garbage collection weekly to keep disk usage low
-  nix.gc = {
-    automatic = lib.mkDefault true;
-    dates = lib.mkDefault "weekly";
-    options = lib.mkDefault "--delete-older-than 7d";
+  nix = {
+    settings = {
+      experimental-features = ["nix-command" "flakes"];
+      use-xdg-base-directories = true;
+    };
+
+    # do garbage collection weekly to keep disk usage low
+    gc = {
+      automatic = lib.mkDefault true;
+      dates = lib.mkDefault "weekly";
+      options = lib.mkDefault "--delete-older-than 7d";
+    };
+    optimise.automatic = true;
   };
-  nix.optimise.automatic = true;
 
   # Set your time zone.
   time.timeZone = lib.mkDefault "Europe/Warsaw";
@@ -40,6 +47,8 @@
     "2620:fe::fe#dns.quad9.net"
     "2620:fe::9#dns.quad9.net"
   ];
+
+  users.mutableUsers = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
