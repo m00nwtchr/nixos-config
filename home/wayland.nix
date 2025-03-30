@@ -4,40 +4,46 @@
   pkgs,
   ...
 }: {
+  # Imports
   imports = [
     ./uwsm.nix
+    ./autostart.nix
   ];
 
+  # Packages
   home.packages = with pkgs; [
+    # Clipboard & Notifications
     wl-clipboard
     dunst
+    usbguard-notifier
 
+    # App Launchers
     bemenu
     fuzzel
 
+    # Device Controls
     brightnessctl
     playerctl
 
+    # Screenshots
     grim
     slurp
 
+    # Lock & Background
     swaylock-effects
     swaybg
 
+    # Themes & Fonts
     wallust
-    usbguard-notifier
-    safeeyes
-
     adwaita-qt
-
-    ffmpegthumbnailer
-
     nerd-fonts.jetbrains-mono
     meslo-lgs-nf
   ];
 
+  # Font Configuration
   fonts.fontconfig.enable = true;
 
+  # GNOME DConf Settings
   dconf = {
     enable = true;
     settings = {
@@ -47,54 +53,50 @@
     };
   };
 
+  # GTK Configuration
   gtk = {
     enable = true;
     theme.name = "Adwaita";
     iconTheme = {
       name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme.override {
-        color = "red";
-      };
+      package = pkgs.papirus-icon-theme.override {color = "red";};
     };
     cursorTheme = {
       name = "Adwaita";
       package = pkgs.adwaita-icon-theme;
     };
-
-    gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
-    gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
+    gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
+    gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
     gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
   };
+
+  # Qt Configuration
   qt = {
     enable = true;
     platformTheme.name = "qt6ct";
     style.name = "Adwaita-Dark";
   };
 
+  # Alacritty Terminal
   programs.alacritty = {
     enable = true;
     settings = {
       font = {
         size = 11;
-        normal = {
-          family = "MesloLGS NF";
-          style = "Regular";
-        };
+        normal.family = "MesloLGS NF";
+        normal.style = "Regular";
       };
-
       window.opacity = 0.8;
     };
   };
 
+  # Waybar Configuration
   programs.waybar = {
     enable = true;
     systemd.enable = true;
   };
 
+  # Sway Idle Services
   services.swayidle = {
     enable = true;
     timeouts = [
@@ -124,60 +126,54 @@
     ];
   };
 
-  systemd.user.targets.tray.Unit = {
-    Requires = ["waybar.service"];
+  # Systemd User Services
+  systemd.user = {
+    targets.tray.Unit.Requires = ["waybar.service"];
+
+    services.keepassxc = {
+      Unit = {
+        Description = "KeePassXC";
+        PartOf = ["graphical-session.target"];
+        After = ["graphical-session.target" "tray.target"];
+      };
+      Service = {
+        Type = "exec";
+        ExitType = "cgroup";
+        ExecStart = ":${pkgs.keepassxc}/bin/keepassxc";
+        Restart = "no";
+        TimeoutStopSec = "5s";
+        Slice = "app-graphical.slice";
+      };
+      Install.WantedBy = ["graphical-session.target"];
+    };
+
+    services.wluma = {
+      Unit = {
+        Description = "Adjusting screen brightness based on screen contents and amount of ambient light";
+        After = "graphical-session.target";
+        PartOf = "graphical-session.target";
+      };
+      Service = {
+        ExecStart = "${pkgs.wluma}/bin/wluma";
+        Slice = "background-graphical.slice";
+        Restart = "always";
+        PrivateNetwork = true;
+        PrivateMounts = false;
+        NoNewPrivileges = true;
+        PrivateTmp = true;
+        ProtectSystem = "strict";
+        ProtectKernelTunables = true;
+        ProtectKernelModules = true;
+        ProtectControlGroups = true;
+        MemoryDenyWriteExecute = true;
+        RestrictSUIDSGID = true;
+        LockPersonality = true;
+      };
+      Install.WantedBy = ["graphical-session.target"];
+    };
   };
 
-  xdg.configFile."systemd/user/app-io.github.slgobinath.SafeEyes@autostart.service.d/override.conf".text = ''
-    [Unit]
-    Requires=tray.target
-    After=tray.target
-  '';
-
-  systemd.user.services.keepassxc = {
-    Unit = {
-      Description = "KeePassXC";
-      PartOf = ["graphical-session.target"];
-      After = ["graphical-session.target" "tray.target"];
-    };
-    Service = {
-      Type = "exec";
-      ExitType = "cgroup";
-      ExecStart = ":${pkgs.keepassxc}/bin/keepassxc";
-      Restart = "no";
-      TimeoutStopSec = "5s";
-      Slice = "app-graphical.slice";
-    };
-    Install = {
-      WantedBy = ["graphical-session.target"];
-    };
-  };
-
-  systemd.user.services.wluma = {
-    Unit = {
-      Description = "Adjusting screen brightness based on screen contents and amount of ambient light";
-      After = "graphical-session.target";
-      PartOf = "graphical-session.target";
-    };
-    Service = {
-      ExecStart = "${pkgs.wluma}/bin/wluma";
-      Slice = "background-graphical.slice";
-      Restart = "always";
-      PrivateNetwork = true;
-      PrivateMounts = false;
-      NoNewPrivileges = true;
-      PrivateTmp = true;
-      ProtectSystem = "strict";
-      ProtectKernelTunables = true;
-      ProtectKernelModules = true;
-      ProtectControlGroups = true;
-      MemoryDenyWriteExecute = true;
-      RestrictSUIDSGID = true;
-      LockPersonality = true;
-    };
-    Install.WantedBy = ["graphical-session.target"];
-  };
-
+  # Miscellaneous Services
   services = {
     gammastep = {
       enable = true;
