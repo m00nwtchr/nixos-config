@@ -1,10 +1,14 @@
 {
   pkgs,
+  config,
   lib,
   username,
   ...
-}: {
-  boot.kernelParams = [
+}:
+  let enable = config.boot.plymouth.enable;
+  in
+{
+  boot.kernelParams = lib.mkIf enable [
     "quiet"
     "splash"
     "systemd.show_status=auto"
@@ -12,10 +16,10 @@
     "vt.global_cursor_default=0"
   ];
 
-  boot.consoleLogLevel = 3;
-  boot.initrd.verbose = false;
+  boot.consoleLogLevel = lib.mkIf enable  3;
+  boot.initrd.verbose = lib.mkIf enable false;
 
-  boot.kernel.sysctl = {
+  boot.kernel.sysctl = lib.mkIf enable {
     "kernel.printk" = "3 3 3 3";
   };
 
