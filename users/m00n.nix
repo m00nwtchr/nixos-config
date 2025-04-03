@@ -16,7 +16,7 @@
     openssh.authorizedKeys.keyFiles = [../secrets/authorized_keys];
 
     extraGroups =
-      ["wheel"]
+      ["wheel" "adbusers"]
       ++ (
         if config.security.tpm2.enable
         then ["tss"]

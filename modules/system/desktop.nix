@@ -7,6 +7,8 @@
 }: {
   imports = [
     ./default.nix
+    # ../clamav.nix
+
     ../home-manager.nix
     ../../users/m00n.nix
   ];
@@ -47,6 +49,8 @@
     # enableSSHSupport = true;
   };
   services.dbus.packages = [pkgs.gcr];
+
+  programs.adb.enable = true;
 
   security.tpm2 = {
     # enable = true;
