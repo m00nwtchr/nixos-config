@@ -44,6 +44,8 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [];
 
+  # 150.230.150.181
+
   services.k3s = {
     role = "agent";
     serverAddr = "https://m00nsrv:6443";

@@ -103,7 +103,7 @@
 
     networking.firewall.enable = lib.mkForce false;
     networking.nftables.ruleset = ''
-      table ip nat {
+      table ip ingress {
         chain prerouting {
           type nat hook prerouting priority 0;
           # Redirect HTTP to NodePort 30080
