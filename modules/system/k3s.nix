@@ -102,8 +102,9 @@
     # ];
 
     networking.firewall.enable = lib.mkForce false;
-    networking.nftables.ruleset = ''
-      table ip ingress {
+    networking.nftables.tables.ingress = {
+      family = "inet";
+      content = ''
         chain prerouting {
           type nat hook prerouting priority 0;
           # Redirect HTTP to NodePort 30080
@@ -115,8 +116,8 @@
         chain output {
           type nat hook output priority 0;
         }
-      }
-    '';
+      '';
+    };
 
     networking.localCommands = ''
       NETDEV=$(ip -o route get 8.8.8.8 | cut -f 5 -d " ")
