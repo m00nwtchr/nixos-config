@@ -103,7 +103,7 @@
 
     networking.firewall.enable = lib.mkForce false;
     networking.nftables.tables.ingress = {
-      family = "inet";
+      family = "ip";
       content = ''
         chain prerouting {
           type nat hook prerouting priority 0;
