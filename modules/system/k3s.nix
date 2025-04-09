@@ -102,22 +102,22 @@
     # ];
 
     networking.firewall.enable = lib.mkForce false;
-    networking.nftables.tables.ingress = {
-      family = "ip";
-      content = ''
-        chain prerouting {
-          type nat hook prerouting priority 0;
-          # Redirect HTTP to NodePort 30080
-          tcp dport 80 redirect to :30080
-          # Redirect HTTPS to NodePort 30443
-          tcp dport 443 redirect to :30443
-        }
+    # networking.nftables.tables.ingress = {
+    #   family = "ip";
+    #   content = ''
+    #     chain prerouting {
+    #       type nat hook prerouting priority 0;
+    #       # Redirect HTTP to NodePort 30080
+    #       tcp dport 80 redirect to :30080
+    #       # Redirect HTTPS to NodePort 30443
+    #       tcp dport 443 redirect to :30443
+    #     }
 
-        chain output {
-          type nat hook output priority 0;
-        }
-      '';
-    };
+    #     chain output {
+    #       type nat hook output priority 0;
+    #     }
+    #   '';
+    # };
 
     networking.localCommands = ''
       NETDEV=$(ip -o route get 8.8.8.8 | cut -f 5 -d " ")
