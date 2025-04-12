@@ -70,6 +70,56 @@
 
   services.ollama.enable = true;
 
+  services.haproxy = {
+    enable = true;
+
+    # Enable UDP support (requires HAProxy 2.0+)
+    package = pkgs.haproxy; # Or use a pinned newer version if needed
+
+    config = ''
+      global
+        log /dev/log local0
+        log /dev/log local1 notice
+        daemon
+
+      defaults
+        log     global
+        mode    http
+        option  httplog
+        option  dontlognull
+        timeout connect 5000
+        timeout client  50000
+        timeout server  50000
+
+      frontend http
+        bind *:80
+        mode tcp
+        default_backend web_backend
+
+      frontend https
+        bind *:443
+        mode tcp
+        default_backend websecure_backend
+
+      frontend https_udp
+        bind *:443 proto udp
+        mode udp
+        default_backend websecure_backend_udp
+
+      backend web_backend
+        mode tcp
+        server web1 127.0.0.1:30080
+
+      backend websecure_backend
+        mode tcp
+        server web1 127.0.0.1:30443
+
+      backend websecure_backend_udp
+        mode udp
+        server web1 127.0.0.1:30443
+    '';
+  };
+
   virtualisation.containers.storage.settings.storage.driver = lib.mkForce "overlay";
 
   # virtualisation = {
