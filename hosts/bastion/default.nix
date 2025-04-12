@@ -101,10 +101,10 @@
         mode tcp
         default_backend websecure_backend
 
-      frontend https_udp
-        bind *:443 proto udp
-        mode udp
-        default_backend websecure_backend_udp
+      # frontend https_udp
+      #   bind *:443 proto udp
+      #   mode udp
+      #   default_backend websecure_backend_udp
 
       backend web_backend
         mode tcp
@@ -114,9 +114,9 @@
         mode tcp
         server web1 127.0.0.1:30443
 
-      backend websecure_backend_udp
-        mode udp
-        server web1 127.0.0.1:30443
+      # backend websecure_backend_udp
+      #   mode udp
+      #   server web1 127.0.0.1:30443
     '';
   };
 
