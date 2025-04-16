@@ -46,5 +46,8 @@
           drv = app2unit;
         };
       }
-    );
+    )
+    // {
+      overlays.default = final: prev: {app2unit = self.packages.${final.system}.default;};
+    };
 }

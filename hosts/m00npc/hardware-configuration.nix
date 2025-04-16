@@ -12,60 +12,42 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = [
-    "nvme"
-    "xhci_pci"
-    "ahci"
-    "usbhid"
-    "rtsx_usb_sdmmc"
-    "asus_wmi"
-  ];
-  boot.initrd.kernelModules = ["amdgpu"];
+  boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "nvme" "usbhid" "sd_mod"];
+  boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-amd"];
   boot.extraModulePackages = [];
 
-  fileSystems."/" = {
-    device = "/dev/mapper/root";
-    fsType = "btrfs";
-    options = [
-      "subvol=@"
-      "compress=zstd"
-    ];
-  };
-
   boot.initrd.luks.devices."root" = {
-    device = "/dev/disk/by-uuid/7790403a-8bbc-4cbd-9bf6-252716a9be06";
+    device = "/dev/disk/by-uuid/bc65df31-228d-4c73-9b25-b57cabf231b6";
     allowDiscards = true;
     bypassWorkqueues = true;
     crypttabExtraOpts = ["tpm2-measure-pcr=yes"];
   };
 
-  fileSystems."/efi" = {
-    device = "/dev/disk/by-uuid/522B-7F0C";
-    fsType = "vfat";
-    options = [
-      "fmask=0022"
-      "dmask=0022"
-      "umask=0077"
-    ];
+  environment.etc.crypttab = {
+    mode = "0600";
+    text = ''
+      # <volume-name> <encrypted-device> [key-file] [options]
+      vault UUID=e2e5b425-b7ca-4bd0-aa69-44c4eb4eb890 /root/keyfile
+    '';
   };
 
-  fileSystems."/home" = {
+  fileSystems."/" = {
     device = "/dev/mapper/root";
     fsType = "btrfs";
-    options = [
-      "subvol=@home"
-      "compress=zstd"
-    ];
+    options = ["subvol=@nixos" "compress=zstd"];
   };
 
   fileSystems."/nix" = {
     device = "/dev/mapper/root";
     fsType = "btrfs";
-    options = [
-      "subvol=@nix"
-      "compress=zstd"
-    ];
+    options = ["subvol=@nix" "compress=zstd"];
+  };
+
+  fileSystems."/efi" = {
+    device = "/dev/disk/by-uuid/72B6-E111";
+    fsType = "vfat";
+    options = ["fmask=0022" "dmask=0022"];
   };
 
   fileSystems."/.snapshots" = {
@@ -77,10 +59,28 @@
     ];
   };
 
+  fileSystems."/home" = {
+    device = "/dev/mapper/root";
+    fsType = "btrfs";
+    options = ["subvol=@home" "compress=zstd"];
+  };
+
+  fileSystems."/home/m00n/Documents" = {
+    device = "/dev/mapper/vault";
+    fsType = "btrfs";
+    options = ["subvol=@Documents" "compress=zstd"];
+  };
+
+  fileSystems."/opt/Games" = {
+    device = "/dev/mapper/vault";
+    fsType = "btrfs";
+    options = ["subvol=@Games" "compress=zstd"];
+  };
+
   swapDevices = [
     {
       device = "/var/lib/swapfile";
-      size = 6 * 1024;
+      size = 32 * 1024;
     }
   ];
 
@@ -88,8 +88,8 @@
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-  #networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp1s0.useDHCP = lib.mkDefault true;
+  networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.enp13s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

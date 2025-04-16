@@ -23,6 +23,8 @@
     extraModulePackages = [config.hardware.nvidia.package];
   };
 
+  programs.sway.extraOptions = ["--unsupported-gpu"];
+
   services.xserver = {
     enable = lib.mkDefault false;
     videoDrivers = ["nvidia"];

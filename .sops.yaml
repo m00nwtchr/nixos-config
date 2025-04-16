@@ -4,6 +4,7 @@
 # for a more complex example.
 keys:
   - &personal A57D4A240C8BC704260A0E6F800214724BE3A82F
+  - &m00npc age1gwv3knvgfrk26ythtrs2ed4235x8tu79lad459vx3e92krth6phq6t3ca3
   - &m00n age1pzfypmreq7znfawswqes7c0hcfehna6du69exhd6rq403sxtny9spje4kz
   - &m00nsrv age18847yw0y9zrvf9gmeu2m62vhukpc653nddvyjeazlc9gxz8dyecqmwsyga
   - &bastion age1st7xhv6tx87lgh4prgr382uvau4tstqxzzjj2ds7vqr5qd7hu53qw5qt3z
@@ -15,13 +16,20 @@ creation_rules:
       age:
       - *m00nsrv
       - *bastion
-  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: ^secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal
       age:
+      - *m00npc
       - *m00n
-  - path_regex: host/m00n/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/m00npc/secrets/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+    - pgp:
+      - *personal
+      age:
+      - *m00npc
+  - path_regex: hosts/m00n/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal

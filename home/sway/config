@@ -19,7 +19,7 @@ set $term alacritty msg create-window || swaymsg exec -- app2unit Alacritty.desk
 # on the original workspace that the command was run on.
 #set $menu ~/.local/bin/bemenu-run --single-instance -H 37 --no-exec | xargs -r swaymsg exec -- uwsm-app --
 set $menu fuzzel --launch-prefix='app2unit --fuzzel-compat --' -T 'alacritty -e'
-assign [app_id="LibreWolf"] workspace number 9
+assign [app_id="librewolf"] workspace number 9
 
 #for_window [class="Spyglass"] floating enable
 

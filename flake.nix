@@ -62,6 +62,34 @@
 		...
 	} @ inputs: {
 		nixosConfigurations = {
+			m00npc =
+				nixpkgs.lib.nixosSystem rec {
+					system = "x86_64-linux";
+					specialArgs = {inherit inputs;};
+					modules = [
+						sops-nix.nixosModules.sops
+						lanzaboote.nixosModules.lanzaboote
+						home-manager.nixosModules.home-manager
+						./hosts/m00npc
+						({pkgs, ...}: {
+								home-manager.extraSpecialArgs = {
+									inherit inputs;
+									inherit system;
+								};
+								nixpkgs.overlays = [
+									(import ./overlays/lens.nix)
+									(import ./overlays/safeeyes.nix)
+									# (import ./packages {
+									# 		inherit system;
+									# 		inherit inputs;
+									# 	})
+									inputs.app2unit.overlays.default
+									rust-overlay.overlays.default
+								];
+							})
+					];
+				};
+
 			m00n =
 				nixpkgs.lib.nixosSystem rec {
 					system = "x86_64-linux";
@@ -79,10 +107,11 @@
 								nixpkgs.overlays = [
 									(import ./overlays/lens.nix)
 									(import ./overlays/safeeyes.nix)
-									(import ./packages {
-											inherit system;
-											inherit inputs;
-										})
+									# (import ./packages {
+									# 		inherit system;
+									# 		inherit inputs;
+									# 	})
+									inputs.app2unit.overlays.default
 									rust-overlay.overlays.default
 								];
 							})

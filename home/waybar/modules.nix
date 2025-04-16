@@ -45,7 +45,7 @@
 
     network = {
       format-wifi = "  {signalStrength}%";
-      format-ethernet = "{ipaddr}/{cidr}";
+      format-ethernet = "󰈁 Connected";
       tooltip-format = "{essid} - {ifname} via {gwaddr}";
       format-linked = "{ifname} (No IP)";
       format-disconnected = "Disconnected ⚠";
