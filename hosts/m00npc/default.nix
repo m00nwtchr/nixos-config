@@ -48,11 +48,15 @@
   services = {
     btrfs.autoScrub = {
       enable = true;
-      fileSystems = ["/"];
+      fileSystems = ["/" "/home/m00n/Documents"];
     };
     beesd.filesystems.root = {
-       spec = "/";
-       hashTableSizeMB = 512;
+      spec = "/";
+      hashTableSizeMB = 512;
+    };
+    beesd.filesystems.vault = {
+      spec = "/home/m00n/Documents";
+      hashTableSizeMB = 512;
     };
 
     tailscale.enable = true;

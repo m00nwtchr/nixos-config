@@ -1,4 +1,8 @@
-{...}: {
+{
+  lib,
+  osConfig,
+  ...
+}: {
   programs.waybar.settings.mainBar = {
     "modules-left" = ["sway/workspaces"];
     "modules-center" = ["sway/window"];
@@ -7,7 +11,7 @@
       "network"
       # "memory"
       # "cpu"
-      "bluetooth"
+      (lib.mkIf osConfig.hardware.bluetooth.enable "bluetooth")
       "battery"
       # "disk"
       "wireplumber"
