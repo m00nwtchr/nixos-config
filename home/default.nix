@@ -11,6 +11,8 @@
     ./wayland.nix
     ./shell.nix
     ./dev.nix
+
+    ./modules/dotfiles.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -80,7 +82,7 @@
     enable = true;
     package = pkgs.librewolf.override {
       nativeMessagingHosts = with pkgs; [
-        pywalfox-native
+        pywalfox-native # Doesn't actually work as a nativeMessagingHost package because it doesn't contain a manifest.
       ];
     };
   };

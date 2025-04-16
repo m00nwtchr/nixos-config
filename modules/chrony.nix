@@ -18,8 +18,6 @@
     enableNTS = true;
     initstepslew.enabled = false;
     extraConfig = ''
-      server 162.159.200.1 iburst
-      server 162.159.200.123 iburst
       makestep 30 3
     '';
   };

@@ -8,13 +8,18 @@
   imports = [
     ./uwsm.nix
     ./autostart.nix
+
+    ./sway
+    ./waybar
+    ./dunst
+
+    ./wallust
   ];
 
   # Packages
   home.packages = with pkgs; [
     # Clipboard & Notifications
     wl-clipboard
-    dunst
     usbguard-notifier
 
     # App Launchers
@@ -88,12 +93,6 @@
       };
       window.opacity = 0.8;
     };
-  };
-
-  # Waybar Configuration
-  programs.waybar = {
-    enable = true;
-    systemd.enable = true;
   };
 
   # Sway Idle Services

@@ -21,6 +21,7 @@
     kubectl
     kubelogin-oidc
     kubernetes-helm
+    cilium-cli
 
     lens
 

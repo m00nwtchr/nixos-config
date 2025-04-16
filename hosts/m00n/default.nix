@@ -30,10 +30,6 @@
   # boot.plymouth.enable = false;
 
   networking.hostName = "m00n"; # Define your hostname.
-  networking.hosts = {
-    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "matrix.m00nlit.dev" "vaultwarden.m00nlit.dev"];
-    "100.116.45.53" = ["m00nlit.dev" "matrix.m00nlit.dev" "vaultwarden.m00nlit.dev"];
-  };
 
   specialisation.noPlymouth.configuration = {
     boot.plymouth.enable = lib.mkForce false;

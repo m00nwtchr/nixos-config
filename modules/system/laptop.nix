@@ -7,7 +7,7 @@
 }: {
   imports = [
     ./desktop.nix
-    ../chrony.nix
+    # ../chrony.nix
   ];
 
   networking.wireless.iwd.enable = true;
@@ -20,6 +20,16 @@
     "9.9.9.9#dns.quad9.net"
     "149.112.112.112#dns.quad9.net"
   ];
+
+  systemd.network.networks."25-wireless" = {
+    matchConfig.WLANInterfaceType = "station";
+    linkConfig.RequiredForOnline = "routable";
+    networkConfig = {
+      DHCP = true;
+      IgnoreCarrierLoss = "3s";
+      MulticastDNS = "resolve";
+    };
+  };
 
   # environment.systemPackages = with pkgs; [];
 

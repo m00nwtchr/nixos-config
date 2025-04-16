@@ -39,8 +39,8 @@
     enableCache = true;
   };
 
-  networking.useNetworkd = true;
   systemd.network.enable = true;
+  networking.useNetworkd = true;
 
   networking.firewall.enable = true;
   networking.nftables.enable = true;
@@ -49,6 +49,11 @@
     "2620:fe::fe#dns.quad9.net"
     "2620:fe::9#dns.quad9.net"
   ];
+
+  networking.hosts = lib.mkIf config.services.tailscale.enable {
+    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "jellyfin.m00nlit.dev"];
+    "100.116.45.53" = ["m00nlit.dev" "jellyfin.m00nlit.dev"];
+  };
 
   users.mutableUsers = false;
 

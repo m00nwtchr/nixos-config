@@ -64,6 +64,8 @@
   };
   security.rtkit.enable = true;
 
+  # mDNS
+  networking.firewall.allowedUDPPorts = [5353];
   services = {
     pipewire = {
       enable = true;
