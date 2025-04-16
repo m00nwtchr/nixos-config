@@ -39,6 +39,10 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 			inputs.home-manager.follows = "home-manager";
 		};
+		app2unit = {
+			url = "./packages/app2unit";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 
 		rust-overlay = {
 			url = "github:oxalica/rust-overlay";
@@ -75,7 +79,10 @@
 								nixpkgs.overlays = [
 									(import ./overlays/lens.nix)
 									(import ./overlays/safeeyes.nix)
-									(import ./packages)
+									(import ./packages {
+											inherit system;
+											inherit inputs;
+										})
 									rust-overlay.overlays.default
 								];
 							})

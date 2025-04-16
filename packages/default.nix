@@ -1,3 +1,6 @@
-final: prev: {
-  app2unit = final.callPackage ./app2unit.nix {};
+{
+  inputs,
+  system,
+}: final: prev: {
+  app2unit = inputs.app2unit.packages.${system}.default;
 }
