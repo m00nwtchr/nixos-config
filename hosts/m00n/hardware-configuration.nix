@@ -37,7 +37,10 @@
     device = "/dev/disk/by-uuid/7790403a-8bbc-4cbd-9bf6-252716a9be06";
     allowDiscards = true;
     bypassWorkqueues = true;
-    crypttabExtraOpts = ["tpm2-measure-pcr=yes"];
+    crypttabExtraOpts = [
+      "x-initrd.attach"
+      # "tpm2-measure-pcr=yes" # Causes an issue
+    ];
   };
 
   fileSystems."/efi" = {

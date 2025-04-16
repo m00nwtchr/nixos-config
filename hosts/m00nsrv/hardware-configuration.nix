@@ -29,6 +29,10 @@
     device = "/dev/disk/by-uuid/999bb59b-d212-496b-867d-b0e54d9f16a3";
     allowDiscards = true;
     bypassWorkqueues = true;
+    crypttabExtraOpts = [
+      "x-initrd.attach"
+      # "tpm2-measure-pcr=yes"
+    ];
   };
 
   fileSystems."/home" = {
