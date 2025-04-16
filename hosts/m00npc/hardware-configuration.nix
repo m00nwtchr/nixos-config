@@ -21,7 +21,10 @@
     device = "/dev/disk/by-uuid/bc65df31-228d-4c73-9b25-b57cabf231b6";
     allowDiscards = true;
     bypassWorkqueues = true;
-    crypttabExtraOpts = ["tpm2-measure-pcr=yes"];
+    crypttabExtraOpts = [
+      "x-initrd.attach"
+      # "tpm2-measure-pcr=yes"
+    ];
   };
 
   environment.etc.crypttab = {
