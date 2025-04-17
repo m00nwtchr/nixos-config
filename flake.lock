@@ -32,15 +32,14 @@
         ]
       },
       "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-5ax2f8hFNI/EofIYYJmyUmjX1iNa2aWb/AYSXJ0vzlQ=",
-        "path": "/nix/store/qpa3r2bl2wz7z6hxz9wnq0dy8b4g8j3g-source/packages/app2unit",
+        "path": "./packages/app2unit",
         "type": "path"
       },
       "original": {
-        "path": "/nix/store/qpa3r2bl2wz7z6hxz9wnq0dy8b4g8j3g-source/packages/app2unit",
+        "path": "./packages/app2unit",
         "type": "path"
-      }
+      },
+      "parent": []
     },
     "app2unit-src": {
       "flake": false,
