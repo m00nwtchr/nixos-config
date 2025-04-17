@@ -11,7 +11,7 @@
     else config.lib.file.mkOutOfStoreSymlink filePath;
 
   screenshotScript = pkgs.writeShellScript "screenshot.sh" ''
-    PICTURES="$(xdg-user-dir PICTURES)/Screenshots"
+    PICTURES="$(${pkgs.xdg-user-dirs}/bin/xdg-user-dir PICTURES)/Screenshots"
 
     mkdir -p "$PICTURES"
 
@@ -28,17 +28,17 @@
   '';
 
   mediaToggleScript = pkgs.writeShellScript "media-toggle.sh" ''
-    if [ $(playerctl status -p mopidy) = 'Playing' ]; then
-    	playerctl play-pause -p mopidy;
+    if [ $(${pkgs.playerctl}/bin/playerctl status -p mopidy) = 'Playing' ]; then
+    	${pkgs.playerctl}/bin/playerctl play-pause -p mopidy;
     else
-    	playerctl play-pause -p %any,mopidy;
+    	${pkgs.playerctl}/bin/playerctl play-pause -p %any,mopidy;
     fi;
   '';
 
   lockScript = pkgs.writeShellScript "lock.sh" ''
-    source "$HOME/.local/state/wallust/colors.sh"
+    source "${config.xdg.stateHome}/wallust/colors.sh"
 
-    exec /etc/profiles/per-user/m00n/bin/swaylock --indicator-radius 160 \
+    exec ${pkgs.swaylock}/bin/swaylock --indicator-radius 160 \
     	--indicator-thickness 20 \
     	--inside-color 00000000 \
     	--inside-clear-color 00000000 \
@@ -70,8 +70,8 @@
     read -r LS <"$LID_STATE_FILE"
 
     case "$LS" in
-    *open) swaymsg output "$LAPTOP_OUTPUT" enable ;;
-    *closed) swaymsg output "$LAPTOP_OUTPUT" disable ;;
+    *open) ${pkgs.sway}/bin/swaymsg output "$LAPTOP_OUTPUT" enable ;;
+    *closed) ${pkgs.sway}/bin/swaymsg output "$LAPTOP_OUTPUT" disable ;;
     *)
     	echo "Could not get lid state" >&2
     	exit 1
