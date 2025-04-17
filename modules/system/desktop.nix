@@ -18,6 +18,11 @@
     trusted-users = ["m00n"];
   };
 
+  nixpkgs.overlays = [
+    (import ../../overlays/safeeyes.nix)
+    (import ../../overlays/lens.nix)
+  ];
+
   boot.kernelPackages = pkgs.linuxPackages_zen;
   boot.kernelParams = [
     "nowatchdogs"

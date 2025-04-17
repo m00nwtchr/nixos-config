@@ -8,6 +8,7 @@
   imports = [
     # ../upg.nix
     ../sops-nix.nix
+    ../facter.nix
   ];
 
   nix = {

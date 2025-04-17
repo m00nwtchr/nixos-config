@@ -21,7 +21,7 @@
   boot = {
     blacklistedKernelModules = ["nouveau"];
     initrd.kernelModules = [
-      "nvidia"
+      # "nvidia"
       "nvidia_modeset"
       "nvidia_uvm"
       "nvidia_drm"

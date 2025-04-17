@@ -20,11 +20,7 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
-		alejandra = {
-			url = "github:kamadorueda/alejandra/main";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
-
+		nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
 		sops-nix = {
 			url = "github:Mic92/sops-nix";
 			inputs.nixpkgs.follows = "nixpkgs";
@@ -34,6 +30,10 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
+		alejandra = {
+			url = "github:kamadorueda/alejandra/main";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 		zen-browser = {
 			url = "github:0xc000022070/zen-browser-flake";
 			inputs.nixpkgs.follows = "nixpkgs";
@@ -43,22 +43,15 @@
 			url = "./packages/app2unit";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
-
-		rust-overlay = {
-			url = "github:oxalica/rust-overlay";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
 	};
 
 	outputs = {
 		self,
 		nixpkgs,
 		lanzaboote,
-		alejandra,
+		nixos-facter-modules,
 		sops-nix,
 		home-manager,
-		zen-browser,
-		rust-overlay,
 		...
 	} @ inputs: {
 		nixosConfigurations = {
@@ -67,25 +60,16 @@
 					system = "x86_64-linux";
 					specialArgs = {inherit inputs;};
 					modules = [
+						./hosts/m00npc
+						nixos-facter-modules.nixosModules.facter
 						sops-nix.nixosModules.sops
 						lanzaboote.nixosModules.lanzaboote
 						home-manager.nixosModules.home-manager
-						./hosts/m00npc
 						({pkgs, ...}: {
 								home-manager.extraSpecialArgs = {
 									inherit inputs;
 									inherit system;
 								};
-								nixpkgs.overlays = [
-									(import ./overlays/lens.nix)
-									(import ./overlays/safeeyes.nix)
-									# (import ./packages {
-									# 		inherit system;
-									# 		inherit inputs;
-									# 	})
-									inputs.app2unit.overlays.default
-									rust-overlay.overlays.default
-								];
 							})
 					];
 				};
@@ -96,6 +80,7 @@
 					specialArgs = {inherit inputs;};
 					modules = [
 						./hosts/m00n
+						nixos-facter-modules.nixosModules.facter
 						sops-nix.nixosModules.sops
 						lanzaboote.nixosModules.lanzaboote
 						home-manager.nixosModules.home-manager
@@ -104,16 +89,6 @@
 									inherit inputs;
 									inherit system;
 								};
-								nixpkgs.overlays = [
-									(import ./overlays/lens.nix)
-									(import ./overlays/safeeyes.nix)
-									# (import ./packages {
-									# 		inherit system;
-									# 		inherit inputs;
-									# 	})
-									inputs.app2unit.overlays.default
-									rust-overlay.overlays.default
-								];
 							})
 					];
 				};
@@ -124,11 +99,9 @@
 					specialArgs = {inherit inputs;};
 					modules = [
 						./hosts/m00nsrv
+						nixos-facter-modules.nixosModules.facter
 						sops-nix.nixosModules.sops
 						lanzaboote.nixosModules.lanzaboote
-						{
-							# environment.systemPackages = [alejandra.defaultPackage.${system}];
-						}
 					];
 				};
 			bastion =
@@ -137,10 +110,8 @@
 					specialArgs = {inherit inputs;};
 					modules = [
 						./hosts/bastion
+						nixos-facter-modules.nixosModules.facter
 						sops-nix.nixosModules.sops
-						{
-							# environment.systemPackages = [alejandra.defaultPackage.${system}];
-						}
 					];
 				};
 		};

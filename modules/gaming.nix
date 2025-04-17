@@ -30,6 +30,7 @@
   environment.systemPackages = with pkgs; [
     prismlauncher
     lutris
+    heroic
   ];
 
   services = {

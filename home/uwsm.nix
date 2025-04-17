@@ -2,10 +2,14 @@
   config,
   lib,
   pkgs,
+  inputs,
+  system,
   ...
 }: let
+  app2unit = inputs.app2unit.packages.${system}.default;
+
   uwsm-shell = pkgs.writeShellScriptBin "uwsm-shell" ''
-    exec ${pkgs.app2unit}/bin/app2unit -- $(getent passwd $USER | cut -d: -f7)
+    exec ${app2unit}/bin/app2unit -- $(getent passwd $USER | cut -d: -f7)
   '';
 in {
   xdg.configFile."uwsm/env".text = ''

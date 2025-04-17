@@ -50,7 +50,9 @@
 
     nheko
     cinny-desktop
-    discord
+    (discord.override {
+      withOpenASAR = true;
+    })
     vesktop
 
     imv

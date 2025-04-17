@@ -24,9 +24,6 @@
 
   networking.hostName = "bastion"; # Define your hostname.
 
-  # Set your time zone.
-  # time.timeZone = "Europe/Berlin";
-
   networking.hosts = {
     "100.116.45.53" = ["m00nlit.dev"];
     "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev"];
