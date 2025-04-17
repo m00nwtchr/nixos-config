@@ -32,14 +32,15 @@
         ]
       },
       "locked": {
-        "path": "./packages/app2unit",
+        "lastModified": 1,
+        "narHash": "sha256-5ax2f8hFNI/EofIYYJmyUmjX1iNa2aWb/AYSXJ0vzlQ=",
+        "path": "/nix/store/qpa3r2bl2wz7z6hxz9wnq0dy8b4g8j3g-source/packages/app2unit",
         "type": "path"
       },
       "original": {
-        "path": "./packages/app2unit",
+        "path": "/nix/store/qpa3r2bl2wz7z6hxz9wnq0dy8b4g8j3g-source/packages/app2unit",
         "type": "path"
-      },
-      "parent": []
+      }
     },
     "app2unit-src": {
       "flake": false,
@@ -194,11 +195,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1744912998,
-        "narHash": "sha256-7UkI7aP0tTXoLjVcK8yv5ZbFwM/Z3enw0wElnFYT7O0=",
+        "lastModified": 1744919155,
+        "narHash": "sha256-IJksPW32V9gid9vDxoloJMRk+YGjxq5drFHBFeBkKU8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "e72178b84e440703e17ff5d393ba060784bed099",
+        "rev": "72526a5f7cde2ef9075637802a1e2a8d2d658f70",
         "type": "github"
       },
       "original": {
