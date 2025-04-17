@@ -14,7 +14,6 @@
   ];
 
   nixpkgs.config.allowUnfree = true;
-
   nix.settings = {
     trusted-users = ["m00n"];
   };
@@ -26,6 +25,7 @@
   ];
 
   hardware.graphics.enable = true;
+  hardware.nvidia.powerManagement.enable = true;
 
   sops.secrets."passwords/root".neededForUsers = true;
   users.users.root.hashedPasswordFile = config.sops.secrets."passwords/root".path;

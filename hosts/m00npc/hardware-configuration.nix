@@ -16,6 +16,7 @@
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-amd"];
   boot.extraModulePackages = [];
+  boot.blacklistedKernelModules = ["amdgpu"];
 
   boot.initrd.luks.devices."root" = {
     device = "/dev/disk/by-uuid/bc65df31-228d-4c73-9b25-b57cabf231b6";

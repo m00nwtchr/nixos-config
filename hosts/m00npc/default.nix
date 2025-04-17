@@ -19,7 +19,6 @@
 
   hardware.nvidia.open = true;
 
-  nixpkgs.config.rocmSupport = true;
   nixpkgs.config.permittedInsecurePackages = [
     "olm-3.2.16"
   ];
@@ -41,7 +40,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    jdk
   ];
 
   # List services that you want to enable:
