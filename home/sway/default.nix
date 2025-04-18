@@ -38,7 +38,7 @@
   lockScript = pkgs.writeShellScript "lock.sh" ''
     source "${config.xdg.stateHome}/wallust/colors.sh"
 
-    exec ${pkgs.swaylock}/bin/swaylock --indicator-radius 160 \
+    exec ${pkgs.swaylock-effects}/bin/swaylock --indicator-radius 160 \
     	--indicator-thickness 20 \
     	--inside-color 00000000 \
     	--inside-clear-color 00000000 \
