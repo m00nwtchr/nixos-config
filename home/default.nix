@@ -126,6 +126,7 @@
 
     syncthing = {
       enable = true;
+      guiAddress = "[::1]:8384";
       tray.enable = true;
     };
   };

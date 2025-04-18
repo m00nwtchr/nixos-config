@@ -133,6 +133,7 @@
       Unit = {
         Description = "KeePassXC";
         PartOf = ["graphical-session.target"];
+        Requires = ["tray.target"];
         After = ["graphical-session.target" "tray.target"];
       };
       Service = {
