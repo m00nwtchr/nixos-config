@@ -119,6 +119,8 @@
 
   virtualisation.containers.storage.settings.storage.driver = lib.mkForce "overlay";
 
+  services.btrfs.autoScrub.enable = false;
+
   # virtualisation = {
   # 	containers.enable = true;
   # 	oci-containers.backend = "podman";

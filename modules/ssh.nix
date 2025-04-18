@@ -5,7 +5,7 @@
   ...
 }: {
   imports = [
-    ./ssh-tpm-agent.nix
+    ./hardware/ssh-tpm-agent.nix
   ];
 
   services.sshTpmAgent.enable = true;

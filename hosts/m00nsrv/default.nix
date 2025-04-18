@@ -8,7 +8,7 @@
   imports = [
     ../../modules/efi/secureboot.nix
     ../../modules/system/k3s.nix
-    ../../modules/nvidia.nix
+    ../../modules/hardware/nvidia.nix
 
     ./hardware-configuration.nix
   ];
@@ -100,10 +100,6 @@
   };
 
   services = {
-    btrfs.autoScrub = {
-      enable = true;
-      fileSystems = ["/" "/mnt/hdd"];
-    };
     # beesd.filesystems.root = {
     #   spec = "/";
     #   hashTableSizeMB = 512;

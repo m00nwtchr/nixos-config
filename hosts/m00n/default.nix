@@ -42,31 +42,12 @@
   environment.systemPackages = with pkgs; [
   ];
 
-  # systemd.services."beesd@root" = {
-  #   # overrideStrategy = "asDropin";
-  #   wantedBy = ["ac.target"];
-  #   unitConfig = {
-  #     BindsTo = ["ac.target"];
-  #   };
-  #   serviceConfig = {
-  #     CPUQuota = "25%";
-  #   };
-  # };
-
   # List services that you want to enable:
   services = {
-    # tlp.enable = false;
-
-    btrfs.autoScrub = {
-      enable = true;
-      fileSystems = ["/"];
-    };
-    beesd.filesystems = {
-      # root = {
-      #   spec = "/";
-      #   hashTableSizeMB = 256;
-      # };
-    };
+    # beesd.filesystems.root = {
+    #   spec = "/";
+    #   hashTableSizeMB = 256;
+    # };
 
     tailscale.enable = true;
 

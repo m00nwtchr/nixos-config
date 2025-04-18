@@ -6,9 +6,11 @@
   ...
 }: {
   imports = [
-    # ../upg.nix
     ../sops-nix.nix
     ../facter.nix
+
+    # ../upg.nix
+    ../hardware/btrfs.nix
   ];
 
   nix = {

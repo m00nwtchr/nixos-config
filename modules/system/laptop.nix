@@ -4,24 +4,23 @@
   lib,
   username,
   ...
-}: {
+}: let
+  isLaptop = config.facter.detected.isLaptop;
+in {
   imports = [
     ./desktop.nix
     # ../chrony.nix
   ];
 
-  networking.wireless.iwd.enable = true;
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = false;
-  };
+  networking.wireless.iwd.enable = config.facter.detected.wireless;
+  hardware.bluetooth.powerOnBoot = !isLaptop;
 
-  networking.nameservers = [
+  networking.nameservers = lib.mkIf isLaptop [
     "9.9.9.9#dns.quad9.net"
     "149.112.112.112#dns.quad9.net"
   ];
 
-  systemd.network.networks."25-wireless" = {
+  systemd.network.networks."25-wireless" = lib.mkIf config.facter.detected.wireless {
     matchConfig.WLANInterfaceType = "station";
     linkConfig.RequiredForOnline = "routable";
     networkConfig = {
@@ -33,7 +32,7 @@
 
   # environment.systemPackages = with pkgs; [];
 
-  systemd.targets = {
+  systemd.targets = lib.mkIf isLaptop {
     ac = {
       description = "AC power";
       unitConfig = {
@@ -52,7 +51,7 @@
     };
   };
 
-  services.udev.extraRules = ''
+  services.udev.extraRules = lib.mkIf isLaptop ''
     SUBSYSTEM=="power_supply", KERNEL=="AC?", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl start battery.target"
     SUBSYSTEM=="power_supply", KERNEL=="AC?", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl start ac.target"
   '';
@@ -67,7 +66,7 @@
     };
 
     auto-cpufreq = {
-      # enable = true;
+      enable = isLaptop;
       settings = {
         battery = {
           governor = "powersave";

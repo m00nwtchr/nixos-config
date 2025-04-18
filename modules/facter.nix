@@ -5,13 +5,49 @@
   ...
 }: let
   defaultFacterPath = "${inputs.self}/hosts/${config.networking.hostName}/facter.json";
+
+  reportExists = builtins.pathExists defaultFacterPath;
+
+  report =
+    if config ? facter && reportExists
+    then config.facter.report
+    else {};
 in {
-  # sops.secrets.facter = lib.mkIf (builtins.pathExists defaultFacterPath) {
-  #   sopsFile = defaultFacterPath;
-  #   format = "json";
-  # };
+  config.facter.reportPath = lib.mkIf reportExists defaultFacterPath;
 
-  # facter.reportPath = lib.mkIf (builtins.pathExists defaultFacterPath) config.sops.secrets.facter.path;
+  options.facter.detected.wireless =
+    lib.mkEnableOption ""
+    // {
+      default =
+        builtins.any
+        (
+          iface:
+            (iface ? sub_class)
+            && (iface.sub_class ? hex)
+            && iface.sub_class.hex == "000a"
+        )
+        (
+          if report ? hardware && config.facter.report.hardware ? network_interface
+          then report.hardware.network_interface
+          else []
+        );
+    };
 
-  facter.reportPath = lib.mkIf (builtins.pathExists defaultFacterPath) defaultFacterPath;
+  options.facter.detected.isLaptop =
+    lib.mkEnableOption ""
+    // {
+      default =
+        if report ? hardware && report.hardware ? system && report.hardware.system ? form_factor
+        then report.hardware.system.form_factor == "laptop"
+        else false;
+    };
+
+  options.facter.detected.isDesktop =
+    lib.mkEnableOption ""
+    // {
+      default =
+        if report ? hardware && report.hardware ? system && report.hardware.system ? form_factor
+        then report.hardware.system.form_factor == "desktop"
+        else false;
+    };
 }

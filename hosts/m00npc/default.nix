@@ -8,7 +8,7 @@
   imports = [
     ../../modules/efi/secureboot.nix
     ../../modules/system/desktop.nix
-    ../../modules/nvidia.nix
+    ../../modules/hardware/nvidia.nix
     ../../modules/splash.nix
     ../../modules/wayland/sway.nix
 
@@ -44,10 +44,6 @@
 
   # List services that you want to enable:
   services = {
-    btrfs.autoScrub = {
-      enable = true;
-      fileSystems = ["/" "/home/m00n/Documents"];
-    };
     beesd.filesystems.root = {
       spec = "/";
       hashTableSizeMB = 512;
