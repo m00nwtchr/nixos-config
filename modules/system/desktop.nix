@@ -72,6 +72,14 @@
   # mDNS
   networking.firewall.allowedUDPPorts = [5353];
   services = {
+    logind = {
+      powerKey = "suspend-then-hibernate";
+      lidSwitch = "suspend-then-hibernate";
+      extraConfig = ''
+        HibernateDelaySec=900
+      '';
+    };
+
     pipewire = {
       enable = true;
       alsa.enable = true;

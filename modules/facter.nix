@@ -50,4 +50,21 @@ in {
         then report.hardware.system.form_factor == "desktop"
         else false;
     };
+
+  options.facter.detected.nvidia =
+    lib.mkEnableOption ""
+    // {
+      default =
+        builtins.any
+        (
+          gpu:
+            (gpu ? driver)
+            && gpu.driver == "nvidia"
+        )
+        (
+          if report ? hardware && config.facter.report.hardware ? graphics_card
+          then report.hardware.graphics_card
+          else []
+        );
+    };
 }

@@ -8,7 +8,6 @@
   imports = [
     ../../modules/efi/secureboot.nix
     ../../modules/system/desktop.nix
-    ../../modules/hardware/nvidia.nix
     ../../modules/splash.nix
     ../../modules/wayland/sway.nix
 

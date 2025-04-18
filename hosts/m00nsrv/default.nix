@@ -8,7 +8,6 @@
   imports = [
     ../../modules/efi/secureboot.nix
     ../../modules/system/k3s.nix
-    ../../modules/hardware/nvidia.nix
 
     ./hardware-configuration.nix
   ];

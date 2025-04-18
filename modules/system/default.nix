@@ -10,7 +10,7 @@
     ../facter.nix
 
     # ../upg.nix
-    ../hardware/btrfs.nix
+    ../hardware
   ];
 
   nix = {

@@ -7,7 +7,7 @@
 }: {
   imports = [
     ../../modules/efi/secureboot.nix
-    ../../modules/system/laptop.nix
+    ../../modules/system/desktop.nix
     ../../modules/splash.nix
     ../../modules/wayland/sway.nix
 
