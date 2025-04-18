@@ -24,7 +24,6 @@
 
     # App Launchers
     bemenu
-    fuzzel
 
     # Device Controls
     brightnessctl
@@ -92,6 +91,16 @@
         normal.style = "Regular";
       };
       window.opacity = 0.8;
+    };
+  };
+
+  programs.fuzzel = {
+    enable = true;
+    settings.main = {
+      include = "${config.xdg.stateHome}/wallust/fuzzel.ini";
+
+      font = "monospace:size=15";
+      hide-before-typing = true;
     };
   };
 

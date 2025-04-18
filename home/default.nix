@@ -34,6 +34,8 @@
   #   rustflags = ["-C", "link-arg=-fuse-ld=${pkgs.mold}/bin/mold"]
   # '';
 
+  dotfiles.mutable = false;
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
