@@ -4,6 +4,7 @@
   pkgs,
   inputs,
   system,
+  osConfig,
   ...
 }: {
   imports = [
@@ -22,6 +23,9 @@
     kubelogin-oidc
     kubernetes-helm
     cilium-cli
+    k3d
+
+    docker-compose
 
     lens
 
@@ -150,5 +154,10 @@
       submodule.recurse = true;
       push.autoSetupRemote = true;
     };
+  };
+
+  services.podman = {
+    enable = true;
+    settings.storage.storage.driver = lib.mkForce osConfig.virtualisation.containers.storage.settings.storage.driver;
   };
 }

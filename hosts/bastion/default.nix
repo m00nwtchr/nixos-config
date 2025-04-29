@@ -117,19 +117,9 @@
     '';
   };
 
-  virtualisation.containers.storage.settings.storage.driver = lib.mkForce "overlay";
-
   services.btrfs.autoScrub.enable = false;
 
-  # virtualisation = {
-  # 	containers.enable = true;
-  # 	oci-containers.backend = "podman";
-  # 	podman = {
-  # 		enable = true;
-  # 		dockerCompat = true;
-  # 		defaultNetwork.settings.dns_enabled = true;
-  # 	};
-  # };
+  virtualisation.containers.storage.settings.storage.driver = lib.mkForce "overlay";
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

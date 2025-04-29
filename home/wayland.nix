@@ -42,6 +42,9 @@
     adwaita-qt
     nerd-fonts.jetbrains-mono
     meslo-lgs-nf
+
+    kdePackages.qtwayland
+    libsForQt5.qt5.qtwayland
   ];
 
   # Font Configuration

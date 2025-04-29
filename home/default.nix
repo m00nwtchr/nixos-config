@@ -53,8 +53,10 @@
     nheko
     cinny-desktop
     (discord.override {
-      withOpenASAR = true;
+      # withOpenASAR = true;
     })
+    discover-overlay
+
     vesktop
 
     imv
@@ -65,6 +67,8 @@
 
     yt-dlp
     pwgen
+
+    aw-qt
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -123,6 +127,13 @@
     };
   };
 
+  programs.obs-studio = {
+    enable = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      obs-pipewire-audio-capture
+    ];
+  };
+
   services = {
     easyeffects.enable = true;
 
@@ -130,6 +141,20 @@
       enable = true;
       guiAddress = "[::1]:8384";
       tray.enable = true;
+    };
+
+    activitywatch = {
+      enable = true;
+      package = pkgs.aw-server-rust;
+
+      watchers = {
+        aw-watcher-window-wayland = {
+          package = pkgs.aw-watcher-window-wayland;
+          settings = {
+            poll_time = 1;
+          };
+        };
+      };
     };
   };
   # Let Home Manager install and manage itself.

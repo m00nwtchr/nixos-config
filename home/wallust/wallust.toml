@@ -1,24 +1,6 @@
-# wallust 2.9.*
-# -- global space -- #
-# values below can be overwritten by command line flags
-
-# How the image is parse, in order to get the colors:
-#  * full       - Read and return the whole image pixels (more precision, slower)
-#  * resized    - Resizes the image before parsing, mantaining it's aspect ratio
-#  * wal        - Uses image magick `convert` to generate the colors, like pywal
-#  * thumb      - Faster algo hardcoded to 512x512 (no ratio respected)
-#  * fastresize - A much faster resize algo that uses SIMD. For some reason it
-#                  fails on some images where `resized` doesn't, for this reason
-#                  it does not *replace* but rather it's a new option.
-backend = "fastresize"
+backend = "kmeans"
 
 # What color space to use to produce and select the most prominent colors:
-#  * lab      - Uses Cie L*a*b color space
-#  * labmixed - Variant of `lab` that mixes the colors gathered, if not enough
-#                colors it fallbacks to usual lab (not recommended in small images)
-#  * labfast  - Variant of `lab` that avoids floating arithmetic, thus, faster
-#                operations but not that much precise result. Images that work on
-#                lab/labmixed could not have "enough colors" for labfast.
 color_space = "lchmixed"
 
 # Difference between similar colors, used by the colorspace:
@@ -30,11 +12,6 @@ color_space = "lchmixed"
 #threshold = 20
 
 # Use the most prominent colors in a way that makes sense, a scheme color palette:
-# dark - dark16 - darkcomp - darkcomp16
-# light - light16 - lightcomp - lightcomp16
-# harddark - harddark16 - harddarkcomp - harddarkcomp16
-# softdark - softdark16 - softdarkcomp - softdarkcomp16
-# softlight - softlight16 - softlightcomp - softlightcomp16
 palette = "dark16"
 
 # Ensures a "readable contrast" (OPTIONAL, disabled by default)
@@ -45,7 +22,7 @@ check_contrast = true
 # Color saturation, between [1% and 100%] (OPTIONAL, disabled by default)
 # usually something higher than 50 increases the saturation and below
 # decreases it (on a scheme with strong and vivid colors)
-#saturation = 35
+# saturation = 35
 
 # Alpha value for templating, by default 100 (no other use whatsoever)
 alpha = 80
@@ -54,7 +31,6 @@ alpha = 80
 # NOTE: prefer '' over "" for paths, avoids escaping.
 # template: A relative path that points to a file where wallust.toml is located, usually at `~/.config/wallust/`.
 # target: Absolute path in which to place a file with generated templated values.
-# If one is a directory, the other one NEEDS to also be one, one line example below
 
 colors.template = 'colors.json'
 colors.target = '~/.cache/wal/colors.json'
