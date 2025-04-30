@@ -2,14 +2,10 @@
   config,
   lib,
   pkgs,
-  inputs,
-  system,
   ...
 }: let
-  app2unit = inputs.app2unit.packages.${system}.default;
-
   uwsm-shell = pkgs.writeShellScriptBin "uwsm-shell" ''
-    exec ${app2unit}/bin/app2unit -- $(getent passwd $USER | cut -d: -f7)
+    exec ${pkgs.app2unit}/bin/app2unit -- $(getent passwd $USER | cut -d: -f7)
   '';
 in {
   xdg.configFile."uwsm/env".text = ''
@@ -40,6 +36,15 @@ in {
 
   home.packages = with pkgs; [
     app2unit
+
+    (xdg-utils.overrideAttrs (old: {
+      postFixup =
+        (old.postFixup or "")
+        + ''
+          rm $out/bin/xdg-open
+          ln -s ${pkgs.app2unit}/bin/app2unit $out/bin/xdg-open
+        '';
+    }))
   ];
 
   programs.zsh.profileExtra = ''

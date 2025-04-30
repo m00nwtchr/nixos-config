@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   username,
   ...
 }: {
@@ -21,6 +22,8 @@
   nixpkgs.overlays = [
     (import ../../overlays/safeeyes.nix)
     (import ../../overlays/lens.nix)
+    (import ../../overlays/pywalfox.nix)
+    inputs.app2unit.overlays.default
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_zen;
