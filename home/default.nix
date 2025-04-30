@@ -88,11 +88,25 @@
 
   programs.librewolf = {
     enable = true;
-    package = pkgs.librewolf.override {
-      nativeMessagingHosts = with pkgs; [
-        pywalfox-native # Doesn't actually work as a nativeMessagingHost package because it doesn't contain a manifest.
-      ];
+    nativeMessagingHosts = with pkgs; [
+      pywalfox-native
+      ff2mpv
+    ];
+    settings = {
+      "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
     };
+    profiles.userjs = let
+      cssPath = "${pkgs.pywalfox-native}/${pkgs.python3.sitePackages}/pywalfox/assets/css";
+    in {
+      path = "7tpqbfqq.userjs";
+      isDefault = true;
+      userChrome = builtins.readFile "${cssPath}/userChrome.css";
+      userContent = builtins.readFile "${cssPath}/userContent.css";
+    };
+  };
+  home.file.".librewolf/native-messaging-hosts" = {
+    source = config.home.file.".mozilla/native-messaging-hosts".source;
+    recursive = true;
   };
 
   programs.mpv = {
