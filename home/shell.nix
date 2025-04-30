@@ -22,25 +22,27 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    initExtraFirst = ''
-      (cat ${config.xdg.cacheHome}/wallust/sequences &)
+    initContent = lib.mkMerge [
+      (lib.mkBefore
+        ''
+          (cat ${config.xdg.cacheHome}/wallust/sequences &)
 
-      eval "$(${lib.getExe pkgs.direnv} hook zsh)"
+          eval "$(${lib.getExe pkgs.direnv} hook zsh)"
 
-      if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
-       source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
-      fi
-    '';
+          if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
+            source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
+          fi
+        '')
+      ''
+        source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+        [[ ! -f "$ZDOTDIR/p10k.zsh" ]] || source "$ZDOTDIR/p10k.zsh"
+      ''
+    ];
 
     completionInit = ''
       zstyle :compinstall filename "$ZDOTDIR/zshrc"
       zstyle ':completion:*' cache-path "${config.xdg.cacheHome}/zsh/zcompcache"
       autoload -U compinit && compinit -d "${config.xdg.cacheHome}/zsh/zcompdump-$ZSH_VERSION"
-    '';
-
-    initExtra = ''
-      source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-      [[ ! -f "$ZDOTDIR/p10k.zsh" ]] || source "$ZDOTDIR/p10k.zsh"
     '';
 
     shellAliases = {
