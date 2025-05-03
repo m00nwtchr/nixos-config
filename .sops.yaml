@@ -3,7 +3,7 @@
 # Also see https://github.com/Mic92/dotfiles/blob/d6114726d859df36ccaa32891c4963ae5717ef7f/nixos/.sops.yaml
 # for a more complex example.
 keys:
-  - &personal A57D4A240C8BC704260A0E6F800214724BE3A82F
+  - &personal F846C93BF4BEAB99D98D29B2DF3CEC6BF015D41D
   - &m00npc age1gwv3knvgfrk26ythtrs2ed4235x8tu79lad459vx3e92krth6phq6t3ca3
   - &m00n age1pzfypmreq7znfawswqes7c0hcfehna6du69exhd6rq403sxtny9spje4kz
   - &m00nsrv age18847yw0y9zrvf9gmeu2m62vhukpc653nddvyjeazlc9gxz8dyecqmwsyga

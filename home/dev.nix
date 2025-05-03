@@ -144,7 +144,7 @@
     userName = "m00nwtchr";
     userEmail = "m00nwtchr@duck.com";
     signing = {
-      key = "0x800214724BE3A82F";
+      key = "0xDF3CEC6BF015D41D";
       signByDefault = true;
     };
     lfs.enable = true;
