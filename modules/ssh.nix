@@ -20,6 +20,7 @@
       PasswordAuthentication = false; # disable password login
       KbdInteractiveAuthentication = false;
       PermitEmptyPasswords = false;
+      StreamLocalBindUnlink = true;
     };
   };
 }

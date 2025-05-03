@@ -17,6 +17,15 @@
     controlPersist = "60";
     serverAliveInterval = 15;
     serverAliveCountMax = 3;
+    matchBlocks = {
+      m00nsrv = {
+        host = "m00nsrv";
+        user = "root";
+        extraOptions = {
+          RemoteForward = "/root/.gnupg/S.gpg-agent.remote /run/user/1000/gnupg/d.qdacfuwqbr7ghuh8iphysdf9/S.gpg-agent.extra";
+        };
+      };
+    };
   };
 
   services = {
