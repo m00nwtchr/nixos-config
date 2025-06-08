@@ -162,7 +162,7 @@
       enable = true;
       tokenFile = config.sops.secrets."k3s/token".path;
 
-      gracefulNodeShutdown.enable = true;
+      gracefulNodeShutdown.enable = false;
       configPath = (pkgs.formats.yaml {}).generate "k3s-config" k3sConfig;
       extraKubeletConfig = {
         memorySwap.swapBehavior = "LimitedSwap";
