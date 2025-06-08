@@ -132,7 +132,7 @@
       serviceConfig = {
         Type = "oneshot";
         ExecStart = ''
-          NETDEV=$(ip -o route show default | awk '{print $5}')
+          NETDEV=$(${pkgs.iproute2}/bin/ip -o route show default | awk '{print $5}')
           ${pkgs.ethtool}/bin/ethtool -K $NETDEV rx-udp-gro-forwarding on rx-gro-list off
         '';
       };
