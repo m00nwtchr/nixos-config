@@ -14,11 +14,7 @@
 
   # Use the systemd-boot EFI boot loader.
   boot.kernelPackages = pkgs.linuxPackages_hardened;
-  boot.kernelParams = [
-  ];
-  boot.kernel.sysctl = {
-    "fs.inotify.max_user_watches" = 524288;
-  };
+  boot.kernelParams = [];
 
   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
 

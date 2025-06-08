@@ -101,6 +101,10 @@
     #   }
     # ];
 
+    boot.kernel.sysctl = {
+      "net.ipv4.ip_local_reserved_ports" = "30000-32767"; # reserve NodePort range
+    };
+
     networking.firewall.enable = lib.mkForce false;
     # networking.nftables.tables.ingress = {
     #   family = "ip";

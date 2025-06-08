@@ -82,7 +82,7 @@
     resolved = {
       enable = lib.mkDefault true;
       dnssec = "true";
-      dnsovertls = "true";
+      dnsovertls = lib.mkDefault "true";
       llmnr = "false";
       fallbackDns = [
         "2620:fe::fe#dns.quad9.net"

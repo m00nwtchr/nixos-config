@@ -28,9 +28,33 @@
         "nvidia_drm"
       ];
       extraModulePackages = [config.hardware.nvidia.package];
-      extraModprobeConfig = ''
-        options nvidia NVreg_UsePageAttributeTable=1
-      '';
+
+      kernelParams = [
+        "nvidia.NVreg_UsePageAttributeTable=1"
+        "nvidia.NVreg_TemporaryFilePath=/var/tmp"
+      ];
+    };
+
+    systemd.services.nvidia-suspend-then-hibernate = {
+      description = "NVIDIA system suspend-then-hibernate actions";
+      path = [pkgs.kbd];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = [
+          "${config.hardware.nvidia.package.out}/bin/nvidia-sleep.sh \"is-suspend-then-hibernate-supported\""
+          "${config.hardware.nvidia.package.out}/bin/nvidia-sleep.sh \"suspend\""
+        ];
+      };
+      before = ["systemd-suspend-then-hibernate.service"];
+      requiredBy = ["systemd-suspend-then-hibernate.service"];
+    };
+    systemd.services.nvidia-resume = {
+      after = [
+        "systemd-suspend-then-hibernate.service"
+      ];
+      requiredBy = [
+        "systemd-suspend-then-hibernate.service"
+      ];
     };
 
     programs.sway.extraOptions = ["--unsupported-gpu"];
