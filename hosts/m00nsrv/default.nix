@@ -170,7 +170,7 @@
     group = "git";
     isSystemUser = true;
     home = "/var/lib/git";
-    shell = giteaShell;
+    shell = "${giteaShell}/bin/gitea-shell";
   };
   users.groups.git = {};
 
