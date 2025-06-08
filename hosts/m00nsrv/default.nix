@@ -163,7 +163,7 @@
 
   # Gitea
   users.users.git = let
-    giteaShell = pkgs.writeShellScript "gitea-shell" ''
+    giteaShell = pkgs.writeShellScriptBin "gitea-shell" ''
       exec ${pkgs.kubectl}/bin/kubectl --client-certificate=/var/lib/git/git.crt --client-key=/var/lib/git/git.key --certificate-authority=/var/lib/git/server-ca.crt -s "https://localhost:6443" -n gitea exec -i deployment/forgejo -c forgejo -- env SSH_ORIGINAL_COMMAND="$SSH_ORIGINAL_COMMAND" sh "$@"
     '';
   in {
