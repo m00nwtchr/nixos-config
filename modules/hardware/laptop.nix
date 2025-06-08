@@ -5,11 +5,6 @@
   ...
 }: {
   config = lib.mkIf config.facter.detected.isLaptop {
-    networking.nameservers = [
-      "9.9.9.9#dns.quad9.net"
-      "149.112.112.112#dns.quad9.net"
-    ];
-
     systemd.targets = {
       ac = {
         description = "AC power";

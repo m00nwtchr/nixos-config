@@ -16,6 +16,9 @@
   boot.kernelPackages = pkgs.linuxPackages_hardened;
   boot.kernelParams = [
   ];
+  boot.kernel.sysctl = {
+    "fs.inotify.max_user_watches" = 524288;
+  };
 
   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
 
@@ -33,6 +36,42 @@
     allowedUDPPorts = [25565 443];
   };
 
+  services.radvd = {
+    enable = true;
+    config = ''
+      interface enp4s0
+      {
+          AdvSendAdvert     on;
+          MinRtrAdvInterval 30;
+          MaxRtrAdvInterval 100;
+
+          AdvManagedFlag     off;
+          AdvOtherConfigFlag on;
+
+          prefix 2a02:a313:43e4:7080::/64
+          {
+              AdvOnLink       on;
+              AdvAutonomous   on;
+              DeprecatePrefix off;
+              AdvRouterAddr   on;
+          };
+
+          # Advertise the ULA prefix on-link + SLAAC
+          prefix fd42:78a5:2c09::/64
+          {
+              AdvOnLink     on;
+              AdvAutonomous on;
+              AdvRouterAddr on;
+          };
+
+          # Tell clients “use me” for DNS
+          RDNSS fd42:78a5:2c09::53
+          {
+          };
+      };
+    '';
+  };
+
   systemd.network.networks."20-wired" = {
     name = "enp4s0";
 
@@ -40,15 +79,89 @@
 
     networkConfig = {
       IPv6AcceptRA = "yes";
-      IPv6PrivacyExtensions = "yes";
+      IPv6PrivacyExtensions = "no";
       MulticastDNS = "yes";
     };
 
-    address = ["192.168.0.10/24" "2a02:a313:43e4:7080::7dc5/128"];
-    gateway = ["192.168.0.1"];
+    # fd42:78a5:2c09:0::/64
+    address = [
+      "192.168.0.10/24"
+      "2a02:a313:43e4:7080::7dc5/128"
 
-    ipv6AcceptRAConfig = {
-      UseDNS = "no";
+      "192.168.0.53/24"
+      "fd42:78a5:2c09::53/64"
+    ];
+    gateway = ["192.168.0.1"];
+  };
+
+  # services.dnsmasq = {
+  #   enable = true;
+  #   settings = {};
+  # };
+
+  services.resolved.enable = false;
+  networking.nameservers = ["127.0.0.1" "::1"];
+  services.tailscale.extraSetFlags = ["--accept-dns=false"];
+  services.unbound = {
+    enable = true;
+    settings = {
+      server = {
+        interface = [
+          "::1"
+        ];
+        access-control = ["::1 allow"];
+
+        # Based on recommended settings in https://docs.pi-hole.net/guides/dns/unbound/#configure-unbound
+        harden-glue = true;
+        harden-dnssec-stripped = true;
+        use-caps-for-id = false;
+        prefetch = true;
+        edns-buffer-size = 1232;
+
+        so-rcvbuf = "1m";
+
+        # Custom settings
+        hide-identity = true;
+        hide-version = true;
+        prefer-ip6 = true;
+
+        # # General hardening
+        # qname-minimisation = true;
+        # serve-expired = false;
+
+        # # Cache size
+        # msg-cache-size = "32m";
+        # rrset-cache-size = "64m";
+
+        # # DNSSEC
+        #val-permissive-mode = false;
+        # do-not-query-localhost = false;
+        # auto-trust-anchor-file = "/var/lib/unbound/root.key";
+        # val-clean-additional = true;
+      };
+
+      forward-zone = [
+        {
+          name = ".";
+          # Upstream DoT resolvers (TLS)
+          # Syntax: [IP@TLS_HOSTNAME] or hostname
+          # These use port 853 for DoT
+          forward-addr = [
+            # Quad9:
+            "2620:fe::fe#dns.quad9.net"
+            "2620:fe::9#dns.quad9.net"
+            # Cloudflare:
+            "2606:4700:4700::1111#cloudflare-dns.com"
+            "2606:4700:4700::1001#cloudflare-dns.com"
+          ];
+          forward-tls-upstream = true;
+          forward-first = false;
+        }
+        {
+          name = "tail096cd8.ts.net.";
+          forward-addr = ["100.100.100.100"];
+        }
+      ];
     };
   };
 
@@ -85,6 +198,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     tpm2-tools
+    ldns
   ];
 
   services.sshTpmAgent.enable = lib.mkForce false;
