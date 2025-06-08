@@ -123,10 +123,20 @@
     #   '';
     # };
 
-    networking.localCommands = ''
-      NETDEV=$(ip -o route get 8.8.8.8 | cut -f 5 -d " ")
-      ${pkgs.ethtool}/bin/ethtool -K $NETDEV rx-udp-gro-forwarding on rx-gro-list off
-    '';
+    systemd.services.tailscale-net-tweak = {
+      description = "Tailscale performance tuning";
+      wantedBy = ["multi-user.target"];
+      wants = ["network-online.target"];
+      after = ["network-online.target"];
+
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = ''
+          NETDEV=$(ip -o route show default | awk '{print $5}')
+          ${pkgs.ethtool}/bin/ethtool -K $NETDEV rx-udp-gro-forwarding on rx-gro-list off
+        '';
+      };
+    };
 
     services.tailscale = {
       enable = true;
