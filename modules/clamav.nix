@@ -4,7 +4,7 @@
   lib,
   ...
 }: let
-  virusEvent = pkgs.writeShellScriptBin "virus-event.bash" ''
+  virusEvent = pkgs.writeShellScript "virus-event.bash" ''
     #!/bin/bash
     PATH=/usr/bin
     ALERT="Signature detected by clamav: $CLAM_VIRUSEVENT_VIRUSNAME in $CLAM_VIRUSEVENT_FILENAME"
@@ -25,7 +25,7 @@ in {
     daemon = {
       enable = true;
       settings = {
-        VirusEvent = "${virusEvent}/bin/virus-event.bash";
+        VirusEvent = virusEvent;
 
         LogTime = true;
         ExtendedDetectionInfo = true;
