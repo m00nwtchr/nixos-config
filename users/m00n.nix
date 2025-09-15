@@ -3,7 +3,8 @@
   pkgs,
   config,
   ...
-}: {
+}:
+{
   sops.secrets."passwords/m00n".neededForUsers = true;
 
   users.users.m00n = {
@@ -13,15 +14,13 @@
     shell = pkgs.zsh;
 
     hashedPasswordFile = config.sops.secrets."passwords/m00n".path;
-    openssh.authorizedKeys.keyFiles = [../secrets/authorized_keys];
+    openssh.authorizedKeys.keyFiles = [ ../secrets/authorized_keys ];
 
-    extraGroups =
-      ["wheel" "adbusers"]
-      ++ (
-        if config.security.tpm2.enable
-        then ["tss"]
-        else []
-      );
+    extraGroups = [
+      "wheel"
+      "adbusers"
+    ]
+    ++ (if config.security.tpm2.enable then [ "tss" ] else [ ]);
   };
   users.groups.m00n.gid = 1000;
 

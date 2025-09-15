@@ -3,7 +3,8 @@
   lib,
   username,
   ...
-}: {
+}:
+{
   imports = [
     ./default.nix
   ];

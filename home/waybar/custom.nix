@@ -1,4 +1,5 @@
-{...}: {
+{ ... }:
+{
   programs.waybar.settings.mainBar = {
     "custom/left-arrow-dark" = {
       format = "";

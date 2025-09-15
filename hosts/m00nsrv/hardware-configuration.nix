@@ -7,26 +7,42 @@
   pkgs,
   modulesPath,
   ...
-}: {
+}:
+{
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "ahci" "usbhid" "sd_mod"];
-  boot.initrd.kernelModules = [];
-  boot.kernelModules = ["kvm-amd"];
-  boot.extraModulePackages = [];
+  boot.initrd.availableKernelModules = [
+    "nvme"
+    "xhci_pci"
+    "ahci"
+    "usbhid"
+    "sd_mod"
+  ];
+  boot.initrd.kernelModules = [ ];
+  boot.initrd.supportedFilesystems = [ "zfs" ];
+  boot.kernelModules = [ "kvm-amd" ];
+  boot.extraModulePackages = [ ];
+  boot.supportedFilesystems = [ "zfs" ];
+
+  boot.zfs = {
+    forceImportRoot = false;
+    extraPools = [
+      "rpool"
+      "vault"
+    ];
+  };
 
   boot.loader.efi.efiSysMountPoint = "/efi";
 
   fileSystems."/" = {
-    device = "/dev/mapper/root";
-    fsType = "btrfs";
-    options = ["subvol=@" "compress=zstd"];
+    device = "rpool/root";
+    fsType = "zfs";
   };
 
   boot.initrd.luks.devices."root" = {
-    device = "/dev/disk/by-uuid/999bb59b-d212-496b-867d-b0e54d9f16a3";
+    device = "/dev/disk/by-uuid/1a9bc52d-3b16-418b-ac47-dc7c54795c19";
     allowDiscards = true;
     bypassWorkqueues = true;
     crypttabExtraOpts = [
@@ -35,52 +51,26 @@
     ];
   };
 
-  fileSystems."/home" = {
-    device = "/dev/mapper/root";
-    fsType = "btrfs";
-    options = ["subvol=@home" "compress=zstd"];
-  };
-
   fileSystems."/nix" = {
-    device = "/dev/mapper/root";
-    fsType = "btrfs";
-    options = ["subvol=@nix" "compress=zstd"];
+    device = "rpool/nix";
+    fsType = "zfs";
   };
 
-  fileSystems."/mnt/root" = {
-    device = "/dev/mapper/root";
-    fsType = "btrfs";
-    options = ["compress=zstd"];
-  };
-
-  fileSystems."/mnt/media" = {
-    device = "/dev/disk/by-uuid/5fa4fdc5-9574-4fa0-b351-50559993bb29";
-    fsType = "btrfs";
-    options = ["subvol=@media" "compress=zstd"];
-  };
-
-  fileSystems."/mnt/hdd" = {
-    device = "/dev/disk/by-uuid/5fa4fdc5-9574-4fa0-b351-50559993bb29";
-    fsType = "btrfs";
-    options = ["compress=zstd"];
-  };
-
-  fileSystems."/var/lib/containers/storage" = {
-    device = "/dev/mapper/root";
-    fsType = "btrfs";
-    options = [
-      "subvol=@containers-storage"
-      "compress=zstd"
-    ];
+  fileSystems."/var" = {
+    device = "rpool/var";
+    fsType = "zfs";
   };
 
   fileSystems."/efi" = {
     device = "/dev/disk/by-uuid/7F16-80BA";
     fsType = "vfat";
-    options = ["fmask=0022" "dmask=0022"];
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
   };
 
-  swapDevices = [];
+  swapDevices = [ ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

@@ -3,11 +3,13 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   uwsm-shell = pkgs.writeShellScriptBin "uwsm-shell" ''
     exec ${pkgs.app2unit}/bin/app2unit -- $(getent passwd $USER | cut -d: -f7)
   '';
-in {
+in
+{
   xdg.configFile."uwsm/env".text = ''
     source "$HOME/scripts/funcs"
     if ifmod nvidia_drm; then
@@ -38,12 +40,10 @@ in {
     app2unit
 
     (xdg-utils.overrideAttrs (old: {
-      postFixup =
-        (old.postFixup or "")
-        + ''
-          rm $out/bin/xdg-open
-          ln -s ${pkgs.app2unit}/bin/app2unit $out/bin/xdg-open
-        '';
+      postFixup = (old.postFixup or "") + ''
+        rm $out/bin/xdg-open
+        ln -s ${pkgs.app2unit}/bin/app2unit $out/bin/xdg-open
+      '';
     }))
   ];
 
@@ -67,11 +67,11 @@ in {
     syncthingtray.Service.Slice = "background-graphical.slice";
     cliphist = {
       Service.Slice = "background-graphical.slice"; # Assign to UWSM slice
-      Unit.After = ["graphical-session.target"];
+      Unit.After = [ "graphical-session.target" ];
     };
     cliphist-images = {
       Service.Slice = "background-graphical.slice"; # Assign to UWSM slice
-      Unit.After = ["graphical-session.target"];
+      Unit.After = [ "graphical-session.target" ];
     };
     # wluma.Service.Slice = "background-graphical.slice"; # Assign to UWSM slice
     gammastep.Service.Slice = "background-graphical.slice"; # Assign to UWSM slice

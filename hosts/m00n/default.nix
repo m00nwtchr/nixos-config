@@ -4,7 +4,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     ../../modules/efi/secureboot.nix
     ../../modules/system/desktop.nix
@@ -21,7 +22,7 @@
     "olm-3.2.16"
   ];
 
-  nixpkgs.overlays = [];
+  nixpkgs.overlays = [ ];
 
   boot.kernelParams = [
     "tsc=unstable"

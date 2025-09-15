@@ -3,7 +3,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   virtualisation = {
     containers.enable = true;
     oci-containers.backend = "podman";

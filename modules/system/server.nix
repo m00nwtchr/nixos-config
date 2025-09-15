@@ -2,7 +2,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   imports = [
     ./default.nix
     ../ssh.nix
@@ -63,7 +64,7 @@
     nnn # terminal file manager
   ];
 
-  users.users.root.openssh.authorizedKeys.keyFiles = [../../secrets/authorized_keys];
+  users.users.root.openssh.authorizedKeys.keyFiles = [ ../../secrets/authorized_keys ];
   services.openssh = {
     authorizedKeysCommand = "/opt/kanidm_ssh_authorizedkeys %u";
     authorizedKeysCommandUser = "nobody";
@@ -82,7 +83,7 @@
     kanidm = {
       package = pkgs.kanidm;
       # enableClient = true;
-      enablePam = true;
+      enablePam = false;
       clientSettings = {
         uri = "https://idm.m00nlit.dev";
       };
@@ -92,10 +93,10 @@
         home_alias = "name";
         uid_attr_map = "name";
         gid_attr_map = "name";
-        pam_allowed_login_groups = ["unix_admins"];
+        pam_allowed_login_groups = [ "unix_admins" ];
 
         kanidm = {
-          pam_allowed_login_groups = ["unix_admins"];
+          pam_allowed_login_groups = [ "unix_admins" ];
 
           map_group = [
             {

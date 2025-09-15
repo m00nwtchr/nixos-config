@@ -3,7 +3,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   home.packages = with pkgs; [
     ssh-tpm-agent
   ];
@@ -61,7 +62,7 @@
       Service = "ssh-tpm-agent.service";
     };
     Install = {
-      WantedBy = ["sockets.target"];
+      WantedBy = [ "sockets.target" ];
     };
   };
 }

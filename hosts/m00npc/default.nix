@@ -4,7 +4,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     ../../modules/efi/secureboot.nix
     ../../modules/system/desktop.nix
@@ -22,7 +23,7 @@
     "olm-3.2.16"
   ];
 
-  nixpkgs.overlays = [];
+  nixpkgs.overlays = [ ];
 
   boot.kernelParams = [
   ];
@@ -30,8 +31,14 @@
 
   networking.hostName = "m00npc"; # Define your hostname.
   networking.hosts = {
-    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "matrix.m00nlit.dev"];
-    "100.116.45.53" = ["m00nlit.dev" "matrix.m00nlit.dev"];
+    "fd7a:115c:a1e0::f201:2d35" = [
+      "m00nlit.dev"
+      "matrix.m00nlit.dev"
+    ];
+    "100.116.45.53" = [
+      "m00nlit.dev"
+      "matrix.m00nlit.dev"
+    ];
   };
 
   security.tpm2.enable = true;

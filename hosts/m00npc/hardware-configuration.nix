@@ -3,8 +3,9 @@
   lib,
   pkgs,
   ...
-}: {
-  boot.blacklistedKernelModules = ["amdgpu"];
+}:
+{
+  boot.blacklistedKernelModules = [ "amdgpu" ];
 
   boot.initrd.luks.devices."root" = {
     device = "/dev/disk/by-uuid/bc65df31-228d-4c73-9b25-b57cabf231b6";
@@ -27,19 +28,28 @@
   fileSystems."/" = {
     device = "/dev/mapper/root";
     fsType = "btrfs";
-    options = ["subvol=@nixos" "compress=zstd"];
+    options = [
+      "subvol=@nixos"
+      "compress=zstd"
+    ];
   };
 
   fileSystems."/nix" = {
     device = "/dev/mapper/root";
     fsType = "btrfs";
-    options = ["subvol=@nix" "compress=zstd"];
+    options = [
+      "subvol=@nix"
+      "compress=zstd"
+    ];
   };
 
   fileSystems."/efi" = {
     device = "/dev/disk/by-uuid/72B6-E111";
     fsType = "vfat";
-    options = ["fmask=0022" "dmask=0022"];
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
   };
 
   fileSystems."/.snapshots" = {
@@ -54,19 +64,28 @@
   fileSystems."/home" = {
     device = "/dev/mapper/root";
     fsType = "btrfs";
-    options = ["subvol=@home" "compress=zstd"];
+    options = [
+      "subvol=@home"
+      "compress=zstd"
+    ];
   };
 
   fileSystems."/home/m00n/Documents" = {
     device = "/dev/mapper/vault";
     fsType = "btrfs";
-    options = ["subvol=@Documents" "compress=zstd"];
+    options = [
+      "subvol=@Documents"
+      "compress=zstd"
+    ];
   };
 
   fileSystems."/opt/Games" = {
     device = "/dev/mapper/vault";
     fsType = "btrfs";
-    options = ["subvol=@Games" "compress=zstd"];
+    options = [
+      "subvol=@Games"
+      "compress=zstd"
+    ];
   };
 
   swapDevices = [

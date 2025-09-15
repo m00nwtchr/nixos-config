@@ -3,13 +3,13 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   filePath = "${config.dotfiles.path}/waybar/style.css";
   styleSrc =
-    if !config.dotfiles.mutable
-    then ./style.css
-    else config.lib.file.mkOutOfStoreSymlink filePath;
-in {
+    if !config.dotfiles.mutable then ./style.css else config.lib.file.mkOutOfStoreSymlink filePath;
+in
+{
   imports = [
     ./modules.nix
     ./custom.nix

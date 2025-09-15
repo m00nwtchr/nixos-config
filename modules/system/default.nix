@@ -4,7 +4,8 @@
   lib,
   username,
   ...
-}: {
+}:
+{
   imports = [
     ../sops-nix.nix
     ../facter.nix
@@ -15,7 +16,10 @@
 
   nix = {
     settings = {
-      experimental-features = ["nix-command" "flakes"];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       use-xdg-base-directories = true;
       download-buffer-size = 524288000; # 500 MiB
     };
@@ -55,11 +59,6 @@
     "9.9.9.9#dns.quad9.net"
     "149.112.112.112#dns.quad9.net"
   ];
-
-  networking.hosts = lib.mkIf config.services.tailscale.enable {
-    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "jellyfin.m00nlit.dev"];
-    "100.116.45.53" = ["m00nlit.dev" "jellyfin.m00nlit.dev"];
-  };
 
   users.mutableUsers = false;
 

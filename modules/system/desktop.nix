@@ -5,7 +5,8 @@
   inputs,
   username,
   ...
-}: {
+}:
+{
   imports = [
     ./default.nix
     # ../clamav.nix
@@ -16,7 +17,7 @@
 
   nixpkgs.config.allowUnfree = true;
   nix.settings = {
-    trusted-users = ["m00n"];
+    trusted-users = [ "m00n" ];
   };
 
   nixpkgs.overlays = [
@@ -38,25 +39,22 @@
   sops.secrets."passwords/root".neededForUsers = true;
   users.users.root.hashedPasswordFile = config.sops.secrets."passwords/root".path;
 
-  environment.systemPackages = with pkgs;
+  environment.systemPackages =
+    with pkgs;
     [
       xdg-user-dirs
 
       papers
       libreoffice-qt6-fresh
     ]
-    ++ (
-      if config.security.tpm2.enable
-      then [pkgs.tpm2-tools]
-      else []
-    );
+    ++ (if config.security.tpm2.enable then [ pkgs.tpm2-tools ] else [ ]);
 
   programs.gnupg.agent = {
     enable = true;
     pinentryPackage = pkgs.pinentry-gnome3;
     # enableSSHSupport = true;
   };
-  services.dbus.packages = [pkgs.gcr];
+  services.dbus.packages = [ pkgs.gcr ];
 
   programs.adb.enable = true;
 
@@ -73,7 +71,7 @@
   security.rtkit.enable = true;
 
   # mDNS
-  networking.firewall.allowedUDPPorts = [5353];
+  networking.firewall.allowedUDPPorts = [ 5353 ];
   services = {
     logind = {
       powerKey = "suspend-then-hibernate";
@@ -92,7 +90,7 @@
     usbguard = {
       enable = true;
       dbus.enable = true;
-      IPCAllowedGroups = ["wheel"];
+      IPCAllowedGroups = [ "wheel" ];
     };
 
     udev.extraRules = ''

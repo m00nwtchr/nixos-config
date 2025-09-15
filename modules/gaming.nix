@@ -4,7 +4,8 @@
   lib,
   username,
   ...
-}: {
+}:
+{
   imports = [
   ];
 

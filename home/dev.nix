@@ -6,7 +6,8 @@
   system,
   osConfig,
   ...
-}: {
+}:
+{
   imports = [
     ./rust.nix
   ];
@@ -51,92 +52,112 @@
     settings = {
       theme = "ayu_dark";
     };
-    languages = let
-      tabIndent = {
-        tab-width = 4;
-        unit = "\t";
+    languages =
+      let
+        tabIndent = {
+          tab-width = 4;
+          unit = "\t";
+        };
+      in
+      {
+        language = [
+          {
+            name = "nix";
+            indent = tabIndent;
+            formatter = {
+              name = "alejandra";
+              command = "${inputs.alejandra.defaultPackage.${system}}/bin/alejandra";
+            };
+            auto-format = true;
+          }
+
+          {
+            name = "cpp";
+            indent = tabIndent;
+            auto-format = true;
+          }
+
+          # Web
+          {
+            name = "html";
+            indent = tabIndent;
+            formatter = {
+              name = "prettier";
+              command = "${pkgs.nodePackages.prettier}/bin/prettier";
+              args = [
+                "--parser"
+                "html"
+              ];
+            };
+            auto-format = true;
+          }
+          {
+            name = "json";
+            indent = tabIndent;
+            formatter = {
+              name = "prettier";
+              command = "${pkgs.nodePackages.prettier}/bin/prettier";
+              args = [
+                "--parser"
+                "json"
+              ];
+            };
+            auto-format = true;
+          }
+          {
+            name = "css";
+            indent = tabIndent;
+            formatter = {
+              name = "prettier";
+              command = "${pkgs.nodePackages.prettier}/bin/prettier";
+              args = [
+                "--parser"
+                "css"
+              ];
+            };
+            auto-format = true;
+          }
+          {
+            name = "javascript";
+            indent = tabIndent;
+            formatter = {
+              name = "prettier";
+              command = "${pkgs.nodePackages.prettier}/bin/prettier";
+              args = [
+                "--parser"
+                "typescript"
+              ];
+            };
+            auto-format = true;
+          }
+          {
+            name = "typescript";
+            indent = tabIndent;
+            formatter = {
+              name = "prettier";
+              command = "${pkgs.nodePackages.prettier}/bin/prettier";
+              args = [
+                "--parser"
+                "typescript"
+              ];
+            };
+            auto-format = true;
+          }
+          {
+            name = "tsx";
+            indent = tabIndent;
+            formatter = {
+              name = "prettier";
+              command = "${pkgs.nodePackages.prettier}/bin/prettier";
+              args = [
+                "--parser"
+                "typescript"
+              ];
+            };
+            auto-format = true;
+          }
+        ];
       };
-    in {
-      language = [
-        {
-          name = "nix";
-          indent = tabIndent;
-          formatter = {
-            name = "alejandra";
-            command = "${inputs.alejandra.defaultPackage.${system}}/bin/alejandra";
-          };
-          auto-format = true;
-        }
-
-        {
-          name = "cpp";
-          indent = tabIndent;
-          auto-format = true;
-        }
-
-        # Web
-        {
-          name = "html";
-          indent = tabIndent;
-          formatter = {
-            name = "prettier";
-            command = "${pkgs.nodePackages.prettier}/bin/prettier";
-            args = ["--parser" "html"];
-          };
-          auto-format = true;
-        }
-        {
-          name = "json";
-          indent = tabIndent;
-          formatter = {
-            name = "prettier";
-            command = "${pkgs.nodePackages.prettier}/bin/prettier";
-            args = ["--parser" "json"];
-          };
-          auto-format = true;
-        }
-        {
-          name = "css";
-          indent = tabIndent;
-          formatter = {
-            name = "prettier";
-            command = "${pkgs.nodePackages.prettier}/bin/prettier";
-            args = ["--parser" "css"];
-          };
-          auto-format = true;
-        }
-        {
-          name = "javascript";
-          indent = tabIndent;
-          formatter = {
-            name = "prettier";
-            command = "${pkgs.nodePackages.prettier}/bin/prettier";
-            args = ["--parser" "typescript"];
-          };
-          auto-format = true;
-        }
-        {
-          name = "typescript";
-          indent = tabIndent;
-          formatter = {
-            name = "prettier";
-            command = "${pkgs.nodePackages.prettier}/bin/prettier";
-            args = ["--parser" "typescript"];
-          };
-          auto-format = true;
-        }
-        {
-          name = "tsx";
-          indent = tabIndent;
-          formatter = {
-            name = "prettier";
-            command = "${pkgs.nodePackages.prettier}/bin/prettier";
-            args = ["--parser" "typescript"];
-          };
-          auto-format = true;
-        }
-      ];
-    };
   };
 
   programs.git = {

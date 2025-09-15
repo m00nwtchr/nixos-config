@@ -3,7 +3,8 @@
   lib,
   username,
   ...
-}: {
+}:
+{
   boot.initrd.systemd.enable = true;
 
   boot.loader.efi.efiSysMountPoint = "/efi";

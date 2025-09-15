@@ -3,7 +3,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     ./ssh.nix
     ./gpg.nix
@@ -23,16 +24,15 @@
     syntaxHighlighting.enable = true;
 
     initContent = lib.mkMerge [
-      (lib.mkBefore
-        ''
-          (cat ${config.xdg.cacheHome}/wallust/sequences &)
+      (lib.mkBefore ''
+        (cat ${config.xdg.cacheHome}/wallust/sequences &)
 
-          eval "$(${lib.getExe pkgs.direnv} hook zsh)"
+        eval "$(${lib.getExe pkgs.direnv} hook zsh)"
 
-          if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
-            source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
-          fi
-        '')
+        if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
+          source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
+        fi
+      '')
       ''
         source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
         [[ ! -f "$ZDOTDIR/p10k.zsh" ]] || source "$ZDOTDIR/p10k.zsh"

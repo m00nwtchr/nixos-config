@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   home.sessionVariables = {
     XDG_STATE_HOME = "${config.xdg.stateHome}";
     XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";

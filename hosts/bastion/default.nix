@@ -4,7 +4,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     ../../modules/efi
     ../../modules/system/k3s.nix
@@ -25,13 +26,20 @@
   networking.hostName = "bastion"; # Define your hostname.
 
   networking.hosts = {
-    "100.116.45.53" = ["m00nlit.dev"];
-    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev"];
+    "100.116.45.53" = [ "m00nlit.dev" ];
+    "fd7a:115c:a1e0::f201:2d35" = [ "m00nlit.dev" ];
   };
 
   networking.firewall = {
-    allowedTCPPorts = [25565 443 80];
-    allowedUDPPorts = [25565 443];
+    allowedTCPPorts = [
+      25565
+      443
+      80
+    ];
+    allowedUDPPorts = [
+      25565
+      443
+    ];
   };
 
   security.tpm2.enable = lib.mkForce false;
@@ -39,7 +47,7 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [];
+  environment.systemPackages = with pkgs; [ ];
 
   # 150.230.150.181
 

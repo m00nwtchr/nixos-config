@@ -3,12 +3,11 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   filePath = "${config.dotfiles.path}/sway/config";
   configSrc =
-    if !config.dotfiles.mutable
-    then ./config
-    else config.lib.file.mkOutOfStoreSymlink filePath;
+    if !config.dotfiles.mutable then ./config else config.lib.file.mkOutOfStoreSymlink filePath;
 
   screenshotScript = pkgs.writeShellScript "screenshot.sh" ''
     PICTURES="$(${pkgs.xdg-user-dirs}/bin/xdg-user-dir PICTURES)/Screenshots"
@@ -78,7 +77,8 @@
     	;;
     esac
   '';
-in {
+in
+{
   xdg.configFile."sway/config".source = configSrc;
   xdg.configFile."sway/scripts/screenshot.sh".source = screenshotScript;
   xdg.configFile."sway/scripts/media-toggle.sh".source = mediaToggleScript;

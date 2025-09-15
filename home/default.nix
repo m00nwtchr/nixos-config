@@ -5,7 +5,8 @@
   system,
   inputs,
   ...
-}: {
+}:
+{
   imports = [
     ./env.nix
     ./wayland.nix
@@ -95,14 +96,16 @@
     settings = {
       "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
     };
-    profiles.userjs = let
-      cssPath = "${pkgs.pywalfox-native}/${pkgs.python3.sitePackages}/pywalfox/assets/css";
-    in {
-      path = "7tpqbfqq.userjs";
-      isDefault = true;
-      userChrome = builtins.readFile "${cssPath}/userChrome.css";
-      userContent = builtins.readFile "${cssPath}/userContent.css";
-    };
+    profiles.userjs =
+      let
+        cssPath = "${pkgs.pywalfox-native}/${pkgs.python3.sitePackages}/pywalfox/assets/css";
+      in
+      {
+        path = "7tpqbfqq.userjs";
+        isDefault = true;
+        userChrome = builtins.readFile "${cssPath}/userChrome.css";
+        userContent = builtins.readFile "${cssPath}/userContent.css";
+      };
   };
   home.file.".librewolf/native-messaging-hosts" = {
     source = config.home.file.".mozilla/native-messaging-hosts".source;

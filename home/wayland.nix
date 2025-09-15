@@ -3,7 +3,8 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   # Imports
   imports = [
     ./uwsm.nix
@@ -66,7 +67,7 @@
     theme.name = "Adwaita";
     iconTheme = {
       name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme.override {color = "red";};
+      package = pkgs.papirus-icon-theme.override { color = "red"; };
     };
     cursorTheme = {
       name = "Adwaita";
@@ -139,14 +140,17 @@
 
   # Systemd User Services
   systemd.user = {
-    targets.tray.Unit.Requires = ["waybar.service"];
+    targets.tray.Unit.Requires = [ "waybar.service" ];
 
     services.keepassxc = {
       Unit = {
         Description = "KeePassXC";
-        PartOf = ["graphical-session.target"];
-        Requires = ["tray.target"];
-        After = ["graphical-session.target" "tray.target"];
+        PartOf = [ "graphical-session.target" ];
+        Requires = [ "tray.target" ];
+        After = [
+          "graphical-session.target"
+          "tray.target"
+        ];
       };
       Service = {
         Type = "exec";
@@ -156,7 +160,7 @@
         TimeoutStopSec = "5s";
         Slice = "app-graphical.slice";
       };
-      Install.WantedBy = ["graphical-session.target"];
+      Install.WantedBy = [ "graphical-session.target" ];
     };
 
     services.wluma = {
@@ -181,7 +185,7 @@
         RestrictSUIDSGID = true;
         LockPersonality = true;
       };
-      Install.WantedBy = ["graphical-session.target"];
+      Install.WantedBy = [ "graphical-session.target" ];
     };
   };
 

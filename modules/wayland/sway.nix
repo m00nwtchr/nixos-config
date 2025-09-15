@@ -3,7 +3,8 @@
   lib,
   username,
   ...
-}: {
+}:
+{
   imports = [
     ./default.nix
   ];
@@ -20,7 +21,7 @@
   programs.sway = {
     enable = true;
     xwayland.enable = true;
-    extraPackages = [];
+    extraPackages = [ ];
   };
 
   xdg.portal = {

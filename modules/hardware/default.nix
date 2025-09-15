@@ -3,10 +3,11 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   imports = [
     ./laptop.nix
-    ./btrfs.nix
+    # ./btrfs.nix
     ./nvidia.nix
   ];
 

@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   config = lib.mkIf config.facter.detected.nvidia {
     nixpkgs.config = {
       allowUnfree = true;
@@ -17,17 +18,17 @@
       package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.latest;
     };
     hardware.nvidia-container-toolkit.enable = config.virtualisation.containers.enable;
-    environment.systemPackages = [config.hardware.nvidia.package];
+    environment.systemPackages = [ config.hardware.nvidia.package ];
 
     boot = {
-      blacklistedKernelModules = ["nouveau"];
+      blacklistedKernelModules = [ "nouveau" ];
       initrd.kernelModules = [
         # "nvidia"
         "nvidia_modeset"
         "nvidia_uvm"
         "nvidia_drm"
       ];
-      extraModulePackages = [config.hardware.nvidia.package];
+      extraModulePackages = [ config.hardware.nvidia.package ];
 
       kernelParams = [
         "nvidia.NVreg_UsePageAttributeTable=1"
@@ -37,7 +38,7 @@
 
     systemd.services.nvidia-suspend-then-hibernate = {
       description = "NVIDIA system suspend-then-hibernate actions";
-      path = [pkgs.kbd];
+      path = [ pkgs.kbd ];
       serviceConfig = {
         Type = "oneshot";
         ExecStart = [
@@ -45,8 +46,8 @@
           "${config.hardware.nvidia.package.out}/bin/nvidia-sleep.sh \"suspend\""
         ];
       };
-      before = ["systemd-suspend-then-hibernate.service"];
-      requiredBy = ["systemd-suspend-then-hibernate.service"];
+      before = [ "systemd-suspend-then-hibernate.service" ];
+      requiredBy = [ "systemd-suspend-then-hibernate.service" ];
     };
     systemd.services.nvidia-resume = {
       after = [
@@ -57,11 +58,11 @@
       ];
     };
 
-    programs.sway.extraOptions = ["--unsupported-gpu"];
+    programs.sway.extraOptions = [ "--unsupported-gpu" ];
 
     services.xserver = {
       enable = lib.mkDefault false;
-      videoDrivers = ["nvidia"];
+      videoDrivers = [ "nvidia" ];
     };
   };
 }
