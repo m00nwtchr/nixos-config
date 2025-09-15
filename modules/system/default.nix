@@ -31,6 +31,7 @@
     };
     optimise.automatic = true;
   };
+  environment.etc."current-nixos".source = ./.;
 
   boot.tmp.cleanOnBoot = true;
 
