@@ -2,76 +2,75 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 {
-  config,
-  lib,
-  pkgs,
-  modulesPath,
-  ...
-}:
-{
-  imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
-  ];
+	config,
+	lib,
+	pkgs,
+	modulesPath,
+	...
+}: {
+	imports = [
+		(modulesPath + "/installer/scan/not-detected.nix")
+	];
 
-  boot.initrd.availableKernelModules = [
-    "nvme"
-    "xhci_pci"
-    "ahci"
-    "usbhid"
-    "sd_mod"
-  ];
-  boot.initrd.kernelModules = [ ];
-  boot.initrd.supportedFilesystems = [ "zfs" ];
-  boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [ ];
-  boot.supportedFilesystems = [ "zfs" ];
+	boot.initrd.availableKernelModules = [
+		"nvme"
+		"xhci_pci"
+		"ahci"
+		"usbhid"
+		"sd_mod"
+	];
+	boot.initrd.kernelModules = [];
+	boot.initrd.supportedFilesystems = ["zfs"];
+	boot.kernelModules = ["kvm-amd"];
+	boot.extraModulePackages = [];
+	boot.supportedFilesystems = ["zfs"];
 
-  boot.zfs = {
-    forceImportRoot = false;
-    extraPools = [
-      "rpool"
-      "vault"
-    ];
-  };
+	boot.zfs = {
+		forceImportRoot = false;
+		extraPools = [
+			"rpool"
+			"vault"
+		];
+	};
 
-  boot.loader.efi.efiSysMountPoint = "/efi";
+	boot.loader.efi.efiSysMountPoint = "/efi";
 
-  fileSystems."/" = {
-    device = "rpool/root";
-    fsType = "zfs";
-  };
+	fileSystems."/" = {
+		device = "rpool/root";
+		fsType = "zfs";
+	};
 
-  boot.initrd.luks.devices."root" = {
-    device = "/dev/disk/by-uuid/1a9bc52d-3b16-418b-ac47-dc7c54795c19";
-    allowDiscards = true;
-    bypassWorkqueues = true;
-    crypttabExtraOpts = [
-      "x-initrd.attach"
-      # "tpm2-measure-pcr=yes"
-    ];
-  };
+	boot.initrd.luks.devices."root" = {
+		device = "/dev/disk/by-uuid/1a9bc52d-3b16-418b-ac47-dc7c54795c19";
+		allowDiscards = true;
+		bypassWorkqueues = true;
+		crypttabExtraOpts = [
+			"x-initrd.attach"
+			# "tpm2-measure-pcr=yes"
+		];
+	};
 
-  fileSystems."/nix" = {
-    device = "rpool/nix";
-    fsType = "zfs";
-  };
+	fileSystems."/nix" = {
+		device = "rpool/nix";
+		fsType = "zfs";
+	};
 
-  fileSystems."/var" = {
-    device = "rpool/var";
-    fsType = "zfs";
-  };
+	fileSystems."/var" = {
+		device = "rpool/var";
+		fsType = "zfs";
+	};
 
-  fileSystems."/efi" = {
-    device = "/dev/disk/by-uuid/7F16-80BA";
-    fsType = "vfat";
-    options = [
-      "fmask=0022"
-      "dmask=0022"
-    ];
-  };
+	fileSystems."/efi" = {
+		device = "/dev/disk/by-uuid/7F16-80BA";
+		fsType = "vfat";
+		options = [
+			"fmask=0022"
+			"dmask=0022"
+		];
+	};
 
-  swapDevices = [ ];
+	swapDevices = [];
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+	nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+	hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

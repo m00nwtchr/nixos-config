@@ -1,33 +1,33 @@
 {
-  pkgs,
-  lib,
-  username,
-  ...
+	pkgs,
+	lib,
+	username,
+	...
 }: {
-  imports = [
-    ./default.nix
-  ];
+	imports = [
+		./default.nix
+	];
 
-  programs.uwsm = {
-    enable = true;
-    waylandCompositors.sway = {
-      prettyName = "Sway";
-      comment = "Sway compositor";
-      binPath = "/run/current-system/sw/bin/sway";
-    };
-  };
+	programs.uwsm = {
+		enable = true;
+		waylandCompositors.sway = {
+			prettyName = "Sway";
+			comment = "Sway compositor";
+			binPath = "/run/current-system/sw/bin/sway";
+		};
+	};
 
-  programs.sway = {
-    enable = true;
-    xwayland.enable = true;
-    wrapperFeatures.gtk = true;
-    extraPackages = [];
-  };
+	programs.sway = {
+		enable = true;
+		xwayland.enable = true;
+		wrapperFeatures.gtk = true;
+		extraPackages = [];
+	};
 
-  xdg.portal = {
-    wlr.enable = true;
-  };
+	xdg.portal = {
+		wlr.enable = true;
+	};
 
-  services = {
-  };
+	services = {
+	};
 }
