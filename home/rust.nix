@@ -6,20 +6,21 @@
   ...
 }: {
   home.packages = with pkgs; [
-    # mold # Linker
-    # sccache
-
-    # (rust-bin.stable.latest.default.override {
-    #   extensions = ["rust-src" "rust-analyzer"];
-    # })
-
     # IDE
-    jetbrains.rust-rover
+    (jetbrains.rust-rover.override {
+      jdk = pkgs.openjdk21;
+    })
   ];
 
   home.sessionVariables = {
     RUSTC_WRAPPER = "${pkgs.sccache}/bin/sccache";
   };
+
+  # home.file.".cargo/config.toml".text = ''
+  #   [target.x86_64-unknown-linux-gnu]
+  #   linker = "clang"
+  #   rustflags = ["-C", "link-arg=-fuse-ld=${pkgs.mold}/bin/mold"]
+  # '';
 
   programs.helix.languages.language = [
     {

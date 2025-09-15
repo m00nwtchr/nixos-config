@@ -46,6 +46,7 @@
     ######################################################################
     KUBECONFIG = "${config.xdg.configHome}/kube/config";
     KUBECACHEDIR = "${config.xdg.cacheHome}/kube";
+    KREW_ROOT = "${config.xdg.stateHome}/krew";
 
     ######################################################################
     # Ansible and Emscripten
@@ -104,6 +105,10 @@
     BROWSER = "librewolf";
     CALCULATOR = "gnome-calculator";
 
+    RECOLL_CONFDIR = "${config.xdg.stateHome}/recoll";
     APP2UNIT_SLICES = "a=app-graphical.slice b=background-graphical.slice s=session-graphical.slice";
   };
+  home.sessionPath = [
+    "${config.home.homeDirectory}/.local/bin"
+  ];
 }

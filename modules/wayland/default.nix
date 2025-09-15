@@ -7,7 +7,7 @@
   imports = [
     ../autologin.nix
   ];
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  # environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   # Bruh
   # https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/graphical-desktop.nix
@@ -16,6 +16,15 @@
   services.graphical-desktop.enable = lib.mkForce false;
 
   systemd.defaultUnit = "graphical.target";
+
+  security.pam.loginLimits = [
+    {
+      domain = "@users";
+      item = "rtprio";
+      type = "-";
+      value = 1;
+    }
+  ];
 
   fonts.packages = with pkgs; [
     dejavu_fonts

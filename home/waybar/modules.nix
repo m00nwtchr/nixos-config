@@ -14,6 +14,7 @@
     clock = {
       format = "{:%H:%M}";
       tooltip-format = "{calendar}";
+      # locale = "en_GB.UTF-8";
       calendar = {
         format = {
           months = "<span color='#ffead3'><b>{}</b></span>";

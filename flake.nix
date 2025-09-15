@@ -5,11 +5,13 @@
 		extra-substituters = [
 			# nix community's cache server
 			"https://nix-community.cachix.org"
+			"https://attic.m00nlit.dev/m00n"
 		];
 
 		extra-trusted-public-keys = [
 			# nix community's cache server public key
 			"nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+			"m00n:kbAQdFU/e4Vec5EnGwobPlNJ98r33SMjwkuWLV/h7lo="
 		];
 	};
 

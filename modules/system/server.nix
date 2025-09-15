@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: {
   imports = [
@@ -73,14 +74,14 @@
   };
 
   system.activationScripts.copyFile = ''
-    cp ${pkgs.kanidm}/bin/kanidm_ssh_authorizedkeys /opt/kanidm_ssh_authorizedkeys
+    cp ${config.services.kanidm.package}/bin/kanidm_ssh_authorizedkeys /opt/kanidm_ssh_authorizedkeys
     chown root:root /opt/kanidm_ssh_authorizedkeys
     chmod 0755 /opt/kanidm_ssh_authorizedkeys
   '';
 
   services = {
     kanidm = {
-      package = pkgs.kanidm;
+      package = pkgs.kanidm_1_7;
       # enableClient = true;
       enablePam = true;
       clientSettings = {

@@ -17,10 +17,6 @@
   ];
 
   nixpkgs.config.rocmSupport = true;
-  nixpkgs.config.permittedInsecurePackages = [
-    "olm-3.2.16"
-  ];
-
   nixpkgs.overlays = [];
 
   boot.kernelParams = [

@@ -17,7 +17,7 @@
 
   programs.zsh = {
     enable = true;
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
@@ -33,6 +33,17 @@
             source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
           fi
         '')
+
+      ''
+        function set_window_title() {
+          print -Pn "\e]0;$TERM - %n@%m: %~\a"
+        }
+
+        autoload -Uz add-zsh-hook
+        add-zsh-hook chpwd set_window_title
+        set_window_title
+      ''
+
       ''
         source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
         [[ ! -f "$ZDOTDIR/p10k.zsh" ]] || source "$ZDOTDIR/p10k.zsh"

@@ -37,11 +37,15 @@
     swaylock-effects
     swaybg
 
-    # Themes & Fonts
+    # Themes
     wallust
     adwaita-qt
+
+    # Fonts
     nerd-fonts.jetbrains-mono
     meslo-lgs-nf
+
+    hack-font # Code
 
     kdePackages.qtwayland
     libsForQt5.qt5.qtwayland

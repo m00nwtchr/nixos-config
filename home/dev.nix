@@ -9,25 +9,16 @@
 }: {
   imports = [
     ./rust.nix
+    ./containers.nix
   ];
 
   home.packages = with pkgs; [
     # DevOps
     ansible
-    kanidm
+    kanidm_1_7
 
     gh # GitHub CLI
-
-    # Kubernetes
-    kubectl
-    kubelogin-oidc
-    kubernetes-helm
-    cilium-cli
-    k3d
-
-    docker-compose
-
-    lens
+    git-filter-repo
 
     mold # Linker
     lldb
@@ -35,7 +26,22 @@
     inputs.alejandra.defaultPackage.${system}
 
     # IDE
-    jetbrains.idea-ultimate
+    # jetbrains.idea-ultimate
+    (jetbrains.idea-ultimate.override {
+      jdk = pkgs.openjdk21;
+    })
+    vale
+
+    zed-editor
+
+    protobuf
+
+    cachix
+    attic-client
+    devenv
+    shellcheck
+    shfmt
+    # androidStudioPackages.stable
   ];
 
   programs.helix = {
@@ -47,6 +53,7 @@
       helm-ls
       vscode-langservers-extracted
       yaml-language-server
+      bash-language-server
     ];
     settings = {
       theme = "ayu_dark";
@@ -135,6 +142,16 @@
           };
           auto-format = true;
         }
+        {
+          name = "astro";
+          indent = tabIndent;
+          formatter = {
+            name = "prettier";
+            command = "${pkgs.nodePackages.prettier}/bin/prettier";
+            args = ["--parser" "astro"];
+          };
+          auto-format = true;
+        }
       ];
     };
   };
@@ -156,8 +173,10 @@
     };
   };
 
-  services.podman = {
-    enable = true;
-    settings.storage.storage.driver = lib.mkForce osConfig.virtualisation.containers.storage.settings.storage.driver;
+  dconf.settings = {
+    "org/virt-manager/virt-manager/connections" = {
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
+    };
   };
 }

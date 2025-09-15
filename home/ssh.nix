@@ -10,19 +10,29 @@
 
   programs.ssh = {
     enable = true;
-    addKeysToAgent = "yes";
-    compression = false;
-    controlMaster = "auto";
-    controlPath = "\${XDG_RUNTIME_DIR}/ssh/socket-%C";
-    controlPersist = "60";
-    serverAliveInterval = 15;
-    serverAliveCountMax = 3;
     matchBlocks = {
+      "*" = {
+        addKeysToAgent = "yes";
+        compression = false;
+        controlMaster = "auto";
+        controlPath = "\${XDG_RUNTIME_DIR}/ssh/socket-%C";
+        controlPersist = "60";
+        serverAliveInterval = 15;
+        serverAliveCountMax = 3;
+      };
+
       m00nsrv = {
         host = "m00nsrv";
         user = "root";
         extraOptions = {
-          RemoteForward = "/root/.gnupg/S.gpg-agent.remote /run/user/1000/gnupg/d.qdacfuwqbr7ghuh8iphysdf9/S.gpg-agent.extra";
+          RemoteForward = "/run/user/0/gnupg/S.gpg-agent /run/user/1000/gnupg/d.qdacfuwqbr7ghuh8iphysdf9/S.gpg-agent.extra";
+        };
+      };
+      bastion = {
+        host = "bastion";
+        user = "root";
+        extraOptions = {
+          RemoteForward = "/run/user/0/gnupg/S.gpg-agent /run/user/1000/gnupg/d.qdacfuwqbr7ghuh8iphysdf9/S.gpg-agent.extra";
         };
       };
     };
@@ -30,6 +40,13 @@
 
   services = {
     ssh-agent.enable = true;
+  };
+
+  systemd.user.services.ensure-ssh-dir = {
+    Unit.Description = "Ensure $XDG_RUNTIME_DIR/ssh exists";
+    Service.ExecStart = "${pkgs.coreutils}/bin/mkdir -p %t/ssh";
+    Service.Type = "oneshot";
+    Install.WantedBy = ["default.target"];
   };
 
   systemd.user.services.ssh-tpm-agent = {

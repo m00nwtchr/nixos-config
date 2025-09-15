@@ -35,7 +35,6 @@
   time.timeZone = lib.mkDefault "Europe/Warsaw";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
   console.keyMap = "pl";
 
   security.apparmor = {
@@ -57,8 +56,8 @@
   ];
 
   networking.hosts = lib.mkIf config.services.tailscale.enable {
-    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "jellyfin.m00nlit.dev"];
-    "100.116.45.53" = ["m00nlit.dev" "jellyfin.m00nlit.dev"];
+    # "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "jellyfin.m00nlit.dev"];
+    # "100.116.45.53" = ["m00nlit.dev" "jellyfin.m00nlit.dev"];
   };
 
   users.mutableUsers = false;

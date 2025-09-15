@@ -27,7 +27,7 @@
   fileSystems."/" = {
     device = "/dev/mapper/root";
     fsType = "btrfs";
-    options = ["subvol=@nixos" "compress=zstd"];
+    options = ["subvol=@" "compress=zstd"];
   };
 
   fileSystems."/nix" = {
@@ -61,6 +61,12 @@
     device = "/dev/mapper/vault";
     fsType = "btrfs";
     options = ["subvol=@Documents" "compress=zstd"];
+  };
+
+  fileSystems."/home/m00n/Videos" = {
+    device = "/dev/mapper/vault";
+    fsType = "btrfs";
+    options = ["subvol=@Videos" "compress=zstd"];
   };
 
   fileSystems."/opt/Games" = {

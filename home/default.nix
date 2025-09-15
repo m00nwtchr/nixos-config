@@ -29,11 +29,6 @@
   # release notes.
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
-  # home.file.".cargo/config.toml".text = ''
-  #   [target.x86_64-unknown-linux-gnu]
-  #   rustflags = ["-C", "link-arg=-fuse-ld=${pkgs.mold}/bin/mold"]
-  # '';
-
   dotfiles.mutable = false;
 
   # The home.packages option allows you to install Nix packages into your
@@ -50,6 +45,7 @@
     yubikey-manager
     keepassxc
 
+    gomuks-web
     nheko
     cinny-desktop
     (discord.override {
@@ -61,6 +57,8 @@
 
     imv
     gimp
+    file-roller
+    inkscape
 
     gnome-calculator
     obsidian
@@ -69,6 +67,19 @@
     pwgen
 
     aw-qt
+
+    age
+    age-plugin-yubikey
+
+    qbittorrent
+    protontricks
+    qdirstat
+
+    calibre
+    spotify
+
+    recoll
+    thunderbird
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -84,7 +95,13 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+    #
+    #
   };
+
+  xdg.configFile."Yubico/u2f_keys".text = ''
+    m00n:yxO+L99UucTy+hvAd5asbRx8SZRIr8SG3GI6QWtWYv5fUxzxa5D/tjZPv30Q8+75MaaE9ntMdsrJE4RxR0O1Aw==,nwYX9cckDOdOkTotQbDHQ4H8B2Zb/ug879VKUyrsaZ8pdRmGvORQgd/XFeCwMdJFtITuYkeK8XncFXWz0Rq9Xg==,es256,+presence+pin
+  '';
 
   programs.librewolf = {
     enable = true;
@@ -104,10 +121,10 @@
       userContent = builtins.readFile "${cssPath}/userContent.css";
     };
   };
-  home.file.".librewolf/native-messaging-hosts" = {
-    source = config.home.file.".mozilla/native-messaging-hosts".source;
-    recursive = true;
-  };
+  # home.file.".librewolf/native-messaging-hosts" = {
+  #   source = config.home.file.".mozilla/native-messaging-hosts".source;
+  #   recursive = true;
+  # };
 
   programs.mpv = {
     enable = true;

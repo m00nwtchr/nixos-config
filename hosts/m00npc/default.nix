@@ -12,15 +12,12 @@
     ../../modules/wayland/sway.nix
 
     ../../modules/gaming.nix
+    ../../modules/vms.nix
 
     ./hardware-configuration.nix
   ];
 
   hardware.nvidia.open = true;
-
-  nixpkgs.config.permittedInsecurePackages = [
-    "olm-3.2.16"
-  ];
 
   nixpkgs.overlays = [];
 
@@ -30,9 +27,19 @@
 
   networking.hostName = "m00npc"; # Define your hostname.
   networking.hosts = {
-    "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "matrix.m00nlit.dev"];
-    "100.116.45.53" = ["m00nlit.dev" "matrix.m00nlit.dev"];
+    # "fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev" "matrix.m00nlit.dev"];
+    # "100.116.45.53" = ["m00nlit.dev" "matrix.m00nlit.dev"];
+    "fd12:3456:789a:0:5054:ff:fef3:d848" = ["virt" "virt.m00nlit.internal"];
   };
+  # networking.nameservers = lib.mkForce ["fd42:78a5:2c09::53"];
+
+  networking.firewall = {
+    # allowedTCPPorts = [];
+    allowedUDPPorts = [1900];
+  };
+  services.resolved.extraConfig = "Cache=no-negative";
+
+  services.resolved.dnsovertls = "opportunistic";
 
   security.tpm2.enable = true;
 
@@ -56,6 +63,8 @@
 
     ollama = {
       enable = true;
+      host = "[::]";
+      openFirewall = true;
     };
   };
 

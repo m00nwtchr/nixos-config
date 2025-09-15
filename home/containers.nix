@@ -12,8 +12,13 @@
     kubectl
     kubelogin-oidc
     kubernetes-helm
+    k9s
     cilium-cli
+
     k3d
+
+    talosctl
+    talhelper
 
     docker-compose
 

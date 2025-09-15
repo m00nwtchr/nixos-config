@@ -7,6 +7,8 @@
   uwsm-shell = pkgs.writeShellScriptBin "uwsm-shell" ''
     exec ${pkgs.app2unit}/bin/app2unit -- $(getent passwd $USER | cut -d: -f7)
   '';
+
+  uwsm-game = pkgs.writeShellScriptBin "uwsm-game" (builtins.readFile ./bin/uwsm-game.sh);
 in {
   xdg.configFile."uwsm/env".text = ''
     source "$HOME/scripts/funcs"
@@ -36,6 +38,7 @@ in {
 
   home.packages = with pkgs; [
     app2unit
+    uwsm-game
 
     (xdg-utils.overrideAttrs (old: {
       postFixup =
@@ -46,6 +49,8 @@ in {
         '';
     }))
   ];
+
+  home.sessionVariables.GAMEMODERUNEXEC = "uwsm-game";
 
   programs.zsh.profileExtra = ''
     if uwsm check may-start; then
