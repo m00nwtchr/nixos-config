@@ -75,6 +75,8 @@
     curl
     git
     neofetch
+
+    attic-client # cache
   ];
 
   programs.zsh.enable = true;

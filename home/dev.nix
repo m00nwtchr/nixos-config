@@ -37,7 +37,6 @@
     protobuf
 
     cachix
-    attic-client
     devenv
     shellcheck
     shfmt
