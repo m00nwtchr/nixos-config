@@ -3,7 +3,8 @@
   config,
   lib,
   ...
-}: {
+}:
+{
   imports = [
     ./hardware/ssh-tpm-agent.nix
   ];

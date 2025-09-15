@@ -2,7 +2,8 @@
   config,
   lib,
   ...
-}: {
+}:
+{
   options = {
     dotfiles = {
       mutable = lib.mkEnableOption "mutable dotfiles";

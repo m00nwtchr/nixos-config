@@ -1,13 +1,14 @@
-{...}: {
+{ ... }:
+{
   programs.waybar.settings.mainBar = {
     "sway/workspaces" = {
       on-click = "activate";
       persistent-workspaces = {
-        "1" = [];
-        "2" = [];
-        "3" = [];
-        "4" = [];
-        "5" = [];
+        "1" = [ ];
+        "2" = [ ];
+        "3" = [ ];
+        "4" = [ ];
+        "5" = [ ];
       };
     };
 
@@ -40,7 +41,11 @@
         phone = "";
         portable = "";
         car = "";
-        default = ["" "" ""];
+        default = [
+          ""
+          ""
+          ""
+        ];
       };
     };
 
@@ -83,7 +88,19 @@
       format-charging = " {capacity}%";
       format-plugged = " {capacity}%";
       format-alt = "{time} {icon}";
-      format-icons = ["󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
+      format-icons = [
+        "󰂎"
+        "󰁺"
+        "󰁻"
+        "󰁼"
+        "󰁽"
+        "󰁾"
+        "󰁿"
+        "󰂀"
+        "󰂁"
+        "󰂂"
+        "󰁹"
+      ];
     };
 
     disk = {

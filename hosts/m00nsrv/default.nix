@@ -4,38 +4,53 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     ../../modules/efi/secureboot.nix
     ../../modules/system/k3s.nix
 
+    ../../modules/hardware/zfs.nix
     ./hardware-configuration.nix
   ];
 
   # Use the systemd-boot EFI boot loader.
-  boot.kernelPackages = pkgs.linuxPackages_hardened;
-  boot.kernelParams = [];
+  # boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelParams = [ ];
 
   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
 
   zramSwap.enable = true;
 
   networking.hostName = "m00nsrv"; # Define your hostname.
+  networking.hostId = "8504e2ee";
 
   networking.hosts = {
-    "2a02:a313:43e4:7080::7dc5" = ["idm.m00nlit.dev" "m00nlit.dev" "m00nsrv"];
-    "192.168.0.10" = ["m00nlit.dev" "m00nsrv"];
+    # "2a02:a313:43e4:7080::200" = ["m00nlit.dev" "external.m00nlit.dev" "idm.m00nlit.dev"];
+    # "2a02:a313:43e4:7080::7dc5" = ["idm.m00nlit.dev" "m00nlit.dev" "m00nsrv"];
+    # "192.168.0.10" = ["m00nlit.dev" "m00nsrv"];
   };
 
   networking.firewall = {
-    allowedTCPPorts = [25565 443 80];
-    allowedUDPPorts = [25565 443];
+    allowedTCPPorts = [
+      25565
+      443
+      80
+      2049
+    ];
+    allowedUDPPorts = [
+      25565
+      443
+      2049
+    ];
   };
+
+  services.nfs.server.enable = true;
 
   services.radvd = {
     enable = true;
     config = ''
-      interface enp4s0
+      interface enp5s0
       {
           AdvSendAdvert     on;
           MinRtrAdvInterval 30;
@@ -69,7 +84,10 @@
   };
 
   systemd.network.networks."20-wired" = {
-    name = "enp4s0";
+    #name = "enp5s0";
+    matchConfig = {
+      PermanentMACAddress = "9c:6b:00:08:bb:03";
+    };
 
     DHCP = "no";
 
@@ -82,12 +100,10 @@
     # fd42:78a5:2c09:0::/64
     address = [
       "192.168.0.10/24"
-      "2a02:a313:43e4:7080::7dc5/128"
-
-      "192.168.0.53/24"
-      "fd42:78a5:2c09::53/64"
+      "2a02:a313:43e4:7080::7dc5/64"
+      "fd42:78a5:2c09::7dc5/64"
     ];
-    gateway = ["192.168.0.1"];
+    gateway = [ "192.168.0.1" ];
   };
 
   # services.dnsmasq = {
@@ -96,8 +112,11 @@
   # };
 
   services.resolved.enable = false;
-  networking.nameservers = ["127.0.0.1" "::1"];
-  services.tailscale.extraSetFlags = ["--accept-dns=false"];
+  networking.nameservers = [
+    "127.0.0.1"
+    "::1"
+  ];
+  services.tailscale.extraSetFlags = [ "--accept-dns=false" ];
   services.unbound = {
     enable = true;
     settings = {
@@ -105,7 +124,7 @@
         interface = [
           "::1"
         ];
-        access-control = ["::1 allow"];
+        access-control = [ "::1 allow" ];
 
         # Based on recommended settings in https://docs.pi-hole.net/guides/dns/unbound/#configure-unbound
         harden-glue = true;
@@ -155,24 +174,26 @@
         }
         {
           name = "tail096cd8.ts.net.";
-          forward-addr = ["100.100.100.100"];
+          forward-addr = [ "100.100.100.100" ];
         }
       ];
     };
   };
 
   # Gitea
-  users.users.git = let
-    giteaShell = pkgs.writeShellScriptBin "gitea-shell" ''
-      exec ${pkgs.kubectl}/bin/kubectl --client-certificate=/var/lib/git/git.crt --client-key=/var/lib/git/git.key --certificate-authority=/var/lib/git/server-ca.crt -s "https://localhost:6443" -n gitea exec -i deployment/forgejo -c forgejo -- env SSH_ORIGINAL_COMMAND="$SSH_ORIGINAL_COMMAND" sh "$@"
-    '';
-  in {
-    group = "git";
-    isSystemUser = true;
-    home = "/var/lib/git";
-    shell = "${giteaShell}/bin/gitea-shell";
-  };
-  users.groups.git = {};
+  users.users.git =
+    let
+      giteaShell = pkgs.writeShellScriptBin "gitea-shell" ''
+        exec ${pkgs.kubectl}/bin/kubectl --client-certificate=/var/lib/git/git.crt --client-key=/var/lib/git/git.key --certificate-authority=/var/lib/git/server-ca.crt -s "https://localhost:6443" -n gitea exec -i deployment/forgejo -c forgejo -- env SSH_ORIGINAL_COMMAND="$SSH_ORIGINAL_COMMAND" sh "$@"
+      '';
+    in
+    {
+      group = "git";
+      isSystemUser = true;
+      home = "/var/lib/git";
+      shell = "${giteaShell}/bin/gitea-shell";
+    };
+  users.groups.git = { };
 
   services.openssh.extraConfig = ''
     Match User git
@@ -195,6 +216,7 @@
   environment.systemPackages = with pkgs; [
     tpm2-tools
     ldns
+    zfs
   ];
 
   services.sshTpmAgent.enable = lib.mkForce false;
@@ -208,11 +230,27 @@
     pinentryPackage = pkgs.pinentry-curses;
   };
 
+  virtualisation.cri-o.settings = {
+    crio.runtime = {
+      # default_runtime = "nvidia";
+      runtimes.nvidia = {
+        runtime_path = "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime";
+        # runtime_path = "${pkgs.nvidia-container-toolkit}/bin/nvidia-container-runtime";
+        runtime_type = "oci";
+      };
+    };
+  };
+
+  environment.etc."nvidia-container-runtime/config.toml".text = ''
+    [nvidia-container-runtime]
+    runtimes = ["${pkgs.crun}/bin/crun"]
+  '';
+
   services = {
-    # beesd.filesystems.root = {
-    #   spec = "/";
-    #   hashTableSizeMB = 512;
-    # };
+    smartd = {
+      enable = true;
+      defaults.monitored = "-a -o on -S on -n standby,q -s (S/../.././02|L/../../7/04) -W 4,45,55 -l error -l xerror -l selftest";
+    };
 
     cockpit = {
       # enable = true;
@@ -229,14 +267,23 @@
           "10.42.0.0/24"
         ];
 
-        ips = [
-          "fd7a:115c:a1e0::f201:2d35"
-          "100.116.45.53"
+        advertisedRoutes = [
+          # "fd42:78a5:2c09::200/120"
         ];
 
-        externalIPs = [
+        ips = [
           "2a02:a313:43e4:7080::7dc5"
           "192.168.0.10"
+        ];
+
+        # ips = [
+        #   "fd7a:115c:a1e0::f201:2d35"
+        #   "100.116.45.53"
+        # ];
+
+        externalIPs = [
+          #   "2a02:a313:43e4:7080::7dc5"
+          #   "192.168.0.10"
         ];
       };
     };

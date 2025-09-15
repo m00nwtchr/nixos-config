@@ -6,7 +6,8 @@
   system,
   osConfig,
   ...
-}: {
+}:
+{
   home.packages = with pkgs; [
     # Kubernetes
     kubectl
@@ -41,7 +42,7 @@
       SocketMode = 0660;
     };
     Install = {
-      WantedBy = ["sockets.target"];
+      WantedBy = [ "sockets.target" ];
     };
   };
 }

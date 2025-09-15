@@ -3,11 +3,12 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   boot.initrd.availableKernelModules = [
     "asus_wmi"
   ];
-  boot.extraModulePackages = [];
+  boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
     device = "/dev/mapper/root";

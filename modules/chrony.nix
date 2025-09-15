@@ -3,8 +3,9 @@
   config,
   lib,
   ...
-}: {
-  imports = [];
+}:
+{
+  imports = [ ];
 
   networking.timeServers = [
     "time.cloudflare.net"

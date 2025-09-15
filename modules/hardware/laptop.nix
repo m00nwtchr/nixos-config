@@ -3,13 +3,14 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   config = lib.mkIf config.facter.detected.isLaptop {
     systemd.targets = {
       ac = {
         description = "AC power";
         unitConfig = {
-          Conflicts = ["battery.target"];
+          Conflicts = [ "battery.target" ];
           DefaultDependencies = false;
           # StopWhenUnneeded = true;
         };
@@ -17,7 +18,7 @@
       battery = {
         description = "Battery power";
         unitConfig = {
-          Conflicts = ["ac.target"];
+          Conflicts = [ "ac.target" ];
           DefaultDependencies = false;
           # StopWhenUnneeded = true;
         };

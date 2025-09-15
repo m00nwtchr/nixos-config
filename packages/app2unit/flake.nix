@@ -11,41 +11,46 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
-    app2unit-src,
-  }: let
-    mkPkg = pkgs:
-      pkgs.stdenv.mkDerivation {
-        pname = "app2unit";
-        version = "1.0";
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      app2unit-src,
+    }:
+    let
+      mkPkg =
+        pkgs:
+        pkgs.stdenv.mkDerivation {
+          pname = "app2unit";
+          version = "1.0";
 
-        src = app2unit-src;
+          src = app2unit-src;
 
-        installPhase = ''
-          mkdir -p $out/bin
-          install -m 755 $src/app2unit $out/bin/app2unit
-          ln -s $out/bin/app2unit $out/bin/app2unit-open
-        '';
+          installPhase = ''
+            mkdir -p $out/bin
+            install -m 755 $src/app2unit $out/bin/app2unit
+            ln -s $out/bin/app2unit $out/bin/app2unit-open
+          '';
 
-        meta = with pkgs.lib; {
-          description = "Utility script for managing application-to-systemd unit conversions.";
-          homepage = "https://github.com/Vladimir-csp/app2unit";
-          license = licenses.gpl3;
-          maintainers = with maintainers; [];
+          meta = with pkgs.lib; {
+            description = "Utility script for managing application-to-systemd unit conversions.";
+            homepage = "https://github.com/Vladimir-csp/app2unit";
+            license = licenses.gpl3;
+            maintainers = with maintainers; [ ];
+          };
         };
-      };
-  in
+    in
     flake-utils.lib.eachDefaultSystem (
-      system: let
+      system:
+      let
         pkgs = import nixpkgs {
           inherit system;
         };
 
         app2unit = mkPkg pkgs;
-      in {
+      in
+      {
         packages.default = app2unit;
         apps.default = flake-utils.lib.mkApp {
           drv = app2unit;
@@ -53,6 +58,6 @@
       }
     )
     // {
-      overlays.default = final: prev: {app2unit = mkPkg prev;};
+      overlays.default = final: prev: { app2unit = mkPkg prev; };
     };
 }

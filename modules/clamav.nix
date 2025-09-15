@@ -3,7 +3,8 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   virusEvent = pkgs.writeShellScript "virus-event.bash" ''
     #!/bin/bash
     PATH=/usr/bin
@@ -16,7 +17,8 @@
             ${pkgs.libnotify}/bin/notify-send -w -u critical -i dialog-warning "Virus found!" "$ALERT"
     done
   '';
-in {
+in
+{
   environment.systemPackages = with pkgs; [
     clamav
   ];
