@@ -12,7 +12,7 @@
 		../podman.nix
 
 		../home-manager.nix
-		../greeter.nix
+		# ../greeter.nix
 		../../users/m00n.nix
 	];
 
@@ -125,12 +125,15 @@
 		pkcs11.enable = true;
 		tctiEnvironment.enable = true;
 	};
-	security.pam.services = {
-		login.u2fAuth = true;
-		sudo.u2fAuth = true;
-		swaylock = {
-			u2fAuth = true;
-			unixAuth = false;
+	security.pam = {
+		u2f.enable = true;
+		services = {
+			login.u2fAuth = true;
+			sudo.u2fAuth = true;
+			swaylock = {
+				u2fAuth = true;
+				# unixAuth = false;
+			};
 		};
 	};
 	security.rtkit.enable = true;

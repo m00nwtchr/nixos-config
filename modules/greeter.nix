@@ -17,7 +17,7 @@
 	};
 
 	services.greetd = {
-		enable = true;
+		enable = false;
 		settings = {
 			default_session = {
 				# TUI (tiny, fastest):
