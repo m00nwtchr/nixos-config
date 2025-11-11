@@ -1,5 +1,6 @@
 {
 	config,
+	osConfig,
 	lib,
 	pkgs,
 	...
@@ -64,6 +65,19 @@
 		history = {
 			size = 10000;
 			path = "${config.xdg.stateHome}/zsh/history";
+		};
+	};
+
+	programs.atuin = {
+		enable = true;
+		settings = {
+			auto_sync = true;
+			sync_frequency = "5m";
+			sync_address = "https://atuin.m00nlit.dev";
+			search_mode = "fuzzy";
+
+			key_path = osConfig.sops.secrets."atuin_key".path;
+			session_path = osConfig.sops.secrets."atuin/session".path;
 		};
 	};
 

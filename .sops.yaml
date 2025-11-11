@@ -16,7 +16,7 @@ creation_rules:
       age:
       - *m00nsrv
       - *bastion
-  - path_regex: ^secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: ^secrets/[^/]+\.(yaml|json|env|ini|txt)$
     key_groups:
     - pgp:
       - *personal

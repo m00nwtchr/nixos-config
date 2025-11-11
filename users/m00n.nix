@@ -28,5 +28,16 @@
 	};
 	users.groups.m00n.gid = 1000;
 
+	sops.secrets.atuin_key = {
+		sopsFile = ../secrets/atuin_key.txt;
+		format = "binary";
+		owner = config.users.users.m00n.name;
+		group = config.users.users.m00n.group;
+	};
+	sops.secrets."atuin/session" = {
+		owner = config.users.users.m00n.name;
+		group = config.users.users.m00n.group;
+	};
+
 	home-manager.users.m00n = import ../home;
 }

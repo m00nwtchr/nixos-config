@@ -157,14 +157,14 @@
 
 	programs.git = {
 		enable = true;
-		userName = "m00nwtchr";
-		userEmail = "m00nwtchr@duck.com";
 		signing = {
 			key = "0xDF3CEC6BF015D41D";
 			signByDefault = true;
 		};
 		lfs.enable = true;
-		extraConfig = {
+		settings = {
+			user.name = "m00nwtchr";
+			user.email = "m00nwtchr@duck.com";
 			pull.rebase = false;
 			init.defaultBranch = "master";
 			submodule.recurse = true;
