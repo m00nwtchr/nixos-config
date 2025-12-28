@@ -57,12 +57,12 @@
 		...
 	} @ inputs: {
 		nixosConfigurations = {
-			m00npc =
+			kepler =
 				nixpkgs.lib.nixosSystem rec {
 					system = "x86_64-linux";
 					specialArgs = {inherit inputs;};
 					modules = [
-						./hosts/m00npc
+						./hosts/kepler
 						nixos-facter-modules.nixosModules.facter
 						sops-nix.nixosModules.sops
 						lanzaboote.nixosModules.lanzaboote
@@ -76,42 +76,42 @@
 					];
 				};
 
-			m00n =
-				nixpkgs.lib.nixosSystem rec {
-					system = "x86_64-linux";
-					specialArgs = {inherit inputs;};
-					modules = [
-						./hosts/m00n
-						nixos-facter-modules.nixosModules.facter
-						sops-nix.nixosModules.sops
-						lanzaboote.nixosModules.lanzaboote
-						home-manager.nixosModules.home-manager
-						({pkgs, ...}: {
-								home-manager.extraSpecialArgs = {
-									inherit inputs;
-									inherit system;
-								};
-							})
-					];
-				};
+			# m00n =
+			# 	nixpkgs.lib.nixosSystem rec {
+			# 		system = "x86_64-linux";
+			# 		specialArgs = {inherit inputs;};
+			# 		modules = [
+			# 			./hosts/m00n
+			# 			nixos-facter-modules.nixosModules.facter
+			# 			sops-nix.nixosModules.sops
+			# 			lanzaboote.nixosModules.lanzaboote
+			# 			home-manager.nixosModules.home-manager
+			# 			({pkgs, ...}: {
+			# 					home-manager.extraSpecialArgs = {
+			# 						inherit inputs;
+			# 						inherit system;
+			# 					};
+			# 				})
+			# 		];
+			# 	};
 
-			m00nsrv =
+			ganymede =
 				nixpkgs.lib.nixosSystem rec {
 					system = "x86_64-linux";
 					specialArgs = {inherit inputs;};
 					modules = [
-						./hosts/m00nsrv
+						./hosts/ganymede
 						nixos-facter-modules.nixosModules.facter
 						sops-nix.nixosModules.sops
 						lanzaboote.nixosModules.lanzaboote
 					];
 				};
-			bastion =
+			beacon =
 				nixpkgs.lib.nixosSystem rec {
 					system = "aarch64-linux";
 					specialArgs = {inherit inputs;};
 					modules = [
-						./hosts/bastion
+						./hosts/beacon
 						nixos-facter-modules.nixosModules.facter
 						sops-nix.nixosModules.sops
 					];

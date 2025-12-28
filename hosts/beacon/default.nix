@@ -22,7 +22,7 @@
 		"crash_kexec_post_notifiers"
 	];
 
-	networking.hostName = "bastion"; # Define your hostname.
+	networking.hostName = "beacon"; # Define your hostname.
 
 	networking.hosts = {
 		"100.116.45.53" = ["m00nlit.dev"];

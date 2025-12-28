@@ -21,7 +21,7 @@
 				serverAliveCountMax = 3;
 			};
 
-			m00nsrv = {
+			ganymede = {
 				host = "m00nsrv";
 				user = "root";
 				extraOptions = {
