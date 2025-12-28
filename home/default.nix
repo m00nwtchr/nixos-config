@@ -76,11 +76,11 @@
 		protontricks
 		qdirstat
 
-		calibre
+		# calibre
 		spotify
 
 		recoll
-		thunderbird
+		# thunderbird
 	];
 
 	# Home Manager is pretty good at managing dotfiles. The primary way to manage

@@ -46,7 +46,7 @@ output * bg $wallpaper fill
 output "'ASUSTek COMPUTER INC PA27JCV T6L\xff\xff\xff\xff\xff\xff\xff\xff\xff'" {
 	resolution 3840x2160
 	scale 1.75
-	# render_bit_depth 10
+	render_bit_depth 10
 	# hdr off
 }
 #

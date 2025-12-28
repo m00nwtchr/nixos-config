@@ -20,14 +20,14 @@
 		gh # GitHub CLI
 		git-filter-repo
 
-		mold # Linker
-		lldb
+		# mold # Linker
+		# lldb
 
 		inputs.alejandra.defaultPackage.${system}
 
 		# IDE
 		# jetbrains.idea-ultimate
-		(jetbrains.idea-ultimate.override {
+		(jetbrains.idea.override {
 				jdk = pkgs.openjdk21;
 			})
 		vale

@@ -129,16 +129,39 @@
 				command = "${pkgs.systemd}/bin/loginctl lock-session";
 			}
 		];
-		events = [
-			{
-				event = "before-sleep";
-				command = "${pkgs.systemd}/bin/loginctl lock-session";
-			}
-			{
-				event = "lock";
-				command = "/home/m00n/.config/sway/scripts/lock.sh -f -S";
-			}
-		];
+		events = let
+			lockScript =
+				pkgs.writeShellScript "lock.sh" ''
+					source "${config.xdg.stateHome}/wallust/colors.sh"
+
+					exec ${pkgs.swaylock-effects}/bin/swaylock --indicator-radius 160 \
+						--indicator-thickness 20 \
+						--inside-color 00000000 \
+						--inside-clear-color 00000000 \
+						--inside-ver-color 00000000 \
+						--inside-wrong-color 00000000 \
+						--key-hl-color "$color1" \
+						--bs-hl-color "$color2" \
+						--ring-color "$background" \
+						--ring-clear-color "$color2" \
+						--ring-wrong-color "$color5" \
+						--ring-ver-color "$color3" \
+						--line-uses-ring \
+						--line-color 00000000 \
+						--font 'MesloLGS NF:style=Thin,Regular 40' \
+						--text-color 00000000 \
+						--text-clear-color 00000000 \
+						--text-wrong-color 00000000 \
+						--text-ver-color 00000000 \
+						--separator-color 00000000 \
+						--effect-blur 10x10 \
+						--effect-compose "50%,48%;20%x20%;center;/usr/share/archlinux/icons/archlinux-icon-crystal-64.svg" \
+						"$@"
+				'';
+		in {
+			before-sleep = "${pkgs.systemd}/bin/loginctl lock-session";
+			lock = "${lockScript} -f -S";
+		};
 	};
 
 	# Systemd User Services
