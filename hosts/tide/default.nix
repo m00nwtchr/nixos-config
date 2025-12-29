@@ -3,6 +3,7 @@
 	config,
 	lib,
 	pkgs,
+	inputs,
 	...
 }: {
 	imports = [
@@ -13,15 +14,14 @@
 
 		../../modules/gaming.nix
 
-		./hardware-configuration.nix
+		./disk-config.nix
+		inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series
 	];
 
 	nixpkgs.config.rocmSupport = true;
 	nixpkgs.overlays = [];
 
 	# boot.kernelParams = [
-	# 	"tsc=unstable"
-	# 	"clocksource=hpet"
 	# ];
 	# boot.plymouth.enable = false;
 

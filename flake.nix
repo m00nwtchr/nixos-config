@@ -21,8 +21,14 @@
 			url = "github:nix-community/lanzaboote/v0.4.3";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
+		disko = {
+			url = "github:nix-community/disko";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 
 		nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
+		nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
 		sops-nix = {
 			url = "github:Mic92/sops-nix";
 			inputs.nixpkgs.follows = "nixpkgs";
