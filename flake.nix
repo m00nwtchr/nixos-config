@@ -57,7 +57,9 @@
 		...
 	} @ inputs: {
 		nixosConfigurations = let
-			mkSystem = system: name:
+			mkSystem = dir: let
+				system = (builtins.fromJSON (builtins.readFile (dir + "/facter.json"))).system;
+			in
 				nixpkgs.lib.nixosSystem {
 					inherit system;
 					specialArgs = {
@@ -65,27 +67,21 @@
 						inherit system;
 					};
 					modules = [
-						./hosts/${system}/${name}
+						dir
 					];
 				};
 
 			onlyDirs = dir:
 				nixpkgs.lib.attrNames (nixpkgs.lib.filterAttrs (_: t: t == "directory") (builtins.readDir dir));
 
-			systems = onlyDirs ./hosts;
+			hostNames = onlyDirs ./hosts;
 
 			hostPairs =
-				nixpkgs.lib.concatMap (
-					system: let
-						hostNames = onlyDirs (./hosts + "/${system}");
-					in
-						map (name: {
-								inherit name;
-								value = mkSystem system name;
-							})
-						hostNames
-				)
-				systems;
+				map (name: {
+						inherit name;
+						value = mkSystem ./hosts/${name};
+					})
+				hostNames;
 		in
 			nixpkgs.lib.listToAttrs hostPairs;
 	};
