@@ -1,5 +1,6 @@
 {
 	config,
+	osConfig,
 	lib,
 	pkgs,
 	...
@@ -11,31 +12,30 @@
 
 	uwsm-game = pkgs.writeShellScriptBin "uwsm-game" (builtins.readFile ./bin/uwsm-game.sh);
 in {
-	xdg.configFile."uwsm/env".text = ''
-		source "$HOME/scripts/funcs"
-		if ifmod nvidia_drm; then
+	xdg.configFile."uwsm/env".text =
+		lib.optionalString osConfig.facter.detected.nvidia ''
 			export GBM_BACKEND=nvidia-drm
 			export __GLX_VENDOR_LIBRARY_NAME=nvidia
 			export LIBVA_DRIVER_NAME=nvidia
 			#export WLR_NO_HARDWARE_CURSORS=1
 			#export XWAYLAND_NO_GLAMOR=1
 			#export WLR_RENDERER=vulkan
-		fi
+		''
+		+ ''
+			export QT_AUTO_SCREEN_SCALE_FACTOR=1
+			export QT_QPA_PLATFORM=wayland
+			export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+			export QT_QPA_PLATFORMTHEME=qt6ct
 
-		export QT_AUTO_SCREEN_SCALE_FACTOR=1
-		export QT_QPA_PLATFORM=wayland
-		export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-		export QT_QPA_PLATFORMTHEME=qt6ct
+			export _JAVA_AWT_WM_NONREPARENTING=1
+			export XCURSOR_SIZE=24
 
-		export _JAVA_AWT_WM_NONREPARENTING=1
-		export XCURSOR_SIZE=24
-
-		export MOZ_ENABLE_WAYLAND=1
-		export ECORE_EVAS_ENGINE=wayland_egl
-		export ELM_ENGINE=wayland_egl
-		export SDL_VIDEODRIVER=wayland
-		export SDL_AUDIODRIVER=pipewire
-	'';
+			export MOZ_ENABLE_WAYLAND=1
+			export ECORE_EVAS_ENGINE=wayland_egl
+			export ELM_ENGINE=wayland_egl
+			export SDL_VIDEODRIVER=wayland
+			export SDL_AUDIODRIVER=pipewire
+		'';
 
 	home.packages = with pkgs; [
 		app2unit
