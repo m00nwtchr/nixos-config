@@ -1,4 +1,5 @@
 {
+	self,
 	config,
 	osConfig,
 	lib,
@@ -23,7 +24,13 @@
 		autosuggestion.enable = true;
 		syntaxHighlighting.enable = true;
 
-		initContent =
+		initContent = let
+			p10k =
+				builtins.path {
+					path = ./zsh/p10k.zsh;
+					name = "p10k.zsh";
+				};
+		in
 			lib.mkMerge [
 				(lib.mkBefore
 					''
@@ -48,7 +55,7 @@
 
 				''
 					source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-					[[ ! -f "$ZDOTDIR/p10k.zsh" ]] || source "$ZDOTDIR/p10k.zsh"
+					source ${p10k}
 				''
 			];
 
