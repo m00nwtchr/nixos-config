@@ -7,7 +7,7 @@ keys:
   # Desktops
   - &kepler age1gwv3knvgfrk26ythtrs2ed4235x8tu79lad459vx3e92krth6phq6t3ca3
   - &ember age1pzfypmreq7znfawswqes7c0hcfehna6du69exhd6rq403sxtny9spje4kz
-  - &tide age1pzfypmreq7znfawswqes7c0hcfehna6du69exhd6rq403sxtny9spje4kz # Replace with actual key once machine arrives
+  - &tide age1g75gk36leqv55yjdu2ulxutnkgye9f82ezhrkcllss3wejc6wewq6kyavs
   # Servers
   - &ganymede age18847yw0y9zrvf9gmeu2m62vhukpc653nddvyjeazlc9gxz8dyecqmwsyga
   - &beacon age1st7xhv6tx87lgh4prgr382uvau4tstqxzzjj2ds7vqr5qd7hu53qw5qt3z
@@ -26,31 +26,32 @@ creation_rules:
       age:
       - *kepler
       - *ember
-  - path_regex: hosts/x86_64-linux/kepler/secrets/[^/]+\.(yaml|json|env|ini)$
+      - *tide
+  - path_regex: hosts/kepler/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal
       age:
       - *kepler
-  - path_regex: hosts/x86_64-linux/ember/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/ember/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal
       age:
       - *ember
-  - path_regex: hosts/x86_64-linux/ganymede/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/ganymede/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal
       age:
       - *ganymede
-  - path_regex: hosts/aarch64-linux/beacon/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/beacon/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal
       age:
       - *beacon
-  - path_regex: hosts/x86_64-linux/tide/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/tide/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal

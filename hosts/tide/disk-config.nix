@@ -17,7 +17,7 @@
         partitions = {
           ESP = {
             size = "512M";
-            type = "E00";
+            type = "EF00";
             content = {
               type = "filesystem";
               format = "vfat";

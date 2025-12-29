@@ -32,7 +32,7 @@
 
 			services = {
 				auto-cpufreq = {
-					enable = true;
+					enable = false;
 					settings = {
 						battery = {
 							governor = "powersave";
