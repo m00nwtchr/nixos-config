@@ -13,6 +13,10 @@
 		then config.facter.report
 		else {};
 in {
+	imports = [
+		inputs.nixos-facter-modules.nixosModules.facter
+	];
+
 	config.facter.reportPath = lib.mkIf reportExists defaultFacterPath;
 
 	options.facter.detected.wireless =

@@ -3,6 +3,7 @@
 	pkgs,
 	lib,
 	inputs,
+	system,
 	username,
 	...
 }: {
@@ -13,8 +14,15 @@
 
 		../home-manager.nix
 		# ../greeter.nix
+
+		inputs.home-manager.nixosModules.home-manager
 		../../users/m00n.nix
 	];
+
+	home-manager.extraSpecialArgs = {
+		inherit inputs;
+		inherit system;
+	};
 
 	nixpkgs.config = {
 		allowUnfree = true;

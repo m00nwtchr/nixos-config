@@ -1,11 +1,13 @@
 {
 	pkgs,
 	lib,
+	inputs,
 	username,
 	...
 }: {
 	imports = [
 		./default.nix
+		inputs.lanzaboote.nixosModules.lanzaboote
 	];
 
 	boot.loader.systemd-boot = {

@@ -26,31 +26,31 @@ creation_rules:
       age:
       - *kepler
       - *ember
-  - path_regex: hosts/kepler/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/x86_64-linux/kepler/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal
       age:
       - *kepler
-  - path_regex: hosts/ember/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/x86_64-linux/ember/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal
       age:
       - *ember
-  - path_regex: hosts/ganymede/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/x86_64-linux/ganymede/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal
       age:
       - *ganymede
-  - path_regex: hosts/beacon/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/aarch64-linux/beacon/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal
       age:
       - *beacon
-  - path_regex: hosts/tide/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/x86_64-linux/tide/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
       - *personal

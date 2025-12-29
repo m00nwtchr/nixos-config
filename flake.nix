@@ -56,66 +56,37 @@
 		home-manager,
 		...
 	} @ inputs: {
-		nixosConfigurations = {
-			kepler =
-				nixpkgs.lib.nixosSystem rec {
-					system = "x86_64-linux";
-					specialArgs = {inherit inputs;};
+		nixosConfigurations = let
+			mkSystem = system: name:
+				nixpkgs.lib.nixosSystem {
+					inherit system;
+					specialArgs = {
+						inherit inputs;
+						inherit system;
+					};
 					modules = [
-						./hosts/kepler
-						nixos-facter-modules.nixosModules.facter
-						sops-nix.nixosModules.sops
-						lanzaboote.nixosModules.lanzaboote
-						home-manager.nixosModules.home-manager
-						({pkgs, ...}: {
-								home-manager.extraSpecialArgs = {
-									inherit inputs;
-									inherit system;
-								};
+						./hosts/${system}/${name}
+					];
+				};
+
+			onlyDirs = dir:
+				nixpkgs.lib.attrNames (nixpkgs.lib.filterAttrs (_: t: t == "directory") (builtins.readDir dir));
+
+			systems = onlyDirs ./hosts;
+
+			hostPairs =
+				nixpkgs.lib.concatMap (
+					system: let
+						hostNames = onlyDirs (./hosts + "/${system}");
+					in
+						map (name: {
+								inherit name;
+								value = mkSystem system name;
 							})
-					];
-				};
-
-			# m00n =
-			# 	nixpkgs.lib.nixosSystem rec {
-			# 		system = "x86_64-linux";
-			# 		specialArgs = {inherit inputs;};
-			# 		modules = [
-			# 			./hosts/m00n
-			# 			nixos-facter-modules.nixosModules.facter
-			# 			sops-nix.nixosModules.sops
-			# 			lanzaboote.nixosModules.lanzaboote
-			# 			home-manager.nixosModules.home-manager
-			# 			({pkgs, ...}: {
-			# 					home-manager.extraSpecialArgs = {
-			# 						inherit inputs;
-			# 						inherit system;
-			# 					};
-			# 				})
-			# 		];
-			# 	};
-
-			ganymede =
-				nixpkgs.lib.nixosSystem rec {
-					system = "x86_64-linux";
-					specialArgs = {inherit inputs;};
-					modules = [
-						./hosts/ganymede
-						nixos-facter-modules.nixosModules.facter
-						sops-nix.nixosModules.sops
-						lanzaboote.nixosModules.lanzaboote
-					];
-				};
-			beacon =
-				nixpkgs.lib.nixosSystem rec {
-					system = "aarch64-linux";
-					specialArgs = {inherit inputs;};
-					modules = [
-						./hosts/beacon
-						nixos-facter-modules.nixosModules.facter
-						sops-nix.nixosModules.sops
-					];
-				};
-		};
+						hostNames
+				)
+				systems;
+		in
+			nixpkgs.lib.listToAttrs hostPairs;
 	};
 }
