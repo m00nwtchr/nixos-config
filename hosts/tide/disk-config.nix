@@ -7,6 +7,9 @@
 		inputs.disko.nixosModules.disko
 	];
 
+	boot.resumeDevice = "/dev/mapper/root";
+	boot.kernelParams = ["resume_offset=533760"];
+
 	disko.devices = {
 		disk.root = {
 			device = lib.mkDefault "/dev/nvme0n1";
