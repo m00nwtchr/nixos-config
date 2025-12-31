@@ -27,11 +27,8 @@
 
 	networking.hostName = "tide"; # Define your hostname.
 
-	# specialisation.noPlymouth.configuration = {
-	# 	boot.plymouth.enable = lib.mkForce false;
-	# };
-
 	security.tpm2.enable = true;
+	facter.detected.wireless = true;
 
 	# List packages installed in system profile. To search, run:
 	# $ nix search wget
@@ -47,11 +44,12 @@
 
 		tailscale.enable = true;
 
-		# ollama = {
-		# 	enable = false;
-		# 	environmentVariables = {
-		# 	};
-		# };
+		ollama = {
+			enable = true;
+			package = pkgs.ollama-vulkan;
+			environmentVariables = {
+			};
+		};
 	};
 
 	# This value determines the NixOS release from which the default

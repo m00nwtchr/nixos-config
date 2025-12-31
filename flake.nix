@@ -5,7 +5,7 @@
 		extra-substituters = [
 			# nix community's cache server
 			"https://nix-community.cachix.org"
-			"https://attic.m00nlit.dev/m00n"
+			# "https://attic.m00nlit.dev/m00n"
 		];
 
 		extra-trusted-public-keys = [

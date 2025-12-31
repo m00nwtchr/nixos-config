@@ -53,8 +53,20 @@
 				;;
 			esac
 		'';
+
+	iccProfiles = {
+		framework16 =
+			builtins.path {
+				path = ./icc/BOE_CQ_______NE160QDM_NZ6.icm;
+			};
+	};
 in {
 	xdg.configFile."sway/config".source = configSrc;
+
+	xdg.configFile."sway/config.d/10-icc.conf".text = ''
+		output "BOE NE160QDM-NZ6 Unknown" color_profile icc "${iccProfiles.framework16}"
+	'';
+
 	xdg.configFile."sway/scripts/screenshot.sh".source = screenshotScript;
 	xdg.configFile."sway/scripts/media-toggle.sh".source = mediaToggleScript;
 	xdg.configFile."sway/scripts/clamshell-state.sh".source = clamshellStateScript;

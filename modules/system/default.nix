@@ -22,7 +22,7 @@
 			use-xdg-base-directories = true;
 			download-buffer-size = 524288000; # 500 MiB
 			substituters = [
-				"https://attic.m00nlit.dev/m00n"
+				# "https://attic.m00nlit.dev/m00n"
 			];
 			trusted-public-keys = [
 				"m00n:kbAQdFU/e4Vec5EnGwobPlNJ98r33SMjwkuWLV/h7lo="

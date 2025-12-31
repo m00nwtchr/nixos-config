@@ -7,9 +7,7 @@
 }: {
 	home.packages = with pkgs; [
 		# IDE
-		(jetbrains.rust-rover.override {
-				jdk = pkgs.openjdk21;
-			})
+		jetbrains.rust-rover
 	];
 
 	home.sessionVariables = {

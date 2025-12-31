@@ -28,6 +28,11 @@
 			services.udev.extraRules = ''
 				SUBSYSTEM=="power_supply", KERNEL=="AC?", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl start battery.target"
 				SUBSYSTEM=="power_supply", KERNEL=="AC?", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl start ac.target"
+
+				ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
+				ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
+				ACTION=="add", SUBSYSTEM=="leds", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/leds/%k/brightness"
+				ACTION=="add", SUBSYSTEM=="leds", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/leds/%k/brightness"
 			'';
 
 			services = {

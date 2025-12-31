@@ -183,6 +183,8 @@
 		containers.enable = true;
 	};
 
+	hardware.alsa.enablePersistence = true;
+
 	# mDNS
 	networking.firewall.allowedUDPPorts = [5353];
 	services = {
@@ -198,7 +200,7 @@
 		};
 
 		usbguard = {
-			enable = true;
+			enable = false;
 			dbus.enable = true;
 			IPCAllowedGroups = ["wheel"];
 		};

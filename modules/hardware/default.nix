@@ -22,5 +22,10 @@
 			};
 		};
 
+	hardware.wirelessRegulatoryDatabase = config.facter.detected.wireless;
+	boot.extraModprobeConfig = ''
+		options cfg80211 ieee80211_regdom="PL"
+	'';
+
 	hardware.bluetooth.powerOnBoot = !config.facter.detected.isLaptop;
 }

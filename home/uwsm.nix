@@ -19,9 +19,10 @@ in {
 			export LIBVA_DRIVER_NAME=nvidia
 			#export WLR_NO_HARDWARE_CURSORS=1
 			#export XWAYLAND_NO_GLAMOR=1
-			#export WLR_RENDERER=vulkan
 		''
 		+ ''
+			export WLR_RENDERER=vulkan
+
 			export QT_AUTO_SCREEN_SCALE_FACTOR=1
 			export QT_QPA_PLATFORM=wayland
 			export QT_WAYLAND_DISABLE_WINDOWDECORATION=1

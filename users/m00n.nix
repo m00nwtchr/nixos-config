@@ -19,6 +19,7 @@
 			[
 				"wheel"
 				"adbusers"
+				"video"
 			]
 			++ (
 				if config.security.tpm2.enable

@@ -104,8 +104,14 @@
 		m00n:yxO+L99UucTy+hvAd5asbRx8SZRIr8SG3GI6QWtWYv5fUxzxa5D/tjZPv30Q8+75MaaE9ntMdsrJE4RxR0O1Aw==,nwYX9cckDOdOkTotQbDHQ4H8B2Zb/ug879VKUyrsaZ8pdRmGvORQgd/XFeCwMdJFtITuYkeK8XncFXWz0Rq9Xg==,es256,+presence+pin
 	'';
 
+	xdg.mimeApps.defaultApplications = {
+		"x-scheme-handler/http" = ["librewolf.desktop"];
+		"x-scheme-handler/https" = ["librewolf.desktop"];
+	};
+
 	programs.librewolf = {
 		enable = true;
+
 		nativeMessagingHosts = with pkgs; [
 			pywalfox-native
 			ff2mpv
