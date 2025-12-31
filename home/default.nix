@@ -1,5 +1,6 @@
 {
 	config,
+	osConfig,
 	lib,
 	pkgs,
 	system,
@@ -104,9 +105,11 @@
 		m00n:yxO+L99UucTy+hvAd5asbRx8SZRIr8SG3GI6QWtWYv5fUxzxa5D/tjZPv30Q8+75MaaE9ntMdsrJE4RxR0O1Aw==,nwYX9cckDOdOkTotQbDHQ4H8B2Zb/ug879VKUyrsaZ8pdRmGvORQgd/XFeCwMdJFtITuYkeK8XncFXWz0Rq9Xg==,es256,+presence+pin
 	'';
 
-	xdg.mimeApps.defaultApplications = {
-		"x-scheme-handler/http" = ["librewolf.desktop"];
-		"x-scheme-handler/https" = ["librewolf.desktop"];
+	xdg.mimeApps = {
+		enable = true;
+		defaultApplicationPackages = [
+			config.programs.librewolf.package
+		];
 	};
 
 	programs.librewolf = {
@@ -173,7 +176,38 @@
 	};
 
 	services = {
-		easyeffects.enable = true;
+		easyeffects = let
+			presetsPath = ../hosts/${osConfig.networking.hostName}/easyeffects;
+
+			entries =
+				if builtins.pathExists presetsPath
+				then builtins.readDir presetsPath
+				else {};
+			presetFiles =
+				lib.filterAttrs
+				(name: type: type == "regular" && lib.hasSuffix ".json" name)
+				entries;
+			presets =
+				lib.mapAttrs'
+				(
+					name: _: let
+						key = lib.removeSuffix ".json" name;
+						path = presetsPath + "/${name}";
+					in
+						lib.nameValuePair key (builtins.fromJSON (builtins.readFile path))
+				)
+				presetFiles;
+
+			presetNames = lib.attrNames presets;
+			preset =
+				if builtins.length presetNames == 1
+				then builtins.head presetNames
+				else null;
+		in {
+			enable = true;
+			extraPresets = presets;
+			inherit preset;
+		};
 
 		syncthing = {
 			enable = true;
