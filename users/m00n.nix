@@ -51,6 +51,5 @@
 		group = config.users.users.m00n.group;
 	};
 
-
 	home-manager.users.m00n = import ../home;
 }

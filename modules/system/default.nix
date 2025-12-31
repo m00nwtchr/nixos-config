@@ -7,7 +7,6 @@
 }: {
 	imports = [
 		../sops-nix.nix
-		../facter.nix
 
 		# ../upg.nix
 		../hardware

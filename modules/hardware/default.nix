@@ -8,6 +8,7 @@
 		./laptop.nix
 		# ./btrfs.nix
 		./nvidia.nix
+		./facter.nix
 	];
 
 	networking.wireless.iwd.enable = config.facter.detected.wireless;
