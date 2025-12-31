@@ -40,5 +40,17 @@
 		group = config.users.users.m00n.group;
 	};
 
+	sops.secrets."proton/password" = {
+		sopsFile = ../secrets/proton.yaml;
+		owner = config.users.users.m00n.name;
+		group = config.users.users.m00n.group;
+	};
+	sops.secrets."proton/otp_secret_key" = {
+		sopsFile = ../secrets/proton.yaml;
+		owner = config.users.users.m00n.name;
+		group = config.users.users.m00n.group;
+	};
+
+
 	home-manager.users.m00n = import ../home;
 }

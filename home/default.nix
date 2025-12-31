@@ -12,6 +12,7 @@
 		./wayland.nix
 		./shell.nix
 		./dev.nix
+		./rclone.nix
 
 		./modules/dotfiles.nix
 		inputs.sops-nix.homeManagerModule
@@ -77,7 +78,7 @@
 		protontricks
 		qdirstat
 
-		# calibre
+		calibre
 		spotify
 
 		recoll
@@ -206,7 +207,7 @@
 		in {
 			enable = true;
 			extraPresets = presets;
-			inherit preset;
+			preset = lib.mkIf (preset != null) preset;
 		};
 
 		syncthing = {
@@ -216,7 +217,7 @@
 		};
 
 		activitywatch = {
-			enable = true;
+			enable = false;
 			package = pkgs.aw-server-rust;
 
 			watchers = {
