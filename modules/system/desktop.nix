@@ -189,7 +189,6 @@
 	networking.firewall.allowedUDPPorts = [5353];
 	services = {
 		logind.settings.Login = {
-			HandleLidSwitch = "suspend-then-hibernate";
 			HibernateDelaySec = 900;
 		};
 

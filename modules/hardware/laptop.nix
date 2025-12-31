@@ -8,7 +8,7 @@
 		lib.mkIf config.facter.detected.isLaptop {
 			systemd.targets = {
 				ac = {
-					description = "AC power";
+					description = "AC Power Profile";
 					unitConfig = {
 						Conflicts = ["battery.target"];
 						DefaultDependencies = false;
@@ -16,7 +16,7 @@
 					};
 				};
 				battery = {
-					description = "Battery power";
+					description = "Battery Power Profile";
 					unitConfig = {
 						Conflicts = ["ac.target"];
 						DefaultDependencies = false;
@@ -26,8 +26,11 @@
 			};
 
 			services.udev.extraRules = ''
-				SUBSYSTEM=="power_supply", KERNEL=="AC?", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl start battery.target"
-				SUBSYSTEM=="power_supply", KERNEL=="AC?", ATTR{online}=="1", RUN+="${pkgs.systemd}/bin/systemctl start ac.target"
+				ACTION=="change", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_TYPE}=="Mains", TAG+="systemd", \
+					ENV{POWER_SUPPLY_ONLINE}=="1", ENV{SYSTEMD_WANTS}+="ac.target"
+
+				ACTION=="change", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_TYPE}=="Mains", TAG+="systemd", \
+					ENV{POWER_SUPPLY_ONLINE}=="0", ENV{SYSTEMD_WANTS}+="battery.target"
 
 				ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness"
 				ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
@@ -36,6 +39,14 @@
 			'';
 
 			services = {
+				logind.settings = {
+					Login = {
+						HandleLidSwitch = "suspend";
+						HandleLidSwitchExternalPower = "lock";
+						HandleLidSwitchDocked = "ignore";
+					};
+				};
+
 				auto-cpufreq = {
 					enable = false;
 					settings = {
