@@ -3194,7 +3194,7 @@
           "/dev/input/by-id/usb-Framework_Laptop_16_Numpad_Module_FRAKDKEN0100000000-event-kbd",
           "/dev/input/by-path/pci-0000:c3:00.0-usb-0:3.2:1.0-event-kbd",
           "/dev/input/by-path/pci-0000:c3:00.0-usbv2-0:3.2:1.0-event-kbd",
-          "/dev/input/event2"
+          "/dev/input/event1"
         ],
         "resources": [
           {
@@ -3297,7 +3297,7 @@
           "/dev/input/by-id/usb-Framework_Laptop_16_Keyboard_Module_-_ANSI_FRAKDKEN0100000000-event-kbd",
           "/dev/input/by-path/pci-0000:c3:00.0-usb-0:4.2:1.0-event-kbd",
           "/dev/input/by-path/pci-0000:c3:00.0-usbv2-0:4.2:1.0-event-kbd",
-          "/dev/input/event7"
+          "/dev/input/event6"
         ],
         "resources": [
           {
@@ -3484,9 +3484,9 @@
           "hex": "0274",
           "value": 628
         },
-        "sysfs_id": "/devices/platform/AMDI0010:03/i2c-2/i2c-PIXA3854:00/0018:093A:0274.000D/input/input17",
+        "sysfs_id": "/devices/platform/AMDI0010:03/i2c-2/i2c-PIXA3854:00/0018:093A:0274.000B/input/input16",
         "unix_device_names": [
-          "/dev/input/event15",
+          "/dev/input/event14",
           "/dev/input/ + handler"
         ]
       }
@@ -3514,9 +3514,9 @@
           "value": 2
         },
         "sub_class": {
-          "hex": "0000",
-          "name": "Ethernet controller",
-          "value": 0
+          "hex": "0080",
+          "name": "Network controller",
+          "value": 128
         },
         "vendor": {
           "hex": "14c3",
@@ -3534,12 +3534,12 @@
           "hex": "0717",
           "value": 1815
         },
-        "model": "Ethernet controller",
+        "model": "Network controller",
         "sysfs_id": "/devices/pci0000:00/0000:00:02.3/0000:bf:00.0",
         "sysfs_bus_id": "0000:bf:00.0",
         "sysfs_iommu_group_id": 15,
         "unix_device_names": [
-          "wlp191s0"
+          "wlan0"
         ],
         "resources": [
           {
@@ -3593,7 +3593,7 @@
         ]
       },
       {
-        "index": 101,
+        "index": 100,
         "attached_to": 42,
         "class_list": [
           "network_interface"
@@ -3604,15 +3604,15 @@
           "value": 263
         },
         "sub_class": {
-          "hex": "0001",
-          "name": "Ethernet",
-          "value": 1
+          "hex": "000a",
+          "name": "WLAN",
+          "value": 10
         },
-        "model": "Ethernet network interface",
-        "sysfs_id": "/class/net/wlp191s0",
+        "model": "WLAN network interface",
+        "sysfs_id": "/class/net/wlan0",
         "sysfs_device_link": "/devices/pci0000:00/0000:00:02.3/0000:bf:00.0",
         "unix_device_names": [
-          "wlp191s0"
+          "wlan0"
         ],
         "resources": [
           {
@@ -4346,6 +4346,9 @@
         "sysfs_id": "/devices/pci0000:00/0000:00:08.3/0000:c3:00.0/usb3/3-3/3-3.2/3-3.2:1.2",
         "sysfs_bus_id": "3-3.2:1.2",
         "unix_device_names": [
+          "/dev/input/by-id/usb-Framework_Laptop_16_Numpad_Module_FRAKDKEN0100000000-if02-event-kbd",
+          "/dev/input/by-path/pci-0000:c3:00.0-usb-0:3.2:1.2-event-kbd",
+          "/dev/input/by-path/pci-0000:c3:00.0-usbv2-0:3.2:1.2-event-kbd",
           "/dev/input/event5"
         ],
         "resources": [

@@ -9,15 +9,11 @@
 	reportExists = builtins.pathExists defaultFacterPath;
 
 	report =
-		if config ? facter && reportExists
-		then config.facter.report
+		if reportExists
+		then config.hardware.facter.report
 		else {};
 in {
-	imports = [
-		inputs.nixos-facter-modules.nixosModules.facter
-	];
-
-	config.facter.reportPath = lib.mkIf reportExists defaultFacterPath;
+	config.hardware.facter.reportPath = lib.mkIf reportExists defaultFacterPath;
 
 	options.facter.detected.wireless =
 		lib.mkEnableOption ""
@@ -26,7 +22,7 @@ in {
 				builtins.any
 				(iface: (iface ? sub_class) && (iface.sub_class ? hex) && iface.sub_class.hex == "000a")
 				(
-					if report ? hardware && config.facter.report.hardware ? network_interface
+					if report ? hardware && report.hardware ? network_interface
 					then report.hardware.network_interface
 					else []
 				);
@@ -55,7 +51,7 @@ in {
 		// {
 			default =
 				builtins.any (gpu: (gpu ? driver) && gpu.driver == "nvidia") (
-					if report ? hardware && config.facter.report.hardware ? graphics_card
+					if report ? hardware && report.hardware ? graphics_card
 					then report.hardware.graphics_card
 					else []
 				);

@@ -28,7 +28,6 @@
 	networking.hostName = "tide"; # Define your hostname.
 
 	security.tpm2.enable = true;
-	facter.detected.wireless = true;
 
 	# List packages installed in system profile. To search, run:
 	# $ nix search wget

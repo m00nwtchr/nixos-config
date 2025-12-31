@@ -26,7 +26,6 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
 
-		nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
 		nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
 		sops-nix = {
@@ -57,7 +56,6 @@
 		self,
 		nixpkgs,
 		lanzaboote,
-		nixos-facter-modules,
 		sops-nix,
 		home-manager,
 		...
