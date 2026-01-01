@@ -49,6 +49,38 @@
 			environmentVariables = {
 			};
 		};
+
+		pipewire.wireplumber.extraConfig = {
+			"disable-extra-mic" = {
+				"monitor.alsa.rules" = [
+					{
+						matches = [
+							{"node.name" = "alsa_input.pci-0000_c1_00.6.HiFi__Mic1__source";}
+						];
+						actions = {
+							update-props = {
+								"node.disabled" = true;
+							};
+						};
+					}
+				];
+			};
+
+			"set-speaker-profile" = {
+				"monitor.alsa.rules" = [
+					{
+						matches = [
+							{"device.name" = "alsa_card.pci-0000_c1_00.6";}
+						];
+						actions = {
+							update-props = {
+								"device.profile" = "HiFi (Mic1, Mic2, Speaker)";
+							};
+						};
+					}
+				];
+			};
+		};
 	};
 
 	# This value determines the NixOS release from which the default
