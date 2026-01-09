@@ -11,7 +11,14 @@
 		./facter.nix
 	];
 
-	networking.wireless.iwd.enable = config.facter.detected.wireless;
+	networking.wireless.iwd = {
+		enable = config.facter.detected.wireless;
+		settings = {
+			Network = {
+				EnableIPv6 = true;
+			};
+		};
+	};
 	systemd.network.networks."25-wireless" =
 		lib.mkIf config.facter.detected.wireless {
 			matchConfig.WLANInterfaceType = "station";
@@ -20,6 +27,8 @@
 				DHCP = true;
 				IgnoreCarrierLoss = "3s";
 				MulticastDNS = "resolve";
+				IPv6PrivacyExtensions = true;
+				IPv6AcceptRA = true;
 			};
 		};
 
