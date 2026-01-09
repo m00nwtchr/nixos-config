@@ -41,9 +41,7 @@
 		(import ../../overlays/lens.nix)
 		(import ../../overlays/pywalfox.nix)
 
-		(final: prev: {
-				app2unit = inputs.self.packages.${system}.app2unit;
-			})
+		inputs.self.overlays.default
 
 		(self: super: {
 				ccacheWrapper =

@@ -2,6 +2,7 @@
 	stdenv,
 	lib,
 	fetchFromGitHub,
+	...
 }:
 stdenv.mkDerivation rec {
 	pname = "app2unit";

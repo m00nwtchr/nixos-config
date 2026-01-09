@@ -16,8 +16,12 @@
 	};
 
 	inputs = {
-		flake-parts.url = "github:hercules-ci/flake-parts";
 		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+		snowfall-lib = {
+			url = "github:snowfallorg/lib";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
+
 		lanzaboote = {
 			url = "github:nix-community/lanzaboote/v0.4.3";
 			inputs.nixpkgs.follows = "nixpkgs";
@@ -59,20 +63,17 @@
 		nixpkgs,
 		...
 	} @ inputs:
-		flake-parts.lib.mkFlake {inherit inputs;} {
-			systems = ["x86_64-linux" "aarch64-linux"];
-			perSystem = {
-				config,
-				self',
-				inputs',
-				pkgs,
-				system,
-				...
-			}: {
-				packages.app2unit = pkgs.callPackage ./packages/app2unit.nix {};
-			};
+		with nixpkgs;
+			(inputs.snowfall-lib.mkFlake {
+					inherit inputs;
+					src = ./.;
 
-			flake = with nixpkgs; {
+					snowfall = {
+						root = ./nix;
+						namespace = "m00nlit";
+					};
+				})
+			// {
 				nixosConfigurations = let
 					mkSystem = dir: let
 						system = (builtins.fromJSON (builtins.readFile (dir + "/facter.json"))).system;
@@ -102,5 +103,4 @@
 				in
 					lib.listToAttrs hostPairs;
 			};
-		};
 }
