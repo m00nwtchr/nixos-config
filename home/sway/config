@@ -53,6 +53,7 @@ output "BOE NE160QDM-NZ6 Unknown" {
 	resolution 2560x1600
 	scale 1.5
 	render_bit_depth 10
+	adaptive_sync on
 }
 
 #

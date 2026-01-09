@@ -8,17 +8,18 @@
 	home.packages = with pkgs; [
 		# IDE
 		jetbrains.rust-rover
+		# rustup
 	];
 
 	home.sessionVariables = {
 		RUSTC_WRAPPER = "${pkgs.sccache}/bin/sccache";
 	};
 
-	# home.file.".cargo/config.toml".text = ''
-	#   [target.x86_64-unknown-linux-gnu]
-	#   linker = "clang"
-	#   rustflags = ["-C", "link-arg=-fuse-ld=${pkgs.mold}/bin/mold"]
-	# '';
+	home.file.".cargo/config.toml".text = ''
+		[target.x86_64-unknown-linux-gnu]
+		linker = "clang"
+		rustflags = ["-C", "link-arg=-fuse-ld=${pkgs.mold}/bin/mold"]
+	'';
 
 	programs.helix.languages.language = [
 		{

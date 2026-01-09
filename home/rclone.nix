@@ -6,7 +6,7 @@
 	...
 }: {
 	programs.rclone = {
-		enable = true;
+		enable = false;
 		remotes = {
 			protondrive = {
 				config = {
@@ -18,11 +18,11 @@
 					password = osConfig.sops.secrets."proton/password".path;
 					# otp_secret_key = osConfig.sops.secrets."proton/otp_secret_key".path;
 				};
-				mounts.home = {
-					enable = false;
+				mounts."/" = {
+					enable = true;
 					mountPoint = "${config.home.homeDirectory}/Proton";
 					options = {
-						cache-dir = "${config.xdg.cacheHome}/rclone/protondrive";
+						cache-dir = "${config.xdg.cacheHome}/rclone";
 						vfs-cache-mode = "full";
 					};
 				};

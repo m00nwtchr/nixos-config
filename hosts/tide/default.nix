@@ -25,6 +25,10 @@
 	# ];
 	# boot.plymouth.enable = false;
 
+	boot.extraModprobeConfig = ''
+		blacklist sp5100_tco
+	'';
+
 	networking.hostName = "tide"; # Define your hostname.
 
 	security.tpm2.enable = true;

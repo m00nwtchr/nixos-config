@@ -7,31 +7,33 @@
 }: let
 	enable = config.boot.plymouth.enable;
 in {
-	boot.kernelParams =
-		lib.mkIf enable [
-			"quiet"
-			"splash"
-			"systemd.show_status=auto"
-			"udev.log_level=3"
-			"vt.global_cursor_default=0"
-		];
+	boot = {
+		plymouth = {
+			enable = lib.mkDefault true;
+			theme = "dna";
 
-	boot.consoleLogLevel = lib.mkIf enable 3;
-	boot.initrd.verbose = lib.mkIf enable false;
-
-	boot.kernel.sysctl =
-		lib.mkIf enable {
-			"kernel.printk" = "3 3 3 3";
+			themePackages = with pkgs; [
+				(adi1090x-plymouth-themes.override {
+						selected_themes = ["dna"];
+					})
+			];
 		};
 
-	boot.plymouth = {
-		enable = lib.mkDefault true;
-		theme = "dna";
+		consoleLogLevel = lib.mkIf enable 3;
+		initrd.verbose = lib.mkIf enable false;
+		loader.timeout = lib.mkIf enable 0;
 
-		themePackages = with pkgs; [
-			(adi1090x-plymouth-themes.override {
-					selected_themes = ["dna"];
-				})
-		];
+		kernelParams =
+			lib.mkIf enable [
+				"quiet"
+				"splash"
+				"systemd.show_status=auto"
+				"udev.log_level=3"
+				"vt.global_cursor_default=0"
+			];
+		kernel.sysctl =
+			lib.mkIf enable {
+				"kernel.printk" = "3 3 3 3";
+			};
 	};
 }

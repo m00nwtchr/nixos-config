@@ -189,30 +189,30 @@
 			Install.WantedBy = ["graphical-session.target"];
 		};
 
-		services.wluma = {
-			Unit = {
-				Description = "Adjusting screen brightness based on screen contents and amount of ambient light";
-				After = "graphical-session.target";
-				PartOf = "graphical-session.target";
-			};
-			Service = {
-				ExecStart = "${pkgs.wluma}/bin/wluma";
-				Slice = "background-graphical.slice";
-				Restart = "always";
-				PrivateNetwork = true;
-				PrivateMounts = false;
-				NoNewPrivileges = true;
-				PrivateTmp = true;
-				ProtectSystem = "strict";
-				ProtectKernelTunables = true;
-				ProtectKernelModules = true;
-				ProtectControlGroups = true;
-				MemoryDenyWriteExecute = true;
-				RestrictSUIDSGID = true;
-				LockPersonality = true;
-			};
-			Install.WantedBy = ["graphical-session.target"];
-		};
+		# services.wluma = {
+		# 	Unit = {
+		# 		Description = "Adjusting screen brightness based on screen contents and amount of ambient light";
+		# 		After = "graphical-session.target";
+		# 		PartOf = "graphical-session.target";
+		# 	};
+		# 	Service = {
+		# 		ExecStart = "${pkgs.wluma}/bin/wluma";
+		# 		Slice = "background-graphical.slice";
+		# 		Restart = "always";
+		# 		PrivateNetwork = true;
+		# 		PrivateMounts = false;
+		# 		NoNewPrivileges = true;
+		# 		PrivateTmp = true;
+		# 		ProtectSystem = "strict";
+		# 		ProtectKernelTunables = true;
+		# 		ProtectKernelModules = true;
+		# 		ProtectControlGroups = true;
+		# 		MemoryDenyWriteExecute = true;
+		# 		RestrictSUIDSGID = true;
+		# 		LockPersonality = true;
+		# 	};
+		# 	Install.WantedBy = ["graphical-session.target"];
+		# };
 	};
 
 	# Miscellaneous Services

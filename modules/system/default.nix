@@ -83,6 +83,8 @@
 		git
 		neofetch
 
+		e2fsprogs
+
 		attic-client # cache
 	];
 

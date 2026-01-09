@@ -40,7 +40,10 @@
 		(import ../../overlays/safeeyes.nix)
 		(import ../../overlays/lens.nix)
 		(import ../../overlays/pywalfox.nix)
-		inputs.app2unit.overlays.default
+
+		(final: prev: {
+				app2unit = inputs.self.packages.${system}.app2unit;
+			})
 
 		(self: super: {
 				ccacheWrapper =
@@ -74,7 +77,7 @@
 	boot = {
 		kernelPackages = pkgs.linuxPackages_zen;
 		kernelParams = [
-			"nowatchdogs"
+			"nowatchdog"
 			"nmi_watchdog=0"
 		];
 		kernel.sysctl."fs.inotify.max_user_watches" = 524288;
@@ -182,8 +185,6 @@
 	virtualisation = {
 		containers.enable = true;
 	};
-
-	hardware.alsa.enablePersistence = true;
 
 	# mDNS
 	networking.firewall.allowedUDPPorts = [5353];
