@@ -16,6 +16,7 @@
 	};
 
 	inputs = {
+		flake-parts.url = "github:hercules-ci/flake-parts";
 		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 		lanzaboote = {
 			url = "github:nix-community/lanzaboote/v0.4.3";
@@ -36,6 +37,10 @@
 			url = "github:nix-community/home-manager";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
+		nixpak = {
+			url = "github:nixpak/nixpak";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
 
 		alejandra = {
 			url = "github:kamadorueda/alejandra/main";
@@ -46,47 +51,56 @@
 			inputs.nixpkgs.follows = "nixpkgs";
 			inputs.home-manager.follows = "home-manager";
 		};
-		app2unit = {
-			url = "./packages/app2unit";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
 	};
 
 	outputs = {
 		self,
+		flake-parts,
 		nixpkgs,
-		lanzaboote,
-		sops-nix,
-		home-manager,
 		...
-	} @ inputs: {
-		nixosConfigurations = let
-			mkSystem = dir: let
-				system = (builtins.fromJSON (builtins.readFile (dir + "/facter.json"))).system;
-			in
-				nixpkgs.lib.nixosSystem {
-					inherit system;
-					specialArgs = {
-						inherit inputs;
-						inherit system;
-					};
-					modules = [
-						dir
-					];
-				};
+	} @ inputs:
+		flake-parts.lib.mkFlake {inherit inputs;} {
+			systems = ["x86_64-linux" "aarch64-linux"];
+			perSystem = {
+				config,
+				self',
+				inputs',
+				pkgs,
+				system,
+				...
+			}: {
+				packages.app2unit = pkgs.callPackage ./packages/app2unit.nix {};
+			};
 
-			onlyDirs = dir:
-				nixpkgs.lib.attrNames (nixpkgs.lib.filterAttrs (_: t: t == "directory") (builtins.readDir dir));
+			flake = with nixpkgs; {
+				nixosConfigurations = let
+					mkSystem = dir: let
+						system = (builtins.fromJSON (builtins.readFile (dir + "/facter.json"))).system;
+					in
+						lib.nixosSystem {
+							inherit system;
+							specialArgs = {
+								inherit inputs;
+								inherit system;
+							};
+							modules = [
+								dir
+							];
+						};
 
-			hostNames = onlyDirs ./hosts;
+					onlyDirs = dir:
+						lib.attrNames (lib.filterAttrs (_: t: t == "directory") (builtins.readDir dir));
 
-			hostPairs =
-				map (name: {
-						inherit name;
-						value = mkSystem ./hosts/${name};
-					})
-				hostNames;
-		in
-			nixpkgs.lib.listToAttrs hostPairs;
-	};
+					hostNames = onlyDirs ./hosts;
+
+					hostPairs =
+						map (name: {
+								inherit name;
+								value = mkSystem ./hosts/${name};
+							})
+						hostNames;
+				in
+					lib.listToAttrs hostPairs;
+			};
+		};
 }
