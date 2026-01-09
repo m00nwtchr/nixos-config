@@ -3,6 +3,7 @@
 	osConfig,
 	lib,
 	pkgs,
+	inputs,
 	...
 }: let
 	uwsm-shell =
@@ -12,31 +13,35 @@
 
 	uwsm-game = pkgs.writeShellScriptBin "uwsm-game" (builtins.readFile ./bin/uwsm-game.sh);
 in {
-	xdg.configFile."uwsm/env".text =
-		lib.optionalString osConfig.facter.detected.nvidia ''
-			export GBM_BACKEND=nvidia-drm
-			export __GLX_VENDOR_LIBRARY_NAME=nvidia
-			export LIBVA_DRIVER_NAME=nvidia
-			#export WLR_NO_HARDWARE_CURSORS=1
-			#export XWAYLAND_NO_GLAMOR=1
-		''
-		+ ''
-			export WLR_RENDERER=vulkan
+	imports = [
+		./modules/uwsm.nix
+	];
 
-			export QT_AUTO_SCREEN_SCALE_FACTOR=1
-			export QT_QPA_PLATFORM=wayland
-			export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-			export QT_QPA_PLATFORMTHEME=qt6ct
+	programs.uwsm.environment =
+		{
+			WLR_RENDERER = "vulkan";
 
-			export _JAVA_AWT_WM_NONREPARENTING=1
-			export XCURSOR_SIZE=24
+			QT_AUTO_SCREEN_SCALE_FACTOR = 1;
+			QT_QPA_PLATFORM = "wayland";
+			QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
+			QT_QPA_PLATFORMTHEME = "qt6ct";
 
-			export MOZ_ENABLE_WAYLAND=1
-			export ECORE_EVAS_ENGINE=wayland_egl
-			export ELM_ENGINE=wayland_egl
-			export SDL_VIDEODRIVER=wayland
-			export SDL_AUDIODRIVER=pipewire
-		'';
+			_JAVA_AWT_WM_NONREPARENTING = 1;
+			XCURSOR_SIZE = 24;
+
+			MOZ_ENABLE_WAYLAND = 1;
+			ECORE_EVAS_ENGINE = "wayland_egl";
+			ELM_ENGINE = "wayland_egl";
+			SDL_VIDEODRIVER = "wayland";
+			SDL_AUDIODRIVER = "pipewire";
+		}
+		// lib.optionalAttrs osConfig.facter.detected.nvidia {
+			GBM_BACKEND = "nvidia-drm";
+			__GLX_VENDOR_LIBRARY_NAME = "nvidia";
+			LIBVA_DRIVER_NAME = "nvidia";
+			# WLR_NO_HARDWARE_CURSORS=1;
+			# XWAYLAND_NO_GLAMOR=1;
+		};
 
 	home.packages = with pkgs; [
 		app2unit
