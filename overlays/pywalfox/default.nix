@@ -1,4 +1,4 @@
-self: super: {
+{...}: self: super: {
   pywalfox-native = super.pywalfox-native.overrideAttrs (old: {
     postInstall = ''
       ${old.postInstall or ""}

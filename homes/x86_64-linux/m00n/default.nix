@@ -83,6 +83,8 @@
 
 		recoll
 		# thunderbird
+		#
+		lmstudio
 	];
 
 	# Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -215,6 +217,8 @@
 			guiAddress = "[::1]:8384";
 			tray.enable = true;
 		};
+
+		gnome-keyring.enable = true;
 
 		activitywatch = {
 			enable = false;

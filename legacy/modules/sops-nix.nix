@@ -2,9 +2,10 @@
 	config,
 	inputs,
 	lib,
+	system,
 	...
 }: let
-	defaultSopsPath = "${inputs.self}/hosts/${config.networking.hostName}/secrets/default.yaml";
+	defaultSopsPath = "${inputs.self}/systems/${system}/${config.networking.hostName}/secrets/default.yaml";
 in {
 	imports = [
 		inputs.sops-nix.nixosModules.sops

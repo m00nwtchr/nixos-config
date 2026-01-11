@@ -2,9 +2,10 @@
 	config,
 	inputs,
 	lib,
+	system,
 	...
 }: let
-	defaultFacterPath = "${inputs.self}/hosts/${config.networking.hostName}/facter.json";
+	defaultFacterPath = "${inputs.self}/systems/${system}/${config.networking.hostName}/facter.json";
 
 	reportExists = builtins.pathExists defaultFacterPath;
 

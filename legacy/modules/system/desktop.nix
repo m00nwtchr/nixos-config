@@ -37,11 +37,7 @@
 	};
 
 	nixpkgs.overlays = [
-		(import ../../overlays/safeeyes.nix)
-		(import ../../overlays/lens.nix)
-		(import ../../overlays/pywalfox.nix)
 
-		inputs.self.overlays.default
 
 		(self: super: {
 				ccacheWrapper =
@@ -101,6 +97,8 @@
 
 			papers
 			libreoffice-qt6-fresh
+
+			bitwarden-desktop
 		]
 		++ (
 			if config.security.tpm2.enable

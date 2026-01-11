@@ -177,4 +177,8 @@
 			uris = ["qemu:///system"];
 		};
 	};
+
+	xdg.configFile."kanidm".text = ''
+		uri = "https://idm.m00nlit.dev"
+	'';
 }

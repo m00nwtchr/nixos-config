@@ -4,11 +4,12 @@
 	lib,
 	pkgs,
 	inputs,
+	namespace,
 	...
 }: let
 	uwsm-shell =
 		pkgs.writeShellScriptBin "uwsm-shell" ''
-			exec ${pkgs.app2unit}/bin/app2unit -- $(getent passwd $USER | cut -d: -f7)
+			exec ${pkgs.${namespace}.app2unit}/bin/app2unit -- $(getent passwd $USER | cut -d: -f7)
 		'';
 
 	uwsm-game = pkgs.writeShellScriptBin "uwsm-game" (builtins.readFile ./bin/uwsm-game.sh);

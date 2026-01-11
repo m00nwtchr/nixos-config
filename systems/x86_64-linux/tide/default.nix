@@ -7,12 +7,12 @@
 	...
 }: {
 	imports = [
-		../../modules/efi/secureboot.nix
-		../../modules/system/desktop.nix
-		../../modules/splash.nix
-		../../modules/wayland/sway.nix
+		"${inputs.self}/legacy/modules/efi/secureboot.nix"
+		"${inputs.self}/legacy/modules/system/desktop.nix"
+		"${inputs.self}/legacy/modules/splash.nix"
+		"${inputs.self}/legacy/modules/wayland/sway.nix"
 
-		../../modules/gaming.nix
+		"${inputs.self}/legacy/modules/gaming.nix"
 
 		./disk-config.nix
 		inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series
@@ -25,6 +25,11 @@
 	# ];
 	# boot.plymouth.enable = false;
 
+	hardware.amdgpu = {
+		initrd.enable = true;
+		opencl.enable = true;
+	};
+
 	boot.extraModprobeConfig = ''
 		blacklist sp5100_tco
 	'';
@@ -36,6 +41,9 @@
 	# List packages installed in system profile. To search, run:
 	# $ nix search wget
 	environment.systemPackages = with pkgs; [
+		clinfo
+		rocmPackages.clr.icd
+		rocmPackages.rocminfo
 	];
 
 	# List services that you want to enable:
