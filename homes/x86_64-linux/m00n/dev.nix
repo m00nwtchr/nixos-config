@@ -185,54 +185,30 @@
 
   m00nlit.kubeconfig = {
     enable = true;
-    config = {
-      apiVersion = "v1";
-
-      clusters = [
-        {
-          name = "default";
-          cluster = {
-            "insecure-skip-tls-verify" = true;
-            server = "https://ganymede:6443";
-          };
-        }
-      ];
-
-      contexts = [
-        {
-          name = "default";
-          context = {
-            cluster = "default";
-            user = "oidc";
-          };
-        }
-      ];
-
-      "current-context" = "default";
-      kind = "Config";
-
-      users = [
-        {
-          name = "oidc";
-          user = {
-            exec = {
-              apiVersion = "client.authentication.k8s.io/v1";
-              command = "kubectl";
-              args = [
-                "oidc-login"
-                "get-token"
-                "--oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
-                "--oidc-client-id=kubernetes"
-                "--oidc-extra-scope=email"
-                "--oidc-extra-scope=groups"
-              ];
-              env = null;
-              interactiveMode = "Never";
-              provideClusterInfo = false;
-            };
-          };
-        }
-      ];
+    clusters.default = {
+      "insecure-skip-tls-verify" = true;
+      server = "https://ganymede:6443";
+    };
+    users.oidc = {
+      exec = {
+        apiVersion = "client.authentication.k8s.io/v1";
+        command = "kubectl";
+        args = [
+          "oidc-login"
+          "get-token"
+          "--oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
+          "--oidc-client-id=kubernetes"
+          "--oidc-extra-scope=email"
+          "--oidc-extra-scope=groups"
+        ];
+        env = null;
+        interactiveMode = "Never";
+        provideClusterInfo = false;
+      };
+    };
+    contexts.default = {
+      cluster = "default";
+      user = "oidc";
     };
   };
 }
