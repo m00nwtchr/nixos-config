@@ -76,7 +76,7 @@ in {
 
 			# Template: powerprofile-set@<profile>.service
 			systemd.services."powerprofile-set@" = {
-				description = "Set power profile to %I";
+				description = "Set power profile to %i";
 				after = ["power-profiles-daemon.service"];
 				wants = ["power-profiles-daemon.service"];
 
@@ -88,20 +88,23 @@ in {
 					# Keep the instance "active (exited)" to reflect selected profile
 					RemainAfterExit = true;
 
-					ExecStart =
-						pkgs.writeShellScript "powerprofile-set-instance" ''
-							set -euo pipefail
-							want="%I"
-							cur="$(${pkgs.power-profiles-daemon}/bin/powerprofilesctl get 2>/dev/null || true)"
-							if [ "$cur" != "$want" ]; then
-								${pkgs.power-profiles-daemon}/bin/powerprofilesctl set "$want"
-							fi
-						'';
+					ExecStart = let
+						script =
+							pkgs.writeShellScript "powerprofile-set-instance" ''
+								set -euo pipefail
+								want="$1"
+								cur="$(${pkgs.power-profiles-daemon}/bin/powerprofilesctl get 2>/dev/null || true)"
+								if [ "$cur" != "$want" ]; then
+									${pkgs.power-profiles-daemon}/bin/powerprofilesctl set "$want"
+								fi
+							'';
+					in "${script} %i";
 				};
 			};
 
 			# Instance: balanced on AC
 			systemd.services."powerprofile-set@balanced" = {
+				overrideStrategy = "asDropin";
 				wantedBy = [cfg.acTarget];
 				partOf = [cfg.acTarget];
 			};

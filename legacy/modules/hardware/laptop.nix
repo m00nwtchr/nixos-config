@@ -92,7 +92,7 @@
 				};
 
 				upower.enable = true;
-				m00nlit.auto-ppd.enable = true;
+				m00nlit.ppd-auto.enable = true;
 
 				networkd-dispatcher = {
 					enable = true;

@@ -3,11 +3,12 @@
 	config,
 	lib,
 	pkgs,
+	inputs,
 	...
 }: {
 	imports = [
-		../../modules/efi
-		../../modules/system/k3s.nix
+		"${inputs.self}/legacy/modules/efi"
+		"${inputs.self}/legacy/modules/system/k3s.nix"
 
 		./hardware-configuration.nix
 	];

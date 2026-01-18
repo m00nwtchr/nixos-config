@@ -3,15 +3,16 @@
 	config,
 	lib,
 	pkgs,
+	inputs,
 	...
 }: {
 	imports = [
-		../../modules/efi/secureboot.nix
-		../../modules/system/desktop.nix
-		../../modules/splash.nix
-		../../modules/wayland/sway.nix
+		"${inputs.self}/legacy/modules/efi/secureboot.nix"
+		"${inputs.self}/legacy/modules/system/desktop.nix"
+		"${inputs.self}/legacy/modules/splash.nix"
+		"${inputs.self}/legacy/modules/wayland/sway.nix"
 
-		../../modules/gaming.nix
+		"${inputs.self}/legacy/modules/gaming.nix"
 
 		./hardware-configuration.nix
 	];

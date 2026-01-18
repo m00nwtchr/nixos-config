@@ -3,13 +3,14 @@
 	config,
 	lib,
 	pkgs,
+	inputs,
 	...
 }: {
 	imports = [
-		../../modules/efi/secureboot.nix
-		../../modules/system/k3s.nix
+		"${inputs.self}/legacy/modules/efi/secureboot.nix"
+		"${inputs.self}/legacy/modules/system/k3s.nix"
 
-		../../modules/hardware/zfs.nix
+		"${inputs.self}/legacy/modules/hardware/zfs.nix"
 		./hardware-configuration.nix
 	];
 
