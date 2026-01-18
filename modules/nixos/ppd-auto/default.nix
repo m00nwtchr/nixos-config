@@ -1,0 +1,132 @@
+{
+	config,
+	lib,
+	pkgs,
+	namespace,
+	...
+}: let
+	cfg = config.services.${namespace}.ppd-auto;
+
+	conflictUnits =
+		map (p: "powerprofile-set@${p}.service") cfg.managedProfiles;
+
+	decideScript =
+		pkgs.writeShellScript "powerprofile-decide" ''
+			set -euo pipefail
+
+			# Find first battery and read capacity
+			bat_path=""
+			for d in /sys/class/power_supply/*; do
+				[ -d "$d" ] || continue
+				if [ "$(cat "$d/type" 2>/dev/null || true)" = "Battery" ]; then
+					bat_path="$d"
+					break
+				fi
+			done
+
+			[ -n "$bat_path" ] || exit 0
+			[ -r "$bat_path/capacity" ] || exit 0
+
+			capacity="$(cat "$bat_path/capacity")"
+
+			if [ "$capacity" -lt "${toString cfg.thresholdPercent}" ]; then
+				target="power-saver"
+			else
+				target="balanced"
+			fi
+
+			${pkgs.systemd}/bin/systemctl start "powerprofile-set@''${target}.service"
+		'';
+in {
+	options.services.${namespace}.ppd-auto = {
+		enable = lib.mkEnableOption "Auto-switch power-profiles-daemon profiles using AC/battery targets + udev capacity updates";
+
+		thresholdPercent =
+			lib.mkOption {
+				type = lib.types.int;
+				default = 60;
+				description = "Below this battery percentage, switch to power-saver (on battery).";
+			};
+
+		acTarget =
+			lib.mkOption {
+				type = lib.types.str;
+				default = "ac.target";
+				description = "Systemd target that becomes active when on AC.";
+			};
+
+		batteryTarget =
+			lib.mkOption {
+				type = lib.types.str;
+				default = "battery.target";
+				description = "Systemd target that becomes active when on battery.";
+			};
+
+		managedProfiles =
+			lib.mkOption {
+				type = lib.types.listOf lib.types.str;
+				default = ["performance" "balanced" "power-saver"];
+				description = "Profiles managed as mutually exclusive instances of powerprofile-set@.service.";
+			};
+	};
+
+	config =
+		lib.mkIf cfg.enable {
+			services.power-profiles-daemon.enable = true;
+
+			# Template: powerprofile-set@<profile>.service
+			systemd.services."powerprofile-set@" = {
+				description = "Set power profile to %I";
+				after = ["power-profiles-daemon.service"];
+				wants = ["power-profiles-daemon.service"];
+
+				conflicts = conflictUnits;
+
+				serviceConfig = {
+					Type = "oneshot";
+
+					# Keep the instance "active (exited)" to reflect selected profile
+					RemainAfterExit = true;
+
+					ExecStart =
+						pkgs.writeShellScript "powerprofile-set-instance" ''
+							set -euo pipefail
+							want="%I"
+							cur="$(${pkgs.power-profiles-daemon}/bin/powerprofilesctl get 2>/dev/null || true)"
+							if [ "$cur" != "$want" ]; then
+								${pkgs.power-profiles-daemon}/bin/powerprofilesctl set "$want"
+							fi
+						'';
+				};
+			};
+
+			# Instance: balanced on AC
+			systemd.services."powerprofile-set@balanced" = {
+				wantedBy = [cfg.acTarget];
+				partOf = [cfg.acTarget];
+			};
+
+			# Battery decision service (only runs on battery)
+			systemd.services.powerprofile-decide-on-battery = {
+				description = "Decide power profile on battery based on capacity threshold";
+				wantedBy = [cfg.batteryTarget];
+				partOf = [cfg.batteryTarget];
+				after = ["power-profiles-daemon.service"];
+				wants = ["power-profiles-daemon.service"];
+
+				unitConfig = {
+					ConditionACPower = false;
+				};
+
+				serviceConfig = {
+					Type = "oneshot";
+					ExecStart = decideScript;
+				};
+			};
+
+			# udev: battery updates -> kick decision service
+			services.udev.extraRules = ''
+				SUBSYSTEM=="power_supply", ATTR{type}=="Battery", ENV{SYSTEMD_WANTS}+="powerprofile-decide-on-battery.service"
+			'';
+		};
+}

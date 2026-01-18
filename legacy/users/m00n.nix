@@ -16,6 +16,8 @@
 		hashedPasswordFile = config.sops.secrets."passwords/m00n".path;
 		openssh.authorizedKeys.keyFiles = [../secrets/authorized_keys];
 
+		autoSubUidGidRange = true;
+
 		extraGroups =
 			[
 				"wheel"

@@ -111,6 +111,11 @@
 		};
 	};
 
+	programs.eww = {
+		enable = true;
+		enableZshIntegration = true;
+	};
+
 	# Sway Idle Services
 	services.swayidle = {
 		enable = true;

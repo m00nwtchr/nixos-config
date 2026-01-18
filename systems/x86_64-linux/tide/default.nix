@@ -21,8 +21,14 @@
 	nixpkgs.config.rocmSupport = true;
 	nixpkgs.overlays = [];
 
-	# boot.kernelParams = [
-	# ];
+	# Increase the max amount of dynamically allocated VRAM
+	boot.kernelParams = let
+		vram = 24;
+		pages = builtins.floor ((vram * 1024 * 1024) / 4.096);
+	in [
+		"ttm.pages_limit=${builtins.toString pages}"
+		"ttm.page_pool_size=${builtins.toString pages}"
+	];
 	# boot.plymouth.enable = false;
 
 	hardware.amdgpu = {
@@ -46,6 +52,11 @@
 		rocmPackages.rocminfo
 	];
 
+	programs.nix-ld.libraries = with pkgs.rocmPackages; [
+		hipblas
+		rocblas
+	];
+
 	# List services that you want to enable:
 	services = {
 		# beesd.filesystems.root = {
@@ -57,7 +68,8 @@
 
 		ollama = {
 			enable = true;
-			package = pkgs.ollama-vulkan;
+			package = pkgs.ollama-rocm;
+			rocmOverrideGfx = "11.0.2";
 			environmentVariables = {
 			};
 		};
@@ -67,7 +79,10 @@
 				"monitor.alsa.rules" = [
 					{
 						matches = [
-							{"node.name" = "alsa_input.pci-0000_c1_00.6.HiFi__Mic1__source";}
+							{
+								"node.nick" = "ALC285 Analog";
+								"device.profile.description" = "Stereo Microphone";
+							}
 						];
 						actions = {
 							update-props = {

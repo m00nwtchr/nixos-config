@@ -37,8 +37,6 @@
 	};
 
 	nixpkgs.overlays = [
-
-
 		(self: super: {
 				ccacheWrapper =
 					super.ccacheWrapper.override {
@@ -106,6 +104,16 @@
 			else []
 		);
 
+	programs.obs-studio = {
+		enable = true;
+		plugins = with pkgs.obs-studio-plugins; [
+			obs-pipewire-audio-capture
+			obs-vaapi
+		];
+
+		enableVirtualCamera = true;
+	};
+
 	programs.ccache = {
 		enable = true;
 		# packageNames = ["magma"];
@@ -138,6 +146,8 @@
 			mesa
 			libgbm
 			alsa-lib
+
+			libGL
 		];
 	};
 	programs.appimage = {
