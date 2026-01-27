@@ -73,6 +73,9 @@
 
 		k3sConfig =
 			{
+				node-name =
+					lib.mkIf (config.networking.hostname == "ganymede")
+					"m00nsrv";
 				node-ip = nodeIPs;
 				# node-external-ip = nodeExternalIPs;
 
