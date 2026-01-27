@@ -9,7 +9,6 @@
 		../sops-nix.nix
 
 		# ../upg.nix
-		../hardware
 	];
 
 	nix = {

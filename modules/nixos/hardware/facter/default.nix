@@ -15,6 +15,10 @@
 		then config.hardware.facter.report
 		else {};
 in {
+	imports = [
+		./wireless.nix
+	];
+
 	config.hardware.facter.reportPath = lib.mkIf reportExists defaultFacterPath;
 	options.${namespace}.hardware.facter.detected = {
 		wireless =

@@ -8,9 +8,13 @@
 	config =
 		lib.mkIf config.${namespace}.hardware.facter.detected.nvidia {
 			nixpkgs.config = {
-				allowUnfree = true;
 				nvidia.acceptLicense = true;
 				cudaSupport = true;
+
+				allowUnfreePredicate = pkg:
+					builtins.elem (lib.getName pkg) [
+						"nvidia-x11"
+					];
 			};
 
 			hardware.nvidia = {
