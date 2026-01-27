@@ -15,7 +15,6 @@
 		./rclone.nix
 
 		./modules/dotfiles.nix
-		inputs.sops-nix.homeManagerModule
 	];
 
 	# Home Manager needs a bit of information about you and the paths it should

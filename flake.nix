@@ -63,42 +63,19 @@
 		nixpkgs,
 		...
 	} @ inputs:
-		with nixpkgs; (inputs.snowfall-lib.mkFlake {
-				inherit inputs;
-				src = ./.;
+		inputs.snowfall-lib.mkFlake {
+			inherit inputs;
+			src = ./.;
 
-				snowfall = {
-					namespace = "m00nlit";
-				};
-			});
-	# // {
-	# 	nixosConfigurations = let
-	# 		mkSystem = dir: let
-	# 			system = (builtins.fromJSON (builtins.readFile (dir + "/facter.json"))).system;
-	# 		in
-	# 			lib.nixosSystem {
-	# 				inherit system;
-	# 				specialArgs = {
-	# 					inherit inputs;
-	# 					inherit system;
-	# 				};
-	# 				modules = [
-	# 					dir
-	# 				];
-	# 			};
+			snowfall = {
+				namespace = "m00nlit";
+			};
 
-	# 		onlyDirs = dir:
-	# 			lib.attrNames (lib.filterAttrs (_: t: t == "directory") (builtins.readDir dir));
-
-	# 		hostNames = onlyDirs ./hosts;
-
-	# 		hostPairs =
-	# 			map (name: {
-	# 					inherit name;
-	# 					value = mkSystem ./hosts/${name};
-	# 				})
-	# 			hostNames;
-	# 	in
-	# 		lib.listToAttrs hostPairs;
-	# };
+			systems.modules.nixos = with inputs; [
+				sops-nix.nixosModules.sops
+			];
+			homes.modules = with inputs; [
+				sops-nix.homeManagerModule
+			];
+		};
 }
