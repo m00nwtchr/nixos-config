@@ -77,6 +77,7 @@
 				# node-external-ip = nodeExternalIPs;
 
 				container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
+				etcd-expose-metrics = true;
 
 				kubelet-arg = [
 					"make-iptables-util-chains=false"
@@ -190,6 +191,9 @@
 
 			storageDriver = config.virtualisation.containers.storage.settings.storage.driver;
 			settings = {
+				crio.image = {
+					short_name_mode = "disabled";
+				};
 				crio.network.plugin_dirs = [
 					"/opt/cni/bin"
 				];

@@ -30,6 +30,7 @@
 		extraPools = [
 			"rpool"
 			"vault"
+			"spark"
 		];
 	};
 

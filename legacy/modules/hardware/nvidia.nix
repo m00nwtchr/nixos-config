@@ -18,8 +18,14 @@
 				nvidiaSettings = lib.mkDefault config.hardware.graphics.enable;
 				package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.latest;
 			};
-			hardware.nvidia-container-toolkit.enable = config.virtualisation.containers.enable;
-			environment.systemPackages = [config.hardware.nvidia.package];
+			hardware.nvidia-container-toolkit = {
+				enable = config.virtualisation.containers.enable;
+				mount-nvidia-executables = true;
+			};
+			environment.systemPackages = with pkgs; [
+				config.hardware.nvidia.package
+				(lib.mkIf config.virtualisation.containers.enable nvidia-container-toolkit)
+			];
 
 			boot = {
 				blacklistedKernelModules = ["nouveau"];
