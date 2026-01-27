@@ -2,6 +2,7 @@
 	config,
 	lib,
 	pkgs,
+	inputs,
 	...
 }: {
 	imports = [
@@ -74,7 +75,7 @@
 		k3sConfig =
 			{
 				node-name =
-					lib.mkIf (config.networking.hostname == "ganymede")
+					lib.mkIf (config.networking.hostName == "ganymede")
 					"m00nsrv";
 				node-ip = nodeIPs;
 				# node-external-ip = nodeExternalIPs;
@@ -235,7 +236,7 @@
 				};
 		};
 
-		sops.secrets."k3s/token".sopsFile = ../../secrets/k3s.yaml;
+		sops.secrets."k3s/token".sopsFile = "${inputs.self}/secrets/k3s.yaml";
 
 		systemd.services.k3s.path = [pkgs.nftables];
 		services.k3s = {

@@ -2,6 +2,7 @@
 	pkgs,
 	lib,
 	config,
+	inputs,
 	...
 }: {
 	imports = [
@@ -67,7 +68,7 @@
 		nnn # terminal file manager
 	];
 
-	users.users.root.openssh.authorizedKeys.keyFiles = [../../secrets/authorized_keys];
+	users.users.root.openssh.authorizedKeys.keyFiles = ["${inputs.self}/secrets/authorized_keys"];
 	services.openssh = {
 		authorizedKeysCommand = "/opt/kanidm_ssh_authorizedkeys %u";
 		authorizedKeysCommandUser = "nobody";
