@@ -21,8 +21,6 @@
 	hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
 
 	zramSwap.enable = true;
-
-	networking.hostName = "m00nsrv"; # Define your hostname.
 	networking.hostId = "8504e2ee";
 
 	networking.hosts = {
@@ -258,7 +256,7 @@
 		k3s = {
 			enable = lib.mkForce true;
 			role = "server";
-			# serverAddr = "https://m00nsrv:6443";
+			# serverAddr = "https://ganymede:6443";
 
 			node = {
 				podCIDRs = [

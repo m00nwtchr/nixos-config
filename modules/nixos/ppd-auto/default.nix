@@ -7,12 +7,16 @@
 }: let
 	cfg = config.services.${namespace}.ppd-auto;
 
-	conflictUnits =
-		map (p: "powerprofile-set@${p}.service") cfg.managedProfiles;
-
 	decideScript =
 		pkgs.writeShellScript "powerprofile-decide" ''
 			set -euo pipefail
+
+			if ${pkgs.systemd}/bin/systemd-ac-power; then
+				sleep 5
+				if ${pkgs.systemd}/bin/systemd-ac-power; then
+					exit 0
+				fi
+			fi
 
 			# Find first battery and read capacity
 			bat_path=""
@@ -61,13 +65,6 @@ in {
 				default = "battery.target";
 				description = "Systemd target that becomes active when on battery.";
 			};
-
-		managedProfiles =
-			lib.mkOption {
-				type = lib.types.listOf lib.types.str;
-				default = ["performance" "balanced" "power-saver"];
-				description = "Profiles managed as mutually exclusive instances of powerprofile-set@.service.";
-			};
 	};
 
 	config =
@@ -80,13 +77,8 @@ in {
 				after = ["power-profiles-daemon.service"];
 				wants = ["power-profiles-daemon.service"];
 
-				conflicts = conflictUnits;
-
 				serviceConfig = {
 					Type = "oneshot";
-
-					# Keep the instance "active (exited)" to reflect selected profile
-					RemainAfterExit = true;
 
 					ExecStart = let
 						script =
@@ -117,9 +109,9 @@ in {
 				after = ["power-profiles-daemon.service"];
 				wants = ["power-profiles-daemon.service"];
 
-				unitConfig = {
-					ConditionACPower = false;
-				};
+				# unitConfig = {
+				# 	ConditionACPower = false;
+				# };
 
 				serviceConfig = {
 					Type = "oneshot";

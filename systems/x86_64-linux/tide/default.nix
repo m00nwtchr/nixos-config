@@ -40,9 +40,11 @@
 		blacklist sp5100_tco
 	'';
 
-	networking.hostName = "tide"; # Define your hostname.
-
 	security.tpm2.enable = true;
+
+	networking.hosts = {
+		# "10.195.43.10" = ["hotspot2.intercity.pl"];
+	};
 
 	# List packages installed in system profile. To search, run:
 	# $ nix search wget

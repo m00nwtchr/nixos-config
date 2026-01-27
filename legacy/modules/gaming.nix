@@ -2,7 +2,7 @@
 	config,
 	pkgs,
 	lib,
-	username,
+	namespace,
 	...
 }: {
 	imports = [
@@ -33,7 +33,7 @@
 
 			gpu = {
 				apply_gpu_optimisations = "accept-responsibility";
-				nv_powermizer_mode = lib.mkIf config.facter.detected.nvidia 1;
+				nv_powermizer_mode = lib.mkIf config.${namespace}.hardware.facter.detected.nvidia 1;
 			};
 		};
 	};

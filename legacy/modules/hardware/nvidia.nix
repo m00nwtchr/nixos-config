@@ -2,10 +2,11 @@
 	config,
 	pkgs,
 	lib,
+	namespace,
 	...
 }: {
 	config =
-		lib.mkIf config.facter.detected.nvidia {
+		lib.mkIf config.${namespace}.hardware.facter.detected.nvidia {
 			nixpkgs.config = {
 				allowUnfree = true;
 				nvidia.acceptLicense = true;

@@ -26,8 +26,6 @@
 	];
 	# boot.plymouth.enable = false;
 
-	networking.hostName = "ember"; # Define your hostname.
-
 	specialisation.noPlymouth.configuration = {
 		boot.plymouth.enable = lib.mkForce false;
 	};

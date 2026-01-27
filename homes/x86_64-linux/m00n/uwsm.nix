@@ -36,7 +36,7 @@ in {
 			SDL_VIDEODRIVER = "wayland";
 			SDL_AUDIODRIVER = "pipewire";
 		}
-		// lib.optionalAttrs osConfig.facter.detected.nvidia {
+		// lib.optionalAttrs osConfig.${namespace}.hardware.facter.detected.nvidia {
 			GBM_BACKEND = "nvidia-drm";
 			__GLX_VENDOR_LIBRARY_NAME = "nvidia";
 			LIBVA_DRIVER_NAME = "nvidia";

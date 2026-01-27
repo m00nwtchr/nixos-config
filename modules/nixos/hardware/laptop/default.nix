@@ -2,10 +2,19 @@
 	config,
 	pkgs,
 	lib,
+	namespace,
 	...
-}: {
+}: let
+	cfg = config.${namespace}.hardware.laptop;
+in {
+	options.${namespace}.hardware.laptop.enable =
+		lib.mkEnableOption "Laptop settings"
+		// {
+			default = config.${namespace}.hardware.facter.detected.isLaptop;
+		};
+
 	config =
-		lib.mkIf config.facter.detected.isLaptop {
+		lib.mkIf cfg.enable {
 			powerManagement.powertop.enable = true;
 
 			systemd.targets = {

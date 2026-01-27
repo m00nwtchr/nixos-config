@@ -10,6 +10,10 @@
 		../chrony.nix
 	];
 
+	snowfallorg.users.m00n.create = false;
+	snowfallorg.users.m00n.home.enable = false;
+
+
 	boot.kernel.sysctl = {
 		# ───────────────────── Networking ─────────────────────
 		# Accept up to 1 024 queued TCP connections before accept()

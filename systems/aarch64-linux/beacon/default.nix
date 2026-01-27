@@ -23,8 +23,6 @@
 		"crash_kexec_post_notifiers"
 	];
 
-	networking.hostName = "beacon"; # Define your hostname.
-
 	networking.hosts = {
 		"100.116.45.53" = ["m00nlit.dev"];
 		"fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev"];
@@ -53,7 +51,7 @@
 
 	services.k3s = {
 		role = "agent";
-		serverAddr = "https://m00nsrv:6443";
+		serverAddr = "https://ganymede:6443";
 
 		node = {
 			podCIDRs = [

@@ -22,14 +22,14 @@
 			};
 
 			ganymede = {
-				host = "m00nsrv";
+				host = "ganymede";
 				user = "root";
 				extraOptions = {
 					RemoteForward = "/run/user/0/gnupg/S.gpg-agent /run/user/1000/gnupg/d.qdacfuwqbr7ghuh8iphysdf9/S.gpg-agent.extra";
 				};
 			};
-			bastion = {
-				host = "bastion";
+			beacon = {
+				host = "beacon";
 				user = "root";
 				extraOptions = {
 					RemoteForward = "/run/user/0/gnupg/S.gpg-agent /run/user/1000/gnupg/d.qdacfuwqbr7ghuh8iphysdf9/S.gpg-agent.extra";

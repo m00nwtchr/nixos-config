@@ -30,6 +30,7 @@
 		# IDE
 		# jetbrains.idea-ultimate
 		jetbrains.idea
+		jetbrains.pycharm
 		vale
 
 		zed-editor
@@ -57,13 +58,18 @@
 		settings = {
 			theme = "ayu_dark";
 		};
-		languages = let
-			tabIndent = {
-				tab-width = 4;
-				unit = "\t";
+
+		languages = {
+			language-server.sqls = {
+				command = "${pkgs.sqls}/bin/sqls";
 			};
-		in {
-			language = [
+
+			language = let
+				tabIndent = {
+					tab-width = 4;
+					unit = "\t";
+				};
+			in [
 				{
 					name = "nix";
 					indent = tabIndent;
@@ -72,6 +78,13 @@
 						command = "${inputs.alejandra.defaultPackage.${system}}/bin/alejandra";
 					};
 					auto-format = true;
+				}
+
+				{
+					name = "sql";
+					indent = tabIndent;
+					auto-format = true;
+					language-servers = ["sqls"];
 				}
 
 				{

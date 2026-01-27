@@ -2,17 +2,19 @@
 	config,
 	pkgs,
 	lib,
+	namespace,
 	...
-}: {
+}: let
+	wireless = config.${namespace}.hardware.facter.detected.wireless;
+in {
 	imports = [
-		./laptop.nix
 		# ./btrfs.nix
 		./nvidia.nix
 		./facter.nix
 	];
 
 	networking.wireless.iwd = {
-		enable = config.facter.detected.wireless;
+		enable = wireless;
 		settings = {
 			Network = {
 				EnableIPv6 = true;
@@ -20,7 +22,7 @@
 		};
 	};
 	systemd.network.networks."25-wireless" =
-		lib.mkIf config.facter.detected.wireless {
+		lib.mkIf wireless {
 			matchConfig.WLANInterfaceType = "station";
 			linkConfig.RequiredForOnline = "routable";
 			networkConfig = {
@@ -32,10 +34,10 @@
 			};
 		};
 
-	hardware.wirelessRegulatoryDatabase = config.facter.detected.wireless;
+	hardware.wirelessRegulatoryDatabase = wireless;
 	boot.extraModprobeConfig = ''
 		options cfg80211 ieee80211_regdom="PL"
 	'';
 
-	hardware.bluetooth.powerOnBoot = !config.facter.detected.isLaptop;
+	hardware.bluetooth.powerOnBoot = !config.${namespace}.hardware.facter.detected.isLaptop;
 }
