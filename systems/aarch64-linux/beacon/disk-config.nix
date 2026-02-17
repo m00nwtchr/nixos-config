@@ -3,15 +3,16 @@
   pkgs,
   inputs,
   ...
-}: {
+}:
+{
   imports = [
     inputs.disko.nixosModules.disko
   ];
 
   disko.devices = {
     disk.main = {
-      # device = lib.mkDefault "/dev/";
-      imageSize = "32G";
+      device = lib.mkDefault "/dev/sda";
+      # imageSize = "32G";
       type = "disk";
 
       content = {

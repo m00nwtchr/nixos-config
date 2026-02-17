@@ -5,11 +5,13 @@
   pkgs,
   inputs,
   ...
-}: {
+}:
+{
   imports = [
     "${inputs.self}/legacy/modules/efi"
     "${inputs.self}/legacy/modules/system/server.nix"
 
+    ./nat46.nix
     ./disk-config.nix
   ];
   boot.loader.efi.canTouchEfiVariables = lib.mkForce true;
@@ -17,7 +19,7 @@
   # nixpkgs.hostPlatform = "aarch64-linux";
   # nixpkgs.system = lib.mkForce null;
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_hardened;
   boot.kernelParams = [
     "console=tty1"
     "console=ttyS0"
@@ -27,16 +29,12 @@
   ];
 
   zramSwap.enable = true;
-
   networking.firewall = {
     allowedTCPPorts = [
       22
-      443
-      80
     ];
     allowedUDPPorts = [
       22
-      443
     ];
   };
 
@@ -45,60 +43,59 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [];
+  environment.systemPackages = with pkgs; [ ];
 
-  services.haproxy = {
-    enable = false;
+  # services.haproxy = {
+  #   enable = false;
 
-    # Enable UDP support (requires HAProxy 2.0+)
-    package = pkgs.haproxy; # Or use a pinned newer version if needed
+  #   # Enable UDP support (requires HAProxy 2.0+)
+  #   package = pkgs.haproxy; # Or use a pinned newer version if needed
 
-    config = ''
-      global
-        log /dev/log local0
-        log /dev/log local1 notice
-        daemon
+  #   config = ''
+  #     global
+  #       log /dev/log local0
+  #       log /dev/log local1 notice
+  #       daemon
 
-      defaults
-        log     global
-        mode    http
-        option  httplog
-        option  dontlognull
-        timeout connect 5000
-        timeout client  50000
-        timeout server  50000
+  #     defaults
+  #       log     global
+  #       mode    http
+  #       option  httplog
+  #       option  dontlognull
+  #       timeout connect 5000
+  #       timeout client  50000
+  #       timeout server  50000
 
-      frontend http
-        bind *:80
-        mode tcp
-        default_backend web_backend
+  #     frontend http
+  #       bind *:80
+  #       mode tcp
+  #       default_backend web_backend
 
-      frontend https
-        bind *:443
-        mode tcp
-        default_backend websecure_backend
+  #     frontend https
+  #       bind *:443
+  #       mode tcp
+  #       default_backend websecure_backend
 
-      # frontend https_udp
-      #   bind *:443 proto udp
-      #   mode udp
-      #   default_backend websecure_backend_udp
+  #     # frontend https_udp
+  #     #   bind *:443 proto udp
+  #     #   mode udp
+  #     #   default_backend websecure_backend_udp
 
-      backend web_backend
-        mode tcp
-        server web1 127.0.0.1:30080
+  #     backend web_backend
+  #       mode tcp
+  #       server web1 127.0.0.1:30080
 
-      backend websecure_backend
-        mode tcp
-        server web1 127.0.0.1:30443
+  #     backend websecure_backend
+  #       mode tcp
+  #       server web1 127.0.0.1:30443
 
-      # backend websecure_backend_udp
-      #   mode udp
-      #   server web1 127.0.0.1:30443
-    '';
-  };
+  #     # backend websecure_backend_udp
+  #     #   mode udp
+  #     #   server web1 127.0.0.1:30443
+  #   '';
+  # };
 
   services.btrfs.autoScrub.enable = false;
-
   virtualisation.containers.storage.settings.storage.driver = lib.mkForce "overlay";
 
   # This value determines the NixOS release from which the default
