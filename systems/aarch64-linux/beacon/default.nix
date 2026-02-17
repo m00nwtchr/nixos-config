@@ -1,137 +1,111 @@
 # https://search.nixos.org/options
 {
-	config,
-	lib,
-	pkgs,
-	inputs,
-	...
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
 }: {
-	imports = [
-		"${inputs.self}/legacy/modules/efi"
-		"${inputs.self}/legacy/modules/system/k3s.nix"
+  imports = [
+    "${inputs.self}/legacy/modules/efi"
+    "${inputs.self}/legacy/modules/system/server.nix"
 
-		./hardware-configuration.nix
-	];
+    ./disk-config.nix
+  ];
+  boot.loader.efi.canTouchEfiVariables = lib.mkForce true;
 
-	# Use the systemd-boot EFI boot loader.
-	boot.kernelPackages = pkgs.linuxPackages_latest;
-	boot.kernelParams = [
-		"console=tty1"
-		"console=ttyS0"
-		"nvme.shutdown_timeout=10"
-		"libiscsi.debug_libiscsi_eh=1"
-		"crash_kexec_post_notifiers"
-	];
+  # nixpkgs.hostPlatform = "aarch64-linux";
+  # nixpkgs.system = lib.mkForce null;
 
-	networking.hosts = {
-		"100.116.45.53" = ["m00nlit.dev"];
-		"fd7a:115c:a1e0::f201:2d35" = ["m00nlit.dev"];
-	};
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelParams = [
+    "console=tty1"
+    "console=ttyS0"
+    "nvme.shutdown_timeout=10"
+    "libiscsi.debug_libiscsi_eh=1"
+    "crash_kexec_post_notifiers"
+  ];
 
-	networking.firewall = {
-		allowedTCPPorts = [
-			25565
-			443
-			80
-		];
-		allowedUDPPorts = [
-			25565
-			443
-		];
-	};
+  zramSwap.enable = true;
 
-	security.tpm2.enable = lib.mkForce false;
-	services.sshTpmAgent.enable = lib.mkForce false;
+  networking.firewall = {
+    allowedTCPPorts = [
+      22
+      443
+      80
+    ];
+    allowedUDPPorts = [
+      22
+      443
+    ];
+  };
 
-	# List packages installed in system profile. To search, run:
-	# $ nix search wget
-	environment.systemPackages = with pkgs; [];
+  security.tpm2.enable = lib.mkForce false;
+  services.sshTpmAgent.enable = lib.mkForce false;
 
-	# 150.230.150.181
+  # List packages installed in system profile. To search, run:
+  # $ nix search wget
+  environment.systemPackages = with pkgs; [];
 
-	services.k3s = {
-		role = "agent";
-		serverAddr = "https://ganymede:6443";
+  services.haproxy = {
+    enable = false;
 
-		node = {
-			podCIDRs = [
-				"2001:cafe:42:1::/64"
-				"10.42.1.0/24"
-			];
+    # Enable UDP support (requires HAProxy 2.0+)
+    package = pkgs.haproxy; # Or use a pinned newer version if needed
 
-			ips = [
-				"fd7a:115c:a1e0::c801:4612"
-				"100.77.70.18"
-			];
+    config = ''
+      global
+        log /dev/log local0
+        log /dev/log local1 notice
+        daemon
 
-			externalIPs = [
-				"2603:c020:8014:300:5bb8:9209:140a:bf5c"
-				"10.0.0.87"
-			];
-		};
-	};
+      defaults
+        log     global
+        mode    http
+        option  httplog
+        option  dontlognull
+        timeout connect 5000
+        timeout client  50000
+        timeout server  50000
 
-	services.ollama.enable = true;
+      frontend http
+        bind *:80
+        mode tcp
+        default_backend web_backend
 
-	services.haproxy = {
-		enable = true;
+      frontend https
+        bind *:443
+        mode tcp
+        default_backend websecure_backend
 
-		# Enable UDP support (requires HAProxy 2.0+)
-		package = pkgs.haproxy; # Or use a pinned newer version if needed
+      # frontend https_udp
+      #   bind *:443 proto udp
+      #   mode udp
+      #   default_backend websecure_backend_udp
 
-		config = ''
-			global
-			  log /dev/log local0
-			  log /dev/log local1 notice
-			  daemon
+      backend web_backend
+        mode tcp
+        server web1 127.0.0.1:30080
 
-			defaults
-			  log     global
-			  mode    http
-			  option  httplog
-			  option  dontlognull
-			  timeout connect 5000
-			  timeout client  50000
-			  timeout server  50000
+      backend websecure_backend
+        mode tcp
+        server web1 127.0.0.1:30443
 
-			frontend http
-			  bind *:80
-			  mode tcp
-			  default_backend web_backend
+      # backend websecure_backend_udp
+      #   mode udp
+      #   server web1 127.0.0.1:30443
+    '';
+  };
 
-			frontend https
-			  bind *:443
-			  mode tcp
-			  default_backend websecure_backend
+  services.btrfs.autoScrub.enable = false;
 
-			# frontend https_udp
-			#   bind *:443 proto udp
-			#   mode udp
-			#   default_backend websecure_backend_udp
+  virtualisation.containers.storage.settings.storage.driver = lib.mkForce "overlay";
 
-			backend web_backend
-			  mode tcp
-			  server web1 127.0.0.1:30080
-
-			backend websecure_backend
-			  mode tcp
-			  server web1 127.0.0.1:30443
-
-			# backend websecure_backend_udp
-			#   mode udp
-			#   server web1 127.0.0.1:30443
-		'';
-	};
-
-	services.btrfs.autoScrub.enable = false;
-
-	virtualisation.containers.storage.settings.storage.driver = lib.mkForce "overlay";
-
-	# This value determines the NixOS release from which the default
-	# settings for stateful data, like file locations and database versions
-	# on your system were taken. It‘s perfectly fine and recommended to leave
-	# this value at the release version of the first install of this system.
-	# Before changing this value read the documentation for this option
-	# (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-	system.stateVersion = "24.11"; # Did you read the comment?
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
+  # Before changing this value read the documentation for this option
+  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  system.stateVersion = "26.05"; # Did you read the comment?
 }

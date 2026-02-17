@@ -56,6 +56,8 @@
 		EM_CACHE = "${config.xdg.cacheHome}/emscripten/";
 		EM_PORTS = "${config.xdg.dataHome}/emscripten/";
 
+		MC_CONFIG_DIR = "${config.xdg.configHome}/mc";
+
 		######################################################################
 		# Wine Configuration
 		######################################################################

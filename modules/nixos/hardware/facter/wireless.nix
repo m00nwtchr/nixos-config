@@ -24,7 +24,7 @@ in {
 				matchConfig.WLANInterfaceType = "station";
 				linkConfig.RequiredForOnline = "routable";
 				networkConfig = {
-					DHCP = true;
+					DHCP = "ipv4";
 					IgnoreCarrierLoss = "3s";
 					MulticastDNS = "resolve";
 					IPv6PrivacyExtensions = true;

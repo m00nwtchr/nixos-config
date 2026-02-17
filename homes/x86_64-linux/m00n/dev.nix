@@ -60,8 +60,11 @@
 		};
 
 		languages = {
-			language-server.sqls = {
-				command = "${pkgs.sqls}/bin/sqls";
+			language-server = {
+				rust-analyzer.config.cargo.features = "all";
+				sqls = {
+					command = "${pkgs.sqls}/bin/sqls";
+				};
 			};
 
 			language = let
