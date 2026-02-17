@@ -16,7 +16,7 @@ let
   pool6 = "fd46:8c2f:6b91:ffff::/96";
 in
 {
-  networking.jool.enable = true;
+  networking.jool.enable = false;
 
   # Stateless translation (SIIT / "NAT46-ish")
   networking.jool.siit.default = {

@@ -4,7 +4,8 @@
   config,
   inputs,
   ...
-}: {
+}:
+{
   imports = [
     ./default.nix
     ../ssh.nix
@@ -68,7 +69,7 @@
     nnn # terminal file manager
   ];
 
-  users.users.root.openssh.authorizedKeys.keyFiles = ["${inputs.self}/secrets/authorized_keys"];
+  users.users.root.openssh.authorizedKeys.keyFiles = [ "${inputs.self}/secrets/authorized_keys" ];
   services.openssh = {
     authorizedKeysCommand = "/opt/kanidm_ssh_authorizedkeys %u";
     authorizedKeysCommandUser = "nobody";
@@ -77,8 +78,8 @@
     };
   };
 
-  system.activationScripts.copyFile = ''
-    ln ${config.services.kanidm.package}/bin/kanidm_ssh_authorizedkeys /opt/kanidm_ssh_authorizedkeys
+  system.activationScripts.kanidmSshAuthorizedKeys = ''
+    cp ${config.services.kanidm.package}/bin/kanidm_ssh_authorizedkeys /opt/kanidm_ssh_authorizedkeys
     chown root:root /opt/kanidm_ssh_authorizedkeys
     chmod 0755 /opt/kanidm_ssh_authorizedkeys
   '';
@@ -99,7 +100,7 @@
         gid_attr_map = "name";
 
         kanidm = {
-          pam_allowed_login_groups = ["unix_admins"];
+          pam_allowed_login_groups = [ "unix_admins" ];
 
           map_group = [
             {

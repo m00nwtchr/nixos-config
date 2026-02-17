@@ -21,12 +21,20 @@
 
   boot.kernelPackages = pkgs.linuxPackages_hardened;
   boot.kernelParams = [
+    "nomodeset"
     "console=tty1"
-    "console=ttyS0"
+    "console=ttyAMA0,115200n8"
     "nvme.shutdown_timeout=10"
     "libiscsi.debug_libiscsi_eh=1"
     "crash_kexec_post_notifiers"
   ];
+
+  boot.initrd.availableKernelModules = [
+    "virtio_pci"
+    "virtio_blk"
+    "virtio_net"
+  ];
+  boot.initrd.includeDefaultModules = false;
 
   zramSwap.enable = true;
   networking.firewall = {
@@ -40,6 +48,8 @@
 
   security.tpm2.enable = lib.mkForce false;
   services.sshTpmAgent.enable = lib.mkForce false;
+  systemd.services.systemd-networkd-wait-online.enable = lib.mkForce false;
+  boot.loader.timeout = 0;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
