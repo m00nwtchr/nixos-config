@@ -98,6 +98,8 @@
       libreoffice-qt6-fresh
 
       bitwarden-desktop
+
+      android-tools
     ]
     ++ (
       if config.security.tpm2.enable
@@ -135,15 +137,15 @@
       pango
       cairo
       gdk-pixbuf
-      xorg.libX11
-      xorg.libXcomposite
-      xorg.libXdamage
-      xorg.libXext
-      xorg.libXfixes
-      xorg.libXrandr
+      libx11
+      libxcomposite
+      libxdamage
+      libxext
+      libxfixes
+      libxrandr
       libxkbcommon
       expat
-      xorg.libxcb
+      libxcb
       mesa
       libgbm
       alsa-lib
@@ -167,8 +169,6 @@
     # enableSSHSupport = true;
   };
   services.dbus.packages = [pkgs.gcr];
-
-  programs.adb.enable = true;
 
   security.tpm2 = {
     # enable = true;
@@ -219,9 +219,7 @@
        RUN+="${pkgs.systemd}/bin/loginctl lock-sessions"
     '';
 
-    resolved.extraConfig = lib.mkDefault ''
-      MulticastDNS=resolve
-    '';
+    resolved.settings.Resolve.MulticastDNS = lib.mkDefault "resolve";
 
     pcscd.enable = true;
   };

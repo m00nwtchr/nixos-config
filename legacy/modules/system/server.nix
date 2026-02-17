@@ -78,26 +78,25 @@
   };
 
   system.activationScripts.copyFile = ''
-    cp ${config.services.kanidm.package}/bin/kanidm_ssh_authorizedkeys /opt/kanidm_ssh_authorizedkeys
+    ln ${config.services.kanidm.package}/bin/kanidm_ssh_authorizedkeys /opt/kanidm_ssh_authorizedkeys
     chown root:root /opt/kanidm_ssh_authorizedkeys
     chmod 0755 /opt/kanidm_ssh_authorizedkeys
   '';
 
   services = {
     kanidm = {
-      package = pkgs.kanidm_1_7;
-      # enableClient = true;
-      enablePam = false;
-      clientSettings = {
+      package = pkgs.kanidm_1_8;
+      client.settings = {
         uri = "https://idm.m00nlit.dev";
       };
-      unixSettings = {
+
+      unix.enable = true;
+      unix.settings = {
         version = "2";
 
         home_alias = "name";
         uid_attr_map = "name";
         gid_attr_map = "name";
-        pam_allowed_login_groups = ["unix_admins"];
 
         kanidm = {
           pam_allowed_login_groups = ["unix_admins"];

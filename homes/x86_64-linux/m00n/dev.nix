@@ -16,7 +16,7 @@
 	home.packages = with pkgs; [
 		# DevOps
 		ansible
-		kanidm_1_7
+		kanidm_1_8
 
 		gh # GitHub CLI
 		git-filter-repo
