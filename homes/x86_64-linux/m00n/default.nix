@@ -47,6 +47,8 @@
     yubikey-manager
     keepassxc
 
+    deskflow
+
     # gomuks-web
     nheko
     # cinny-desktop
