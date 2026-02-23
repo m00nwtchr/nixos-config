@@ -30,6 +30,11 @@
 			url = "github:nix-community/disko";
 			inputs.nixpkgs.follows = "nixpkgs";
 		};
+		disko-zfs = {
+			url = "github:numtide/disko-zfs";
+			inputs.nixpkgs.follows = "nixpkgs";
+			inputs.disko.follows = "disko";
+		};
 
 		nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -72,6 +77,8 @@
 			};
 
 			systems.modules.nixos = with inputs; [
+				disko.nixosModules.disko
+				disko-zfs.nixosModules.default
 				sops-nix.nixosModules.sops
 			];
 			homes.modules = with inputs; [
