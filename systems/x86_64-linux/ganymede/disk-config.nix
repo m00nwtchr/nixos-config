@@ -7,6 +7,7 @@
     '';
   };
 
+  disko.zfs.enable = true;
   disko.devices = {
     disk = {
       root = {
