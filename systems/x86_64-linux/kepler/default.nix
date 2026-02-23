@@ -15,12 +15,15 @@
     "${inputs.self}/legacy/modules/gaming.nix"
     "${inputs.self}/legacy/modules/vms.nix"
 
-    ./hardware-configuration.nix
+    # ./hardware-configuration.nix
+    ./disk-config.nix
   ];
 
   hardware.nvidia.open = true;
 
   nixpkgs.overlays = [];
+
+  boot.blacklistedKernelModules = ["amdgpu"];
 
   boot.kernelParams = [
   ];
