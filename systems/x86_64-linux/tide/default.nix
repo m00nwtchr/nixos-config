@@ -14,6 +14,7 @@
 
 		"${inputs.self}/legacy/modules/gaming.nix"
 
+		./virt.nix
 		./disk-config.nix
 		inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series
 	];

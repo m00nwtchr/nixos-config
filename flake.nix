@@ -85,50 +85,8 @@
 				sops-nix.homeManagerModule
 			];
 
-			systems.hosts.beacon = {
-				# system = "x86_64-linux";
-				# builder = args:
-				# 	inputs.nixpkgs.lib.nixosSystem
-				# 	((builtins.removeAttrs args ["system"])
-				# 		// {
-				# 			system = "x86_64-linux";
-				# 			specialArgs =
-				# 				args.specialArgs
-				# 				// {
-				# 					system = "aarch64-linux";
-				# 					format = "linux";
-				# 				};
-				# 			modules =
-				# 				args.modules
-				# 				++ [
-				# 					"${inputs.snowfall-lib}/modules/nixos/user/default.nix"
-				# 				];
-				# 		});
-			};
-
 			outputs-builder = channels: {
 				packages = {
-					beacon-aarch64 =
-						(inputs.self.nixosConfigurations.beacon.extendModules {
-								modules = [
-									{
-										# nixpkgs.system = channels.nixpkgs.stdenv.hostPlatform.system;
-										nixpkgs.buildPlatform = channels.nixpkgs.stdenv.hostPlatform;
-										nixpkgs.hostPlatform = "aarch64-linux";
-
-										disko.imageBuilder = {
-											enableBinfmt = true;
-											imageFormat = "qcow2";
-											pkgs = channels.nixpkgs;
-											kernelPackages = channels.nixpkgs.linuxPackages_latest;
-										};
-
-										# imports = [
-										# 	"${inputs.nixpkgs}/nixos/modules/virtualisation/oci-image.nix"
-										# ];
-									}
-								];
-							}).config.system.build.diskoImagesScript;
 				};
 			};
 		};

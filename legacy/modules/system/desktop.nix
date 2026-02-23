@@ -20,6 +20,7 @@
   ];
 
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
+  boot.supportedFilesystems = ["ntfs"];
 
   home-manager.extraSpecialArgs = {
     inherit inputs;
