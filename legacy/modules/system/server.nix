@@ -86,7 +86,7 @@
 
   services = {
     kanidm = {
-      package = pkgs.kanidm_1_8;
+      package = pkgs.kanidm_1_9;
       client.settings = {
         uri = "https://idm.m00nlit.dev";
       };

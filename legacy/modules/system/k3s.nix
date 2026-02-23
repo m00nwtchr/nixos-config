@@ -74,9 +74,9 @@
 
 		k3sConfig =
 			{
-				node-name =
-					lib.mkIf (config.networking.hostName == "ganymede")
-					"m00nsrv";
+				node-name = "m00nsrv";
+					# lib.mkIf (config.networking.hostName == "ganymede")
+					# "m00nsrv";
 				node-ip = nodeIPs;
 				# node-external-ip = nodeExternalIPs;
 
@@ -241,6 +241,7 @@
 		systemd.services.k3s.path = [pkgs.nftables];
 		services.k3s = {
 			enable = true;
+			package = pkgs.k3s_1_33;
 			tokenFile = config.sops.secrets."k3s/token".path;
 
 			gracefulNodeShutdown.enable = false;

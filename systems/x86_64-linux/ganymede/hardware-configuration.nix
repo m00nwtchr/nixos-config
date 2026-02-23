@@ -70,6 +70,14 @@
 		];
 	};
 
+	environment.etc.crypttab = {
+    mode = "0600";
+    text = ''
+      # <volume-name> <encrypted-device> [key-file] [options]
+      vault-1 UUID=45507ea6-cda1-4ca3-9c49-008b84b0f10f /root/keys/vault.key
+    '';
+  };
+
 	swapDevices = [];
 
 	nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

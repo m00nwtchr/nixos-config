@@ -19,7 +19,8 @@
 
 			hardware.nvidia = {
 				modesetting.enable = true;
-				nvidiaSettings = lib.mkDefault config.hardware.graphics.enable;
+				# nvidiaSettings = lib.mkDefault config.hardware.graphics.enable;
+				nvidiaSettings = false;
 				package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.latest;
 			};
 			hardware.nvidia-container-toolkit = {

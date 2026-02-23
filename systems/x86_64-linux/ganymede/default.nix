@@ -15,10 +15,20 @@
 	];
 
 	# Use the systemd-boot EFI boot loader.
-	# boot.kernelPackages = pkgs.linuxPackages_zen;
 	boot.kernelParams = [];
 
-	hardware.nvidia.open = true;
+	hardware.nvidia = {
+		open = false;
+		package = config.boot.kernelPackages.nvidiaPackages.production;
+	};
+	# nixpkgs.config.allowUnfree = true;
+	nixpkgs.config = {
+						allowUnfreePredicate = pkg:
+					builtins.elem (lib.getName pkg) [
+						"nvidia-x11"
+					];
+
+	};
 
 	zramSwap.enable = true;
 	networking.hostId = "8504e2ee";
@@ -45,10 +55,20 @@
 
 	services.nfs.server.enable = true;
 
+systemd.network.links."10-lan" = {
+		matchConfig = {
+			MACAddress = "9c:6b:00:08:bb:03";
+		};
+
+		linkConfig = {
+			Name = "lan0";
+		};
+	};
+
 	services.radvd = {
 		enable = true;
 		config = ''
-			interface enp5s0
+			interface lan0
 			{
 			    AdvSendAdvert     on;
 			    MinRtrAdvInterval 30;
@@ -185,7 +205,6 @@
 	environment.systemPackages = with pkgs; [
 		tpm2-tools
 		ldns
-		zfs
 	];
 
 	services.sshTpmAgent.enable = lib.mkForce false;
@@ -201,6 +220,7 @@
 
 	virtualisation.cri-o.settings = {
 		crio.runtime = {
+			# log_level=lib.mkForce "debug";
 			# default_runtime = "nvidia";
 			runtimes.nvidia = {
 				runtime_path = "${pkgs.nvidia-container-toolkit.tools}/bin/nvidia-container-runtime";
@@ -251,7 +271,7 @@
 				# ];
 
 				externalIPs = [
-					#   "2a02:a313:43e4:7080::7dc5"
+					"2a02:a313:43e4:7080::7dc5"
 					#   "192.168.0.10"
 				];
 			};
