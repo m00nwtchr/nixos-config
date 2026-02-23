@@ -194,6 +194,13 @@
               relatime = "off";
             };
           };
+
+          # "data/git" = {
+          #   type = "zfs_fs";
+          #   options = {
+          #     recordsize = "16K";
+          #   };
+          # };
         };
       };
 
@@ -221,6 +228,15 @@
           };
 
           "data/media" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+              recordsize = "1M";
+              primarycache = "metadata";
+            };
+          };
+
+          media = {
             type = "zfs_fs";
             options = {
               mountpoint = "legacy";
