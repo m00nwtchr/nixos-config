@@ -7,6 +7,8 @@
     '';
   };
 
+  boot.zfs.extraPools = ["rpool" "spark" "vault"];
+
   disko.zfs.enable = true;
   disko.devices = {
     disk = {
