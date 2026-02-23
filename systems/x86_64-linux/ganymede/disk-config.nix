@@ -70,7 +70,6 @@
         content = {
           type = "luks";
           name = "vault-0";
-          askPassword = true;
           settings = {
             keyFile = "/root/keys/vault.key";
           };
