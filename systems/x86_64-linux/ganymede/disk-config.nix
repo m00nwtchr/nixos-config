@@ -91,11 +91,11 @@
 
         options = {
           ashift = 12;
-          autotrim = true;
+          autotrim = "on";
           acltype = "posixacl";
           xattr = "sa";
           dnodesize = "auto";
-          relatime = true;
+          relatime = "on";
         };
         rootFsOptions = {
           compression = "zstd";
@@ -111,9 +111,9 @@
             type = "zfs_fs";
             options = {
               mountpoint = "/home";
-              atime = false;
-              devices = false;
-              setuid = false;
+              atime = "off";
+              devices = "off";
+              setuid = "off";
             };
           };
           nix = {
@@ -122,7 +122,7 @@
             options = {
               mountpoint = "legacy";
               compression = "zstd-6";
-              atime = false;
+              atime = "off";
             };
           };
           var = {
@@ -138,7 +138,7 @@
             options = {
               mountpoint = "legacy";
               compression = "zstd-3";
-              atime = false;
+              atime = "off";
               recordsize = "16K";
             };
           };
@@ -151,7 +151,7 @@
             type = "zfs_fs";
             options = {
               mountpoint = "/var/lib/kubelet";
-              atime = false;
+              atime = "off";
               recordsize = "16K";
             };
           };
@@ -159,7 +159,7 @@
             type = "zfs_fs";
             options = {
               mountpoint = "/var/lib/containers";
-              atime = false;
+              atime = "off";
               recordsize = "16K";
             };
           };
@@ -173,7 +173,7 @@
         options = {
           mountpoint = "/spark";
           ashift = 12;
-          autotrim = true;
+          autotrim = "on";
           acltype = "posixacl";
           xattr = "sa";
           dnodesize = "auto";
@@ -186,9 +186,9 @@
               canmount = "off";
               mountpoint = "none";
 
-              atime = false;
+              atime = "off";
               compression = "zstd";
-              relatime = false;
+              relatime = "off";
             };
           };
         };
@@ -201,7 +201,7 @@
         options = {
           mountpoint = "/vault";
           ashift = 12;
-          autotrim = false;
+          autotrim = "off";
           acltype = "posixacl";
           xattr = "sa";
         };
@@ -212,7 +212,7 @@
             options = {
               mountpoint = "none";
               canmount = "off";
-              atime = false;
+              atime = "off";
               compression = "zstd";
             };
           };
