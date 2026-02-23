@@ -3,7 +3,7 @@
     mode = "0600";
     text = ''
       # <volume-name> <encrypted-device> [key-file] [options]
-      vault-1 UUID=45507ea6-cda1-4ca3-9c49-008b84b0f10f /root/keys/vault.key
+      vault-0 UUID=45507ea6-cda1-4ca3-9c49-008b84b0f10f /root/keys/vault.key
     '';
   };
 
@@ -100,13 +100,17 @@
         rootFsOptions = {
           compression = "zstd";
         };
-        mountpoint = "/";
 
         datasets = {
+          root = {
+            type = "zfs_fs";
+            mountpoint = "/";
+            options.mountpoint = "legacy";
+          };
           home = {
             type = "zfs_fs";
-            mountpoint = "/home";
             options = {
+              mountpoint = "/home";
               atime = false;
               devices = false;
               setuid = false;
@@ -116,14 +120,15 @@
             type = "zfs_fs";
             mountpoint = "/nix";
             options = {
+              mountpoint = "legacy";
               compression = "zstd-6";
               atime = false;
             };
           };
           var = {
             type = "zfs_fs";
-            mountpoint = "none";
             options = {
+              mountpoint = "none";
               canmount = "off";
             };
           };
@@ -131,6 +136,7 @@
             type = "zfs_fs";
             mountpoint = "/var/log";
             options = {
+              mountpoint = "legacy";
               compression = "zstd-3";
               atime = false;
               recordsize = "16K";
@@ -139,19 +145,20 @@
           "var/lib" = {
             type = "zfs_fs";
             mountpoint = "/var/lib";
+            options.mountpoint = "legacy";
           };
           "var/lib/kubelet" = {
             type = "zfs_fs";
-            mountpoint = "/var/lib/kubelet";
             options = {
+              mountpoint = "/var/lib/kubelet";
               atime = false;
               recordsize = "16K";
             };
           };
           "var/lib/containers" = {
             type = "zfs_fs";
-            mountpoint = "/var/lib/containers";
             options = {
+              mountpoint = "/var/lib/containers";
               atime = false;
               recordsize = "16K";
             };
@@ -164,20 +171,21 @@
         mode = "mirror";
 
         options = {
+          mountpoint = "/spark";
           ashift = 12;
           autotrim = true;
           acltype = "posixacl";
           xattr = "sa";
           dnodesize = "auto";
         };
-        mountpoint = "/spark";
 
         datasets = {
           data = {
             type = "zfs_fs";
-            mountpoint = "none";
             options = {
               canmount = "off";
+              mountpoint = "none";
+
               atime = false;
               compression = "zstd";
               relatime = false;
@@ -191,18 +199,18 @@
         # mode = "mirror";
 
         options = {
+          mountpoint = "/vault";
           ashift = 12;
           autotrim = false;
           acltype = "posixacl";
           xattr = "sa";
         };
-        mountpoint = "/vault";
 
         datasets = {
           data = {
             type = "zfs_fs";
-            mountpoint = "none";
             options = {
+              mountpoint = "none";
               canmount = "off";
               atime = false;
               compression = "zstd";
@@ -211,8 +219,8 @@
 
           "data/media" = {
             type = "zfs_fs";
-            # mountpoint = "legacy";
             options = {
+              mountpoint = "legacy";
               recordsize = "1M";
               primarycache = "metadata";
             };
