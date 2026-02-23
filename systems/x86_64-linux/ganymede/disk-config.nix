@@ -1,4 +1,12 @@
 {lib, ...}: {
+  environment.etc.crypttab = {
+    mode = "0600";
+    text = ''
+      # <volume-name> <encrypted-device> [key-file] [options]
+      vault-1 UUID=45507ea6-cda1-4ca3-9c49-008b84b0f10f /root/keys/vault.key
+    '';
+  };
+
   disko.devices = {
     disk = {
       root = {
@@ -28,12 +36,10 @@
               content = {
                 type = "luks";
                 name = "root";
-                askPassword = true;
                 settings = {
                   allowDiscards = true;
                   bypassWorkqueues = true;
                 };
-                initrdUnlock = true;
                 content = {
                   type = "zfs";
                   pool = "rpool";
@@ -70,9 +76,7 @@
         content = {
           type = "luks";
           name = "vault-0";
-          settings = {
-            keyFile = "/root/keys/vault.key";
-          };
+          initrdUnlock = false;
           content = {
             type = "zfs";
             pool = "vault";
