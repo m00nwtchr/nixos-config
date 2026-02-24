@@ -18,13 +18,13 @@ jobs:
         include:
           - nix_system: x86_64-linux
             # runs_on: [self-hosted, linux, x86_64]
-            runs_on: [ubuntu-latest]
+            runs_on: ubuntu-latest
             emulate: false
 
           # If you have a native aarch64 runner, change runs_on and set emulate: false.
           - nix_system: aarch64-linux
             # runs_on: [self-hosted, linux, x86_64]
-            runs_on: [ubuntu-latest]
+            runs_on: ubuntu-latest
             emulate: true
 
     runs-on: ${{ matrix.runs_on }}
