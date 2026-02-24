@@ -3,6 +3,7 @@ name: nixos-build-and-cache
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: nix-${{ forgejo.repository }}-${{ forgejo.ref }}
