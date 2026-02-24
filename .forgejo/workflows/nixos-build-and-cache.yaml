@@ -1,0 +1,153 @@
+name: nixos-build-and-cache
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: nix-${{ forgejo.repository }}-${{ forgejo.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build (${{ matrix.nix_system }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - nix_system: x86_64-linux
+            runs_on: [self-hosted, linux, x86_64]
+            emulate: false
+
+          # If you have a native aarch64 runner, change runs_on and set emulate: false.
+          - nix_system: aarch64-linux
+            runs_on: [self-hosted, linux, x86_64]
+            emulate: true
+
+    runs-on: ${{ matrix.runs_on }}
+
+    # Non-sensitive stuff can be job env
+    env:
+      ATTIC_ENDPOINT: ${{ secrets.ATTIC_ENDPOINT }}      # e.g. https://attic.example.com
+      ATTIC_CACHE: ${{ secrets.ATTIC_CACHE }}            # e.g. system
+      ATTIC_PUBLIC_KEY: ${{ secrets.ATTIC_PUBLIC_KEY }}  # e.g. system:AbCd...=
+      # Optional: split tokens. If you don't, set only ATTIC_TOKEN.
+      ATTIC_READ_TOKEN: ${{ secrets.ATTIC_READ_TOKEN }}
+      ATTIC_PUSH_TOKEN: ${{ secrets.ATTIC_PUSH_TOKEN }}
+      ATTIC_TOKEN: ${{ secrets.ATTIC_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable QEMU (for aarch64 emulation)
+        if: ${{ matrix.emulate }}
+        uses: docker/setup-qemu-action@v3
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            fallback = true
+            http-connections = 128
+            max-substitution-jobs = 128
+
+      - name: Configure Attic substituter (pull)
+        if: ${{ env.ATTIC_ENDPOINT != '' && env.ATTIC_CACHE != '' && env.ATTIC_PUBLIC_KEY != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Normalize endpoint (strip trailing slash)
+          ATTIC_ENDPOINT_NORM="${ATTIC_ENDPOINT%/}"
+          ATTIC_HOST="$(echo "$ATTIC_ENDPOINT_NORM" | sed -E 's#^https?://##; s#/.*##')"
+
+          # Attic binary cache endpoint is: https://attic.domain.tld/<cache> :contentReference[oaicite:3]{index=3}
+          ATTIC_SUB="${ATTIC_ENDPOINT_NORM}/${ATTIC_CACHE}?priority=41"
+
+          sudo mkdir -p /etc/nix
+
+          sudo tee -a /etc/nix/nix.conf >/dev/null <<EOF
+          substituters = ${ATTIC_SUB} https://cache.nixos.org/
+          trusted-public-keys = ${ATTIC_PUBLIC_KEY} cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+          EOF
+
+          # If the cache is private, Nix needs netrc auth. Forgejo withholds secrets on fork PRs. :contentReference[oaicite:4]{index=4}
+          TOKEN="${ATTIC_READ_TOKEN:-${ATTIC_TOKEN:-}}"
+          if [[ -n "${TOKEN:-}" ]]; then
+            echo "machine ${ATTIC_HOST} password ${TOKEN}" | sudo tee /etc/nix/netrc >/dev/null
+            sudo chmod 0600 /etc/nix/netrc
+            sudo tee -a /etc/nix/nix.conf >/dev/null <<EOF
+          netrc-file = /etc/nix/netrc
+          EOF
+          else
+            echo "No Attic read token available; will build without private-cache auth."
+          fi
+
+      - name: Enable aarch64 as extra platform (only for emulation)
+        if: ${{ matrix.emulate }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo tee -a /etc/nix/nix.conf >/dev/null <<EOF
+          extra-platforms = aarch64-linux
+          EOF
+
+      - name: Sanity check flake.lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          nix flake lock --no-update-lock-file
+
+      - name: Build all nixosConfigurations for ${{ matrix.nix_system }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t HOSTS < <(
+            nix eval --raw .#nixosConfigurations \
+              --apply 'x: builtins.concatStringsSep "\n" (builtins.attrNames x)'
+          )
+
+          rm -f outpaths.txt
+          touch outpaths.txt
+
+          matched=0
+          for host in "${HOSTS[@]}"; do
+            sys="$(nix eval --raw ".#nixosConfigurations.${host}.config.nixpkgs.hostPlatform.system" 2>/dev/null || true)"
+            if [[ "$sys" != "${{ matrix.nix_system }}" ]]; then
+              continue
+            fi
+
+            matched=1
+            echo "=== Building nixosConfigurations.${host} (${sys}) ==="
+            out="$(nix build -L --no-link --print-out-paths ".#nixosConfigurations.${host}.config.system.build.toplevel")"
+            echo "$out" >> outpaths.txt
+          done
+
+          if [[ "$matched" -eq 0 ]]; then
+            echo "No nixosConfigurations matched system=${{ matrix.nix_system }} (nothing to build)."
+            exit 0
+          fi
+
+          echo "Built store paths:"
+          cat outpaths.txt
+
+      # ✅ Push on BOTH push and pull_request, whenever the token exists.
+      # Fork PRs won't have secrets anyway. :contentReference[oaicite:5]{index=5}
+      - name: Push to Attic (push + PR)
+        if: ${{ (forgejo.event_name == 'push' || forgejo.event_name == 'pull_request') && (secrets.ATTIC_PUSH_TOKEN != '' || secrets.ATTIC_TOKEN != '') && env.ATTIC_ENDPOINT != '' && env.ATTIC_CACHE != '' }}
+        env:
+          ATTIC_PUSH_TOKEN_EFF: ${{ secrets.ATTIC_PUSH_TOKEN != '' && secrets.ATTIC_PUSH_TOKEN || secrets.ATTIC_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          nix run github:zhaofengli/attic#attic -- \
+            login ci "${ATTIC_ENDPOINT}" "${ATTIC_PUSH_TOKEN_EFF}"
+
+          nix run github:zhaofengli/attic#attic -- \
+            push "ci:${ATTIC_CACHE}" --stdin < outpaths.txt
+

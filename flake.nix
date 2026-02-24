@@ -16,8 +16,12 @@
 	};
 
 	inputs = {
-		flake-parts.url = "github:hercules-ci/flake-parts";
 		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+		snowfall-lib = {
+			url = "github:snowfallorg/lib";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
+
 		lanzaboote = {
 			url = "github:nix-community/lanzaboote/v0.4.3";
 			inputs.nixpkgs.follows = "nixpkgs";
@@ -25,6 +29,11 @@
 		disko = {
 			url = "github:nix-community/disko";
 			inputs.nixpkgs.follows = "nixpkgs";
+		};
+		disko-zfs = {
+			url = "github:numtide/disko-zfs";
+			inputs.nixpkgs.follows = "nixpkgs";
+			inputs.disko.follows = "disko";
 		};
 
 		nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -59,48 +68,26 @@
 		nixpkgs,
 		...
 	} @ inputs:
-		flake-parts.lib.mkFlake {inherit inputs;} {
-			systems = ["x86_64-linux" "aarch64-linux"];
-			perSystem = {
-				config,
-				self',
-				inputs',
-				pkgs,
-				system,
-				...
-			}: {
-				packages.app2unit = pkgs.callPackage ./packages/app2unit.nix {};
+		inputs.snowfall-lib.mkFlake {
+			inherit inputs;
+			src = ./.;
+
+			snowfall = {
+				namespace = "m00nlit";
 			};
 
-			flake = with nixpkgs; {
-				nixosConfigurations = let
-					mkSystem = dir: let
-						system = (builtins.fromJSON (builtins.readFile (dir + "/facter.json"))).system;
-					in
-						lib.nixosSystem {
-							inherit system;
-							specialArgs = {
-								inherit inputs;
-								inherit system;
-							};
-							modules = [
-								dir
-							];
-						};
+			systems.modules.nixos = with inputs; [
+				disko.nixosModules.disko
+				disko-zfs.nixosModules.default
+				sops-nix.nixosModules.sops
+			];
+			homes.modules = with inputs; [
+				sops-nix.homeManagerModule
+			];
 
-					onlyDirs = dir:
-						lib.attrNames (lib.filterAttrs (_: t: t == "directory") (builtins.readDir dir));
-
-					hostNames = onlyDirs ./hosts;
-
-					hostPairs =
-						map (name: {
-								inherit name;
-								value = mkSystem ./hosts/${name};
-							})
-						hostNames;
-				in
-					lib.listToAttrs hostPairs;
+			outputs-builder = channels: {
+				packages = {
+				};
 			};
 		};
 }
