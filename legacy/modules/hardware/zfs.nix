@@ -15,7 +15,11 @@ in {
     builtins.hashString "sha256" seed
   );
 
-  boot.supportedFilesystems = ["zfs"];
-  boot.zfs.package = pkgs.zfs_2_4;
+  boot = {
+    kernelPackages = lib.mkDefault pkgs.linuxPackages;
+    supportedFilesystems = ["zfs"];
+    zfs.package = pkgs.zfs_2_4;
+  };
+
   services.zfs.autoScrub.enable = lib.mkDefault true;
 }

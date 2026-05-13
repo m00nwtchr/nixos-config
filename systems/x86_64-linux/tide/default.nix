@@ -12,7 +12,7 @@
     "${inputs.self}/legacy/modules/splash.nix"
     "${inputs.self}/legacy/modules/wayland/sway.nix"
 
-    "${inputs.self}/legacy/modules/hardware/zfs.nix"
+    # "${inputs.self}/legacy/modules/hardware/zfs.nix"
 
     "${inputs.self}/legacy/modules/gaming.nix"
     "${inputs.self}/legacy/modules/vms.nix"
@@ -51,7 +51,7 @@
     opencl.enable = true;
   };
 
-  boot.zfs.allowHibernation = true; # No swap on ZFS
+  boot.zfs.unsafeAllowHibernation = true; # No swap on ZFS
   boot.zfs.forceImportRoot = false; # No root on ZFS
   boot.extraModprobeConfig = ''
     blacklist sp5100_tco
