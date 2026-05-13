@@ -4,7 +4,10 @@
 	pkgs,
 	inputs,
 	...
-}: {
+}: with lib; let
+	cfg = config.services.k3s;
+	yaml = pkgs.formats.yaml {};
+in {
 	imports = [
 		./server.nix
 	];
@@ -27,6 +30,14 @@
 					"10.43.0.0/16"
 				];
 			};
+
+		authConfig = mkOption {
+			type = with types; attrsOf yaml.type;
+			default = {
+				apiVersion = "apiserver.config.k8s.io/v1";
+				kind = "AuthenticationConfiguration";
+			};
+		};
 
 		node = {
 			podCIDRs =
@@ -55,22 +66,46 @@
 					type = lib.types.listOf lib.types.str;
 				};
 		};
+
+		
 	};
 
 	config = let
-		clusterCIDRs = lib.strings.concatStringsSep "," config.services.k3s.clusterCIDRs;
-		serviceCIDRs = lib.strings.concatStringsSep "," config.services.k3s.serviceCIDRs;
-		# nodePodCIDRs = lib.strings.concatStringsSep "," config.services.k3s.node.podCIDRs;
-		nodeIPs = lib.strings.concatStringsSep "," config.services.k3s.node.ips;
-		nodeExternalIPs = lib.strings.concatStringsSep "," config.services.k3s.node.externalIPs;
+		clusterCIDRs = lib.strings.concatStringsSep "," cfg.clusterCIDRs;
+		serviceCIDRs = lib.strings.concatStringsSep "," cfg.serviceCIDRs;
+		# nodePodCIDRs = lib.strings.concatStringsSep "," cfg.node.podCIDRs;
+		nodeIPs = lib.strings.concatStringsSep "," cfg.node.ips;
+		nodeExternalIPs = lib.strings.concatStringsSep "," cfg.node.externalIPs;
 
 		advertisedRoutes =
 			lib.strings.concatStringsSep "," (
 				builtins.concatLists [
-					config.services.k3s.node.podCIDRs
-					config.services.k3s.node.advertisedRoutes
+					cfg.node.podCIDRs
+					cfg.node.advertisedRoutes
 				]
 			);
+
+
+		authConfig = {
+			jwt = [{
+				issuer.url = "https://idm.m00nlit.dev/oauth2/openid/kubernetes";
+				issuer.audiences = ["kubernetes"];
+				claimMappings = {
+					username = { claim = "name"; prefix = "oidc:"; };
+					groups = { claim = "groups"; prefix = "oidc:"; };
+				};
+			}];
+			anonymous = {
+				enabled = true;
+				conditions = [
+					{path = "/livez";}
+					{path = "/readyz";}
+					{path = "/healthz";}
+					{path = "/.well-known/openid-configuration";}
+					{path = "/openid/v1/jwks";}
+				];
+			};
+		} // cfg.authConfig;
 
 		k3sConfig =
 			{
@@ -89,7 +124,7 @@
 				];
 			}
 			// (
-				if config.services.k3s.role == "server"
+				if cfg.role == "server"
 				then {
 					disable = [
 						"traefik"
@@ -102,7 +137,7 @@
 					cluster-cidr = clusterCIDRs;
 					service-cidr = serviceCIDRs;
 
-					advertise-address = builtins.elemAt config.services.k3s.node.ips 0;
+					advertise-address = builtins.elemAt cfg.node.ips 0;
 
 					flannel-backend = "none";
 					disable-network-policy = true;
@@ -110,17 +145,15 @@
 
 					tls-san = "k8s.m00nlit.dev";
 
-					kube-apiserver-arg = [
-						"oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
-						"oidc-client-id=kubernetes"
-						"oidc-signing-algs=ES256"
-						"oidc-username-prefix=oidc:"
-						"oidc-groups-prefix=oidc:"
-						"oidc-username-claim=name"
-						"oidc-groups-claim=groups"
+					kube-apiserver-arg = let
+						authConfigYaml = yaml.generate "k8s-auth-config" authConfig;
+					in [
+						"authentication-config=${authConfigYaml}"
+						"service-account-issuer=https://k8s.m00nlit.dev"
+						"service-account-jwks-uri=https://k8s.m00nlit.dev/openid/v1/jwks"
 
 						"feature-gates=MutatingAdmissionPolicy=true"
-						"runtime-config=admissionregistration.k8s.io/v1alpha1=true"
+						"runtime-config=admissionregistration.k8s.io/v1beta1=true"
 					];
 				}
 				else {}
@@ -201,6 +234,9 @@
 				crio.network.plugin_dirs = [
 					"/opt/cni/bin"
 				];
+				crio.runtime.hooks_dir = [
+					"/usr/share/containers/oci/hooks.d"
+				];
 			};
 		};
 
@@ -241,11 +277,11 @@
 		systemd.services.k3s.path = [pkgs.nftables];
 		services.k3s = {
 			enable = true;
-			package = pkgs.k3s_1_33;
+			package = pkgs.k3s;
 			tokenFile = config.sops.secrets."k3s/token".path;
 
 			gracefulNodeShutdown.enable = false;
-			configPath = (pkgs.formats.yaml {}).generate "k3s-config" k3sConfig;
+			configPath = yaml.generate "k3s-config" k3sConfig;
 			extraKubeletConfig = {
 				memorySwap.swapBehavior = "LimitedSwap";
 				imageMaximumGCAge = "12h";

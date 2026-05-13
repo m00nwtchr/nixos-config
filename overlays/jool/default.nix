@@ -34,7 +34,7 @@ in
   linuxPackages = overrideKernelPackages super.linuxPackages;
   linuxPackages_latest = overrideKernelPackages super.linuxPackages_latest;
   linuxPackages_6_6 = overrideKernelPackages super.linuxPackages_6_6;
-  linuxPackages_hardened = overrideKernelPackages super.linuxPackages_hardened;
+  # linuxPackages_hardened = overrideKernelPackages super.linuxPackages_hardened;
 
   # Add other kernelPackages variants you use here if needed.
 }

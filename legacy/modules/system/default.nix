@@ -92,6 +92,7 @@
     wget
     curl
     git
+    fastfetch
 
     e2fsprogs
 

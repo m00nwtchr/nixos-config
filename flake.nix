@@ -17,7 +17,7 @@
 
 	inputs = {
 		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-		nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
+		stable.url = "github:NixOS/nixpkgs/nixos-25.11";
 
 		snowfall-lib = {
 			url = "github:snowfallorg/lib";
@@ -90,7 +90,7 @@
 						...
 					}: {
 						_module.args.pkgsStable =
-							import inputs.nixpkgs-stable {
+							import inputs.stable {
 								inherit (pkgs.stdenv.hostPlatform) system;
 								inherit (config.nixpkgs) config;
 							};

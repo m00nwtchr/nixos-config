@@ -4,6 +4,7 @@
   lib,
   pkgs,
   inputs,
+  system,
   ...
 }: {
   imports = [
@@ -19,7 +20,8 @@
 
   hardware.nvidia = {
     open = false;
-    package = config.boot.kernelPackages.nvidiaPackages.production;
+    # package = config.boot.kernelPackages.nvidiaPackages.production;
+    package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
   };
   # nixpkgs.config.allowUnfree = true;
   nixpkgs.config = {
@@ -52,7 +54,11 @@
   };
 
   services.nfs.server.enable = true;
-
+  services.seatd.enable = true;
+  services.openiscsi = {
+    enable=true;
+    name = "iqn.2016-04.com.open-iscsi:bd68ae22efed";
+};
   systemd.network.links."10-lan" = {
     matchConfig = {
       MACAddress = "9c:6b:00:08:bb:03";
@@ -216,7 +222,18 @@
     pinentryPackage = pkgs.pinentry-curses;
   };
 
-  virtualisation.cri-o.settings = {
+  virtualisation.cri-o = let
+    stPkgs = import inputs.stable {inherit system;};
+
+    crioPackage = stPkgs.cri-o.override {
+    extraPackages =
+      config.virtualisation.cri-o.extraPackages
+      ++ lib.optional (config.boot.supportedFilesystems.zfs or false) config.boot.zfs.package;
+  };
+
+     in {
+    package = crioPackage;
+    settings = {
     crio.runtime = {
       # log_level=lib.mkForce "debug";
       # default_runtime = "nvidia";
@@ -225,8 +242,16 @@
         # runtime_path = "${pkgs.nvidia-container-toolkit}/bin/nvidia-container-runtime";
         runtime_type = "oci";
       };
+      runtimes.kata = {
+        runtime_path = "${pkgs.kata-runtime}/bin/containerd-shim-kata-v2";
+        runtime_type = "vm";
+        runtime_root = "/run/vc";
+        privileged_without_host_devices = true;
+      };
+
     };
-  };
+    crio.image.image_volumes = "mkdir";
+  };};
 
   environment.etc."nvidia-container-runtime/config.toml".text = ''
     [nvidia-container-runtime]
