@@ -130,7 +130,7 @@
     lsof
 
     # system tools
-    neofetch
+    fastfetch
     htop
     iotop # io monitoring
     iftop # network monitoring

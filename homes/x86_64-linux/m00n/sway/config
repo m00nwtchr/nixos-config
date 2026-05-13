@@ -65,6 +65,14 @@ input * {
 	xkb_options compose:menu
 	xkb_numlock enabled
 }
+
+input type:touchpad {
+	dwt disabled
+	dwtp disabled
+	tap enabled
+	tap_button_map lrm
+}
+
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
 

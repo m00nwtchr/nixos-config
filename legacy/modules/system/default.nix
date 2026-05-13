@@ -3,6 +3,7 @@
   pkgs,
   lib,
   username,
+  inputs,
   ...
 }: {
   imports = [
@@ -35,7 +36,7 @@
     };
     optimise.automatic = true;
   };
-  environment.etc."current-nixos".source = ./.;
+  environment.etc."current-nixos".source = "${inputs.self}";
 
   boot.tmp.cleanOnBoot = true;
 
@@ -70,6 +71,18 @@
 
   users.mutableUsers = false;
 
+  zramSwap = {
+    enable = true;
+    priority = 100;
+  };
+
+  boot.kernel.sysctl = lib.mkIf config.zramSwap.enable {
+    "vm.swappiness" = 180;
+    "vm.watermark_boost_factor" = 0;
+    "vm.watermark_scale_factor" = 125;
+    "vm.page-cluster" = 0;
+  };
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -79,7 +92,6 @@
     wget
     curl
     git
-    neofetch
 
     e2fsprogs
 

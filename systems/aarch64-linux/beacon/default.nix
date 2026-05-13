@@ -5,8 +5,7 @@
   pkgs,
   inputs,
   ...
-}:
-{
+}: {
   imports = [
     "${inputs.self}/legacy/modules/efi"
     "${inputs.self}/legacy/modules/system/server.nix"
@@ -36,7 +35,6 @@
   ];
   boot.initrd.includeDefaultModules = false;
 
-  zramSwap.enable = true;
   networking.firewall = {
     allowedTCPPorts = [
       22
@@ -53,7 +51,7 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [ ];
+  environment.systemPackages = with pkgs; [];
 
   # services.haproxy = {
   #   enable = false;

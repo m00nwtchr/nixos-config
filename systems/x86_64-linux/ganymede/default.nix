@@ -29,8 +29,7 @@
       ];
   };
 
-  zramSwap.enable = true;
-  networking.hostId = "8504e2ee";
+  networking.hostId = lib.mkForce "8504e2ee";
 
   networking.hosts = {
     # "2a02:a313:43e4:7080::200" = ["m00nlit.dev" "external.m00nlit.dev" "idm.m00nlit.dev"];

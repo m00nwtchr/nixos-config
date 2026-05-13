@@ -100,7 +100,16 @@ in {
 					};
 				};
 
-				upower.enable = true;
+				upower = {
+					enable = true;
+					usePercentageForPolicy = true;
+
+                    percentageLow = 20;
+                    percentageCritical = 15;
+                    percentageAction = 10;
+
+                    criticalPowerAction = "HybridSleep";
+				};
 				m00nlit.ppd-auto.enable = true;
 
 				networkd-dispatcher = {

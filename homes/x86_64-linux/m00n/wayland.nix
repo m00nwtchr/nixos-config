@@ -76,6 +76,7 @@
       name = "Adwaita";
       package = pkgs.adwaita-icon-theme;
     };
+    gtk4.theme = config.gtk.theme;
     gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
     gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
     gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";

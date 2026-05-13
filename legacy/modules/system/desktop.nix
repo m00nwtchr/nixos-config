@@ -66,6 +66,10 @@
         '';
       };
     })
+
+    # (self: super: {
+    #   rocmPackages.hipblaslt = super.rocmPackages.hipblaslt.override {stdenv = super.ccacheStdenv;};
+    # })
   ];
 
   boot = {

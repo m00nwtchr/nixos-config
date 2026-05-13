@@ -27,6 +27,13 @@ creation_rules:
       - *kepler
       - *ember
       - *tide
+  - path_regex: ^homes/x86_64-linux/m00n/secrets/[^/]+\.(yaml|json|env|ini|txt)$
+    key_groups:
+    - pgp:
+      - *personal
+      age:
+      - *kepler
+      - *tide
   - path_regex: systems/x86_64-linux/kepler/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:

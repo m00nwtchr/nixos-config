@@ -52,6 +52,8 @@ LOG="$HOME/steam_wrapper.log"
 ########## 5. Hand off ########################################################
 if [[ -n "$NAME" ]]; then
 	exec app2unit -a "$NAME" -d "$NAME" -- "$@"
+elif [[ -n "$GAME_NAME" ]]; then
+	exec app2unit -a "$GAME_NAME" -d "$GAME_NAME" -- "$@"
 else
 	# No Steam env or name detected — just call app2unit bare
 	exec app2unit -- "$@"

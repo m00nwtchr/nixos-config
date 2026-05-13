@@ -5,18 +5,20 @@
 		extra-substituters = [
 			# nix community's cache server
 			"https://nix-community.cachix.org"
-			# "https://attic.m00nlit.dev/m00n"
+			"https://attic.m00nlit.dev/m00n-system"
 		];
 
 		extra-trusted-public-keys = [
 			# nix community's cache server public key
 			"nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-			"m00n:kbAQdFU/e4Vec5EnGwobPlNJ98r33SMjwkuWLV/h7lo="
+			"m00n-system:VibP74fZiSuiC8WaYCoLfn5jrfcQ7cyBht0baynxxCY="
 		];
 	};
 
 	inputs = {
 		nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+		nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
+
 		snowfall-lib = {
 			url = "github:snowfallorg/lib";
 			inputs.nixpkgs.follows = "nixpkgs";
@@ -80,9 +82,25 @@
 				disko.nixosModules.disko
 				disko-zfs.nixosModules.default
 				sops-nix.nixosModules.sops
+
+				({
+						inputs,
+						pkgs,
+						config,
+						...
+					}: {
+						_module.args.pkgsStable =
+							import inputs.nixpkgs-stable {
+								inherit (pkgs.stdenv.hostPlatform) system;
+								inherit (config.nixpkgs) config;
+							};
+					})
 			];
 			homes.modules = with inputs; [
 				sops-nix.homeManagerModule
+				({osConfig, ...}: {
+						_module.args.pkgsStable = osConfig._module.args.pkgsStable;
+					})
 			];
 
 			outputs-builder = channels: {

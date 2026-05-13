@@ -1,22 +1,23 @@
 {
-	config,
-	lib,
-	pkgs,
-	namespace,
-	...
+  config,
+  lib,
+  pkgs,
+  namespace,
+  ...
 }: {
-	virtualisation.containers.storage.settings.storage.driver = "btrfs";
+  virtualisation.containers.storage.settings.storage.driver = lib.mkOverride 998 "btrfs";
 
-	services.btrfs.autoScrub.enable = lib.mkDefault true;
+  boot.supportedFilesystems = ["btrfs"];
 
-	systemd.services."beesd@root" =
-		lib.mkIf config.${namespace}.hardware.facter.detected.isLaptop {
-			wantedBy = ["ac.target"];
-			unitConfig = {
-				BindsTo = ["ac.target"];
-			};
-			serviceConfig = {
-				CPUQuota = "25%";
-			};
-		};
+  services.btrfs.autoScrub.enable = lib.mkDefault true;
+
+  systemd.services."beesd@root" = lib.mkIf config.${namespace}.hardware.facter.detected.isLaptop {
+    wantedBy = ["ac.target"];
+    unitConfig = {
+      BindsTo = ["ac.target"];
+    };
+    serviceConfig = {
+      CPUQuota = "25%";
+    };
+  };
 }

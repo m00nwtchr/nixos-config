@@ -3,6 +3,7 @@
   osConfig,
   lib,
   pkgs,
+  pkgsStable,
   system,
   inputs,
   ...
@@ -40,7 +41,7 @@
     inputs.zen-browser.packages."${system}".default
 
     overskride
-    helvum
+    crosspipe
     pavucontrol
 
     yubioath-flutter
@@ -57,6 +58,7 @@
       # withOpenASAR = true;
     })
     discover-overlay
+    signal-desktop
 
     vesktop
 
@@ -80,7 +82,7 @@
     protontricks
     qdirstat
 
-    calibre
+    # calibre
     spotify
 
     recoll
@@ -88,6 +90,8 @@
     jellyfin-desktop
     #
     lmstudio
+
+    zotero # study
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -123,6 +127,7 @@
 
   programs.librewolf = {
     enable = true;
+    # package = pkgsStable.librewolf;
 
     nativeMessagingHosts = with pkgs; [
       pywalfox-native
