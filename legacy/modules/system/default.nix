@@ -79,7 +79,7 @@
     wget
     curl
     git
-    neofetch
+    # neofetch
 
     e2fsprogs
 

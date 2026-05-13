@@ -19,7 +19,7 @@
   # nixpkgs.hostPlatform = "aarch64-linux";
   # nixpkgs.system = lib.mkForce null;
 
-  boot.kernelPackages = pkgs.linuxPackages_hardened;
+  # boot.kernelPackages = pkgs.linuxPackages_hardened;
   boot.kernelParams = [
     "nomodeset"
     "console=tty1"

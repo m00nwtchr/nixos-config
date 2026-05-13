@@ -41,7 +41,7 @@
     "net.ipv4.tcp_fastopen" = 3;
 
     # ───────────────────── Memory Management ─────────────────────
-    "vm.swappiness" = 1; # avoid swapping unless absolutely necessary
+    # "vm.swappiness" = 1; # avoid swapping unless absolutely necessary
     "vm.vfs_cache_pressure" = 50; # retain inode/dentry caches longer
     "vm.overcommit_memory" = 1; # allow memory over-commit (K8s-friendly)
     "vm.max_map_count" = 262144; # large mmap limit for databases/search
