@@ -5,7 +5,7 @@
   pkgs,
   ...
 }: {
-  den.aspects.vms = {
+  den.aspects.system.vms = {
     nixos = {
       programs.virt-manager.enable = true;
 

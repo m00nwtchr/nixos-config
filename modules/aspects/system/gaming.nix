@@ -6,7 +6,7 @@
   lib,
   ...
 }: {
-  den.aspects.gaming = {
+  den.aspects.system.gaming = {
     nixos = {
       hardware.graphics.enable32Bit = true;
 

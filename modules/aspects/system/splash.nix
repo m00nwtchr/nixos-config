@@ -5,7 +5,7 @@
   lib,
   ...
 }: {
-  den.aspects.splash = {
+  den.aspects.system.splash = {
     nixos = {
       boot.plymouth = {
         enable = lib.mkDefault true;

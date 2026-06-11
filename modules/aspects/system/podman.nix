@@ -2,7 +2,7 @@
 {
   ...
 }: {
-  den.aspects.podman = {
+  den.aspects.system.podman = {
     nixos = {
       systemd.services."user@".serviceConfig.Delegate = "yes";
 
