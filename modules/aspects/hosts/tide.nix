@@ -10,7 +10,7 @@
   den.aspects.tide = {
     includes = [
       <boot>
-      <system/default>
+      <system>
       <hardware/facter>
     ];
 
