@@ -11,6 +11,10 @@
     includes = [
       <boot>
       <system>
+      <system/splash>
+      <system/podman>
+      <system/vms>
+      <system/gaming>
       <hardware/facter>
     ];
 
