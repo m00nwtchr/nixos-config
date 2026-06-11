@@ -17,10 +17,6 @@
       lib,
       ...
     }: {
-      imports = [
-        inputs.sops-nix.nixosModules.sops
-      ];
-
       boot.binfmt.emulatedSystems = ["aarch64-linux"];
       boot.supportedFilesystems = ["ntfs"];
 
@@ -96,7 +92,7 @@
           papers
           libreoffice-qt6-fresh
 
-          bitwarden-desktop
+          # bitwarden-desktop
 
           android-tools
         ]

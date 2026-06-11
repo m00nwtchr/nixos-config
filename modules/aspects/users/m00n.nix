@@ -5,6 +5,7 @@
 # user (via `den.hosts.<arch>.<host>.users.<user>`).
 {
   den,
+  inputs,
   __findFile ? __findFile,
   ...
 }: {
@@ -54,7 +55,7 @@
       users.groups.m00n.gid = 1000;
 
       sops.secrets.atuin_key = {
-        sopsFile = (builtins.toString ../../secrets/atuin_key.txt);
+        sopsFile = builtins.toString "${inputs.self}/secrets/atuin_key.txt";
         format = "binary";
         owner = config.users.users.m00n.name;
         group = config.users.users.m00n.group;
@@ -65,12 +66,12 @@
       };
 
       sops.secrets."proton/password" = {
-        sopsFile = (builtins.toString ../../secrets/proton.yaml);
+        sopsFile = builtins.toString "${inputs.self}/secrets/proton.yaml";
         owner = config.users.users.m00n.name;
         group = config.users.users.m00n.group;
       };
       sops.secrets."proton/otp_secret_key" = {
-        sopsFile = (builtins.toString ../../secrets/proton.yaml);
+        sopsFile = builtins.toString "${inputs.self}/secrets/proton.yaml";
         owner = config.users.users.m00n.name;
         group = config.users.users.m00n.group;
       };
