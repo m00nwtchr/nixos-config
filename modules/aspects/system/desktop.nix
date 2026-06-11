@@ -11,6 +11,10 @@
   ...
 }: {
   den.aspects.system.desktop = {
+    nixos.imports = [
+      inputs.sops-nix.nixosModules.sops
+    ];
+
     nixos = {
       boot.binfmt.emulatedSystems = ["aarch64-linux"];
       boot.supportedFilesystems = ["ntfs"];
