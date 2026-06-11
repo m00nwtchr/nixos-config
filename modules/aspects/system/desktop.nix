@@ -11,10 +11,14 @@
   ...
 }: {
   den.aspects.system.desktop = {
-    nixos = {config, pkgs, lib, ...}: {
+    nixos = {
+      config,
+      pkgs,
+      lib,
+      ...
+    }: {
       imports = [
         inputs.sops-nix.nixosModules.sops
-        inputs.home-manager.nixosModules.home-manager
       ];
 
       boot.binfmt.emulatedSystems = ["aarch64-linux"];
@@ -85,16 +89,22 @@
         ];
       };
 
-      environment.systemPackages = with pkgs; [
-        xdg-user-dirs
+      environment.systemPackages = with pkgs;
+        [
+          xdg-user-dirs
 
-        papers
-        libreoffice-qt6-fresh
+          papers
+          libreoffice-qt6-fresh
 
-        bitwarden-desktop
+          bitwarden-desktop
 
-        android-tools
-      ] ++ (if config.security.tpm2.enable then [pkgs.tpm2-tools] else []);
+          android-tools
+        ]
+        ++ (
+          if config.security.tpm2.enable
+          then [pkgs.tpm2-tools]
+          else []
+        );
 
       programs.obs-studio = {
         enable = true;

@@ -31,7 +31,6 @@
         isNormalUser = true;
         uid = 1000;
         group = "m00n";
-        shell = pkgs.zsh;
 
         hashedPasswordFile = config.sops.secrets."passwords/m00n".path;
         openssh.authorizedKeys.keyFiles = [
