@@ -30,6 +30,14 @@
     nixos = {
       system.stateVersion = "26.05";
       networking.hostName = "tide";
+
+      # TODO: replace with disko btrfs-on-luks config (the disk
+      # aspect). For now, a placeholder so the system can build.
+      fileSystems."/" = {
+        device = "/dev/fake";
+        fsType = "auto";
+      };
+      boot.loader.systemd-boot.enable = false;
     };
 
     # Provides: tide adds default packages to every user home on
