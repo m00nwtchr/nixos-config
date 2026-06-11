@@ -14,6 +14,7 @@
       <system>
       <system/desktop>
       <system/splash>
+      <system/sops>
       <system/podman>
       <system/vms>
       <system/gaming>
