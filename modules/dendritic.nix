@@ -10,6 +10,7 @@
     (inputs.den.namespace "hardware" true)
     (inputs.den.namespace "system" true)
     (inputs.den.namespace "users" true)
+    (inputs.den.namespace "hosts" true)
   ];
 
   _module.args.__findFile = den.lib.__findFile;

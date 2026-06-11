@@ -4,6 +4,7 @@
 {
   den,
   __findFile ? __findFile,
+  inputs,
   ...
 }:
 {
@@ -18,6 +19,9 @@
       <system/gaming>
       <system/rfkill-wlan0>
       <hardware/facter>
+
+      # User aspects for m00n
+      den.aspects.m00n
     ];
 
     # Tide-specific overrides go here. (Source equivalent:

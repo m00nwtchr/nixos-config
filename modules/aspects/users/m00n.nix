@@ -1,9 +1,12 @@
+# Port of legacy/users/m00n.nix — defines the `m00n` user, sops
+# secrets, etc. The user-aspect is `den.aspects.m00n`; the
+# `provides.to-hosts.nixos` sub-aspect is the NixOS-side user
+# definition that gets applied to any host that includes this
+# user (via `den.hosts.<arch>.<host>.users.<user>`).
 {
   den,
-  __findFile ? __findFile,
   ...
 }: {
-  # user aspect
   den.aspects.m00n = {
     includes = [
       <den/primary-user>
@@ -14,8 +17,63 @@
       home.packages = [pkgs.htop];
     };
 
-    # user can provide NixOS configurations
-    # to any host it is included on
-    provides.to-hosts.nixos = {pkgs, ...}: {};
+    # NixOS-side user definition. Source equivalent:
+    # legacy/users/m00n.nix (sops + users.users.m00n + extras).
+    provides.to-hosts.nixos = {
+      config,
+      pkgs,
+      ...
+    }: {
+      sops.secrets."passwords/m00n".neededForUsers = true;
+
+      users.users.m00n = {
+        isNormalUser = true;
+        uid = 1000;
+        group = "m00n";
+        shell = pkgs.zsh;
+
+        hashedPasswordFile = config.sops.secrets."passwords/m00n".path;
+        openssh.authorizedKeys.keyFiles = [
+          (builtins.toString ../../secrets/authorized_keys)
+        ];
+
+        autoSubUidGidRange = true;
+
+        extraGroups =
+          [
+            "wheel"
+            "adbusers"
+            "video"
+          ]
+          ++ (
+            if config.security.tpm2.enable
+            then ["tss"]
+            else []
+          );
+      };
+      users.groups.m00n.gid = 1000;
+
+      sops.secrets.atuin_key = {
+        sopsFile = (builtins.toString ../../secrets/atuin_key.txt);
+        format = "binary";
+        owner = config.users.users.m00n.name;
+        group = config.users.users.m00n.group;
+      };
+      sops.secrets."atuin/session" = {
+        owner = config.users.users.m00n.name;
+        group = config.users.users.m00n.group;
+      };
+
+      sops.secrets."proton/password" = {
+        sopsFile = (builtins.toString ../../secrets/proton.yaml);
+        owner = config.users.users.m00n.name;
+        group = config.users.users.m00n.group;
+      };
+      sops.secrets."proton/otp_secret_key" = {
+        sopsFile = (builtins.toString ../../secrets/proton.yaml);
+        owner = config.users.users.m00n.name;
+        group = config.users.users.m00n.group;
+      };
+    };
   };
 }
