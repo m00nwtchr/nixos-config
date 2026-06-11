@@ -11,6 +11,7 @@
     includes = [
       <boot>
       <system>
+      <system/desktop>
       <system/splash>
       <system/podman>
       <system/vms>
