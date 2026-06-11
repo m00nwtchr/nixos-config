@@ -7,7 +7,7 @@
   ...
 }: {
   den.aspects.system.gaming = {
-    nixos = {
+    nixos = {config, pkgs, ...}: {
       hardware.graphics.enable32Bit = true;
 
       programs.steam = {
