@@ -6,7 +6,7 @@
   ...
 }: {
   den.aspects.system.splash = {
-    nixos = {
+    nixos = {pkgs, ...}: {
       boot.plymouth = {
         enable = lib.mkDefault true;
         theme = "dna";
