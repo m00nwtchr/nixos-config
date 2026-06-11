@@ -16,7 +16,7 @@
       inputs.home-manager.nixosModules.home-manager
     ];
 
-    nixos = {
+    nixos = {config, pkgs, lib, ...}: {
       boot.binfmt.emulatedSystems = ["aarch64-linux"];
       boot.supportedFilesystems = ["ntfs"];
 
