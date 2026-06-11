@@ -3,7 +3,6 @@
 {
   # tux user at igloo host.
   den.hosts.x86_64-linux.tide.users.m00n = {
-    classes = [ "homeManager" ];
   };
 
   # define an standalone home-manager for tux

@@ -15,6 +15,7 @@
   den.default.includes = [
     <den/hostname>
     <den/define-user>
+    <den/home-manager>
 
     <hardware/facter>
   ];
