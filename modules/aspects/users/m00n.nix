@@ -5,6 +5,7 @@
 # user (via `den.hosts.<arch>.<host>.users.<user>`).
 {
   den,
+  __findFile ? __findFile,
   ...
 }: {
   den.aspects.m00n = {
