@@ -10,7 +10,7 @@
   ...
 }: {
   den.aspects.system = {
-    nixos = {
+    nixos = {config, pkgs, lib, ...}: {
       nix = {
         settings = {
           experimental-features = [
