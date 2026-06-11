@@ -15,6 +15,7 @@
       <system/podman>
       <system/vms>
       <system/gaming>
+      <system/rfkill-wlan0>
       <hardware/facter>
     ];
 
