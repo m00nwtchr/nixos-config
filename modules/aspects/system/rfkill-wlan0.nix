@@ -5,7 +5,7 @@
   ...
 }: {
   den.aspects.system.rfkill-wlan0 = {
-    nixos = {
+    nixos = {pkgs, ...}: {
       environment.etc."systemd/system-sleep/wlan0-rfkill-networkctl".mode = "0755";
       environment.etc."systemd/system-sleep/wlan0-rfkill-networkctl".text = ''
         #!/bin/sh
