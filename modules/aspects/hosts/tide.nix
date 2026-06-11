@@ -1,14 +1,30 @@
+# Host aspect for tide. Wires together the aspects that make up
+# tide's NixOS configuration. Each `includes` reference is to
+# another top-level den aspect (or a sub-aspect via `.name`).
 {
-  # host aspect
+  den,
+  __findFile ? __findFile,
+  ...
+}:
+{
   den.aspects.tide = {
-    # host NixOS configuration
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [pkgs.hello];
+    includes = [
+      <boot>
+      <system/default>
+      <hardware/facter>
+    ];
+
+    # Tide-specific overrides go here. (Source equivalent:
+    # systems/x86_64-linux/tide/default.nix.)
+    nixos = {
+      system.stateVersion = "26.05";
+      networking.hostName = "tide";
     };
 
-    # host provides default home environment for its users
+    # Provides: tide adds default packages to every user home on
+    # this host. Source equivalent: home.packages = [pkgs.hello, pkgs.vim].
     provides.to-users.homeManager = {pkgs, ...}: {
-      home.packages = [pkgs.vim];
+      home.packages = [];
     };
   };
 }

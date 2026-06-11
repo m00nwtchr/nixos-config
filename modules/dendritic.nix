@@ -8,6 +8,8 @@
     (inputs.den.flakeModules.dendritic or {})
 
     (inputs.den.namespace "hardware" true)
+    (inputs.den.namespace "system" true)
+    (inputs.den.namespace "users" true)
   ];
 
   _module.args.__findFile = den.lib.__findFile;
