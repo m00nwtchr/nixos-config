@@ -6,7 +6,7 @@
   ...
 }: {
   den.aspects.system.vms = {
-    nixos = {
+    nixos = {pkgs, ...}: {
       programs.virt-manager.enable = true;
 
       virtualisation.libvirtd = {
