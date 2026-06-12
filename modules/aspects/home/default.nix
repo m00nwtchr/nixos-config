@@ -14,8 +14,6 @@
       home.homeDirectory = "/home/m00n";
       home.stateVersion = "26.05";
 
-      dotfiles.mutable = false;
-
       home.packages = with pkgs; [
         ungoogled-chromium
 
