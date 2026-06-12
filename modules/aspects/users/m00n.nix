@@ -25,6 +25,7 @@
       <home/rclone>
       <home/autostart>
       <home/wayland>
+      <home/default>
     ];
 
     homeManager = {pkgs, ...}: {
