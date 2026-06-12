@@ -115,6 +115,9 @@
       <system/rfkill-wlan0>
       <hardware/facter>
 
+      # AMD dynamic VRAM tuning (defines hardware.amdgpu.dynamicVram)
+      den.aspects.amdgpuDynamicVram
+
       # Tide-specific (Framework 16, ROCm, ollama, wireplumber)
       den.aspects.hosts.tide
     ];
