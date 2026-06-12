@@ -112,8 +112,13 @@
           sync_frequency = "5m";
           sync_address = "https://atuin.m00nlit.dev";
           search_mode = "fuzzy";
-          key_path = osConfig.sops.secrets.atuin_key.path;
-          session_path = osConfig.sops.secrets."atuin/session".path;
+          # Source used osConfig.sops.secrets.atuin_key.path and
+          # osConfig.sops.secrets."atuin/session".path here. den
+          # doesn't surface osConfig to home aspects; these paths
+          # will be set by the m00n user aspect's `homeManager`
+          # (if/when re-introduced). For now, default locations.
+          key_path = "${config.xdg.stateHome}/atuin/key";
+          session_path = "${config.xdg.stateHome}/atuin/session";
         };
       };
     };
