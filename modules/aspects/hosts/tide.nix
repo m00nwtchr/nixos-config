@@ -110,7 +110,7 @@
       inputs.disko.nixosModules.disko
     ];
 
-    nixos = {
+    nixos = {lib, ...}: {
       # disko's imageBuild.qemu is checked but we don't use it;
       # disko asserts the option is unset in current nixpkgs.
       disko.imageBuild.qemu = null;
