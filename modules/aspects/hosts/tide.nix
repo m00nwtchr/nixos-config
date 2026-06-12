@@ -8,7 +8,7 @@
 }: {
   # Sub-aspect: Framework 16 / ROCm / ollama / wireplumber config.
   den.aspects.hosts.tide = {
-    nixos = {
+    nixos = {pkgs, ...}: {
       nixpkgs.config.rocmSupport = true;
       nixpkgs.overlays = [];
 
