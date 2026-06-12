@@ -9,8 +9,7 @@
 }: {
   den.aspects.home.dev = {
     homeManager = {pkgs, ...}: {
-      system = pkgs.stdenv.hostPlatform.system;
-      alejandra = inputs.alejandra.defaultPackage.${system};
+      alejandra = inputs.alejandra.defaultPackage.${pkgs.stdenv.hostPlatform.system};
       home.packages = with pkgs; [
         ansible
         kanidm_1_10
