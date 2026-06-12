@@ -21,12 +21,8 @@
       boot.supportedFilesystems = ["ntfs"];
 
       nixpkgs.config = {
-        allowUnfree = true;
-        permittedInsecurePackages = [
-          "olm-3.2.16"
-          "libsoup-2.74.3"
-          "electron-39.8.10"
-        ];
+        # allowUnfree + permittedInsecurePackages are set globally
+        # in modules/defaults.nix via den.default.
       };
       nix.settings = {
         trusted-users = ["m00n"];
