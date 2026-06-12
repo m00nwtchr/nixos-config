@@ -1,12 +1,107 @@
 # Host aspect for tide. Wires together the aspects that make up
-# tide's NixOS configuration. Each `includes` reference is to
-# another top-level den aspect (or a sub-aspect via `.name`).
+# tide's NixOS configuration.
 {
   den,
   __findFile ? __findFile,
   inputs,
   ...
 }: {
+  # Sub-aspect: Framework 16 / ROCm / ollama / wireplumber config.
+  den.aspects.hosts.tide = {
+    nixos = {
+      nixpkgs.config.rocmSupport = true;
+      nixpkgs.overlays = [];
+
+      hardware.amdgpu = {
+        initrd.enable = true;
+        opencl.enable = true;
+        dynamicVram = {
+          enable = true;
+          vramGiB = 30;
+        };
+      };
+
+      # memlock unlimited for m00n
+      security.pam.loginLimits = [
+        {
+          domain = "m00n";
+          type = "soft";
+          item = "memlock";
+          value = "unlimited";
+        }
+        {
+          domain = "m00n";
+          type = "hard";
+          item = "memlock";
+          value = "unlimited";
+        }
+      ];
+
+      security.tpm2.enable = true;
+
+      networking.bridges = {
+        "br0" = {
+          interfaces = ["wlan0"];
+        };
+      };
+
+      hardware.alsa.enablePersistence = true;
+
+      environment.systemPackages = with pkgs; [
+        clinfo
+        rocmPackages.clr.icd
+        rocmPackages.rocminfo
+      ];
+
+      programs.nix-ld.libraries = with pkgs.rocmPackages; [
+        hipblas
+        rocblas
+        numactl
+        elfutils
+      ];
+
+      services.tailscale.enable = true;
+
+      services.ollama = {
+        enable = true;
+        package = pkgs.ollama-vulkan;
+        environmentVariables = {};
+      };
+
+      services.pipewire.wireplumber.extraConfig = {
+        "disable-extra-mic"."monitor.alsa.rules" = [
+          {
+            matches = [
+              {
+                "node.nick" = "ALC285 Analog";
+                "device.profile.description" = "Stereo Microphone";
+              }
+            ];
+            actions = {
+              update-props = {
+                "node.disabled" = true;
+              };
+            };
+          }
+        ];
+
+        "set-speaker-profile"."monitor.alsa.rules" = [
+          {
+            matches = [
+              {"device.name" = "alsa_card.pci-0000_c1_00.6";}
+            ];
+            actions = {
+              update-props = {
+                "device.profile" = "HiFi (Mic1, Mic2, Speaker)";
+                "api.alsa.soft-mixer" = true;
+              };
+            };
+          }
+        ];
+      };
+    };
+  };
+
   den.aspects.tide = {
     includes = [
       <boot>
@@ -19,6 +114,9 @@
       <system/gaming>
       <system/rfkill-wlan0>
       <hardware/facter>
+
+      # Tide-specific (Framework 16, ROCm, ollama, wireplumber)
+      den.aspects.hosts.tide
     ];
 
     # Tide-specific overrides go here. (Source equivalent:
@@ -37,9 +135,14 @@
     };
 
     # Provides: tide adds default packages to every user home on
-    # this host. Source equivalent: home.packages = [pkgs.hello, pkgs.vim].
+    # this host.
     provides.to-users.homeManager = {pkgs, ...}: {
-      home.packages = [];
+      home.packages = with pkgs; [
+        # rocm userspace tools
+        clinfo
+        rocmPackages.clr.icd
+        rocmPackages.rocminfo
+      ];
     };
   };
 }
