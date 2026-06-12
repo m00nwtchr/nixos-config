@@ -4,12 +4,13 @@
 {
   den,
   inputs,
-  system,
   osConfig,
   ...
 }: {
   den.aspects.home.dev = {
     homeManager = {pkgs, ...}: {
+      system = pkgs.stdenv.hostPlatform.system;
+      alejandra = inputs.alejandra.defaultPackage.${system};
       home.packages = with pkgs; [
         ansible
         kanidm_1_10
@@ -21,7 +22,7 @@
         lldb
         clang
 
-        inputs.alejandra.defaultPackage.${system}
+        alejandra
 
         jetbrains.idea
         jetbrains.pycharm
@@ -81,7 +82,7 @@
               indent = tabIndent;
               formatter = {
                 name = "alejandra";
-                command = "${inputs.alejandra.defaultPackage.${system}}/bin/alejandra";
+                command = "${alejandra}/bin/alejandra";
               };
               auto-format = true;
             }
