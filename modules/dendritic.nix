@@ -11,6 +11,7 @@
     (inputs.den.namespace "system" true)
     (inputs.den.namespace "users" true)
     (inputs.den.namespace "hosts" true)
+    (inputs.den.namespace "home" true)
   ];
 
   _module.args.__findFile = den.lib.__findFile;

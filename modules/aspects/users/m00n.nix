@@ -13,6 +13,9 @@
     includes = [
       <den/primary-user>
       (<den/user-shell> "zsh")
+
+      # Home sub-aspects
+      <home/env>
     ];
 
     homeManager = {pkgs, ...}: {
