@@ -9,7 +9,7 @@
   ...
 }: {
   den.aspects.home.shell = {
-    homeManager = {pkgs, ...}: {
+    homeManager = {pkgs, config, ...}: {
       home.packages = with pkgs; [
         zsh-powerlevel10k
 
