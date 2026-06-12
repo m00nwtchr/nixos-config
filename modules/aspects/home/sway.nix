@@ -9,7 +9,7 @@
       xdg.configFile."sway/config".source = ../../../home/m00n/sway/config;
 
       xdg.configFile."sway/config.d/10-icc.conf".text = ''
-        output "BOE NE160QDM-NZ6 Unknown" color_profile icc "${pkgs.framework16-icc}/share/color/icc/BOE_CQ_______NE160QDM_NZ6.icc"
+        output "BOE NE160QDM-NZ6 Unknown" color_profile icc "/home/m00n/.config/sway/icc/BOE_CQ_______NE160QDM_NZ6.icm"
       '';
 
       xdg.configFile."sway/scripts/screenshot.sh".source = pkgs.writeShellScript "screenshot.sh" ''
