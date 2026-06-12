@@ -53,12 +53,13 @@
         rocmPackages.rocminfo
       ];
 
-      programs.nix-ld.libraries = with pkgs.rocmPackages; [
+      programs.nix-ld.libraries = (with pkgs.rocmPackages; [
         hipblas
         rocblas
+      ]) ++ (with pkgs; [
         numactl
         elfutils
-      ];
+      ]);
 
       services.tailscale.enable = true;
 
