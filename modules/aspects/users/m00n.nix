@@ -26,6 +26,10 @@
       <home/autostart>
       <home/wayland>
       <home/default>
+      <home/sway>
+      <home/wallust>
+      <home/dunst>
+      <home/waybar>
     ];
 
     homeManager = {pkgs, ...}: {
