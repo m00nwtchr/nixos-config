@@ -106,11 +106,11 @@
   # Sub-aspect: disko btrfs-on-luks config (from
   # systems/x86_64-linux/tide/disk-config.nix).
   den.aspects.hosts.tide-disk = {
-    nixos.imports = [
-      inputs.disko.nixosModules.disko
-    ];
-
     nixos = {lib, ...}: {
+      imports = [
+        inputs.disko.nixosModules.disko
+      ];
+
       # disko's imageBuild.qemu is checked but we don't use it;
       # disko asserts the option is unset in current nixpkgs.
       disko.imageBuild.qemu = null;
