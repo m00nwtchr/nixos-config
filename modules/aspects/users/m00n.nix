@@ -18,6 +18,12 @@
       <home/env>
       <home/dev>
       <home/shell>
+      <home/rust>
+      <home/containers>
+      <home/ssh>
+      <home/gpg>
+      <home/rclone>
+      <home/autostart>
     ];
 
     homeManager = {pkgs, ...}: {
