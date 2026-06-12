@@ -138,9 +138,14 @@ disko config — `fileSystems."/"` is set to a placeholder
 
 ## What's TODO (in priority order)
 
-1. **Disko aspect** (`modules/aspects/disk.nix`): port the
-   btrfs-on-LUKS config from
-   `~/nixos-config/systems/x86_64-linux/tide/disk-config.nix`.
+1. ~~**Disko aspect**~~ — DONE. The btrfs-on-luks disko config
+   is now a sub-aspect `den.aspects.hosts.tide-disk` in
+   `modules/aspects/hosts/tide.nix`, included from `den.aspects.tide`.
+   It imports `inputs.disko.nixosModules.disko` and sets
+   `disko.devices.disk.root` with the original btrfs subvol layout.
+   Note: the source had `disko.imageBuild.qemu = false`; the
+   current nixpkgs/disko no longer defines `disko.imageBuild` at
+   all, so that line was simply dropped.
 2. **`pkgsStable` aspect** (if/when needed): see "deferred" above.
 3. **`kubeconfig` module** (`modules/home/kubeconfig/default.nix` in
    source): currently stubbed in `home/dev.nix`.
