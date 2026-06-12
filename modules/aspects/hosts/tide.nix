@@ -103,6 +103,90 @@
     };
   };
 
+  # Sub-aspect: disko btrfs-on-luks config (from
+  # systems/x86_64-linux/tide/disk-config.nix).
+  den.aspects.hosts.tide-disk = {
+    nixos.imports = [
+      inputs.disko.nixosModules.disko
+    ];
+
+    nixos = {
+      # disko's imageBuild.qemu is checked but we don't use it;
+      # disko asserts the option is unset in current nixpkgs.
+      disko.imageBuild.qemu = null;
+
+      boot.resumeDevice = "/dev/mapper/root";
+      boot.kernelParams = ["resume_offset=533760"];
+
+      disko.devices = {
+        disk.root = {
+          device = lib.mkDefault "/dev/nvme0n1";
+          type = "disk";
+
+          content = {
+            type = "gpt";
+            partitions = {
+              ESP = {
+                size = "512M";
+                type = "EF00";
+                content = {
+                  type = "filesystem";
+                  format = "vfat";
+                  mountpoint = "/efi";
+                  mountOptions = [
+                    "fmask=0022"
+                    "dmask=0022"
+                    "umask=0077"
+                  ];
+                };
+              };
+
+              root = {
+                size = "100%";
+                content = {
+                  type = "luks";
+                  name = "root";
+                  askPassword = true;
+                  settings = {
+                    allowDiscards = true;
+                    bypassWorkqueues = true;
+                  };
+                  initrdUnlock = true;
+                  content = {
+                    type = "btrfs";
+                    subvolumes = {
+                      "@" = {
+                        mountpoint = "/";
+                        mountOptions = ["compress=zstd" "noatime"];
+                      };
+                      "@home" = {
+                        mountpoint = "/home";
+                        mountOptions = ["compress=zstd" "noatime"];
+                      };
+                      "@nix" = {
+                        mountpoint = "/nix";
+                        mountOptions = ["compress=zstd" "noatime"];
+                      };
+
+                      "@snapshots" = {
+                        mountpoint = "/.snapshots";
+                        mountOptions = ["compress=zstd" "noatime"];
+                      };
+                      "@swap" = {
+                        mountpoint = "/.swap";
+                        swap.swapfile.size = "32G";
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+
   den.aspects.tide = {
     includes = [
       <boot>
@@ -121,6 +205,9 @@
 
       # Tide-specific (Framework 16, ROCm, ollama, wireplumber)
       den.aspects.hosts.tide
+
+      # Disko btrfs-on-luks disk layout
+      den.aspects.hosts.tide-disk
     ];
 
     # Tide-specific overrides go here. (Source equivalent:
@@ -128,14 +215,6 @@
     nixos = {
       system.stateVersion = "26.05";
       networking.hostName = "tide";
-
-      # TODO: replace with disko btrfs-on-luks config (the disk
-      # aspect). For now, a placeholder so the system can build.
-      fileSystems."/" = {
-        device = "/dev/fake";
-        fsType = "auto";
-      };
-      boot.loader.systemd-boot.enable = false;
     };
 
     # Provides: tide adds default packages to every user home on
