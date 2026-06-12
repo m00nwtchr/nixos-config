@@ -30,7 +30,7 @@
         hack-font
 
         kdePackages.qtwayland
-        libsForQt5.qt5.qtwayland
+        # libsForQt5.qt5.qtwayland  # removed in current nixpkgs
       ];
 
       fonts.fontconfig.enable = true;
