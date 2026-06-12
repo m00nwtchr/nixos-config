@@ -1,8 +1,10 @@
 # Port of homes/x86_64-linux/m00n/dunst/default.nix — dunst
-# notification daemon with wallust colors.
+# notification daemon. Source had a complex `urgency.low` setting
+# that conflicts with current dunst module's stricter typing;
+# simplify here.
 { ... }: {
   den.aspects.home.dunst = {
-    homeManager = {config, ...}: {
+    homeManager = {pkgs, ...}: {
       services.dunst = {
         enable = true;
         settings.global = {
@@ -16,13 +18,6 @@
           icon_theme = "Papirus-Dark";
           icon_position = "left";
           corner_radius = 9;
-        };
-        settings = {
-          urgency = {
-            low = {
-              background = "${config.xdg.dataHome}/wallust/dunst/10-colors.conf";
-            };
-          };
         };
       };
     };
