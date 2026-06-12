@@ -9,7 +9,6 @@
 }: {
   den.aspects.home.dev = {
     homeManager = {pkgs, ...}: {
-      alejandra = inputs.alejandra.defaultPackage.${pkgs.stdenv.hostPlatform.system};
       home.packages = with pkgs; [
         ansible
         kanidm_1_10
@@ -81,7 +80,7 @@
               indent = tabIndent;
               formatter = {
                 name = "alejandra";
-                command = "${alejandra}/bin/alejandra";
+                command = "${inputs.alejandra.defaultPackage.${pkgs.stdenv.hostPlatform.system}}/bin/alejandra";
               };
               auto-format = true;
             }
