@@ -49,5 +49,10 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     #   inputs.home-manager.follows = "home-manager";
     # };
+
+    alejandra = {
+      url = "github:kamadorueda/alejandra/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 }
