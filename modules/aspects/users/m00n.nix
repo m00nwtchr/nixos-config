@@ -16,6 +16,7 @@
 
       # Home sub-aspects
       <home/env>
+      <home/dev>
     ];
 
     homeManager = {pkgs, ...}: {
