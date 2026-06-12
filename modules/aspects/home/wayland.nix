@@ -154,7 +154,7 @@
       services.mpris-proxy.enable = true;
 
       home.file.".local/share/uwsm-game.sh" = {
-        source = ./../../home/m00n/bin/uwsm-game.sh;
+        source = ../../../home/m00n/bin/uwsm-game.sh;
         executable = true;
       };
     };
