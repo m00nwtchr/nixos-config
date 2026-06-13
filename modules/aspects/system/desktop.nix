@@ -8,9 +8,15 @@
   lib,
   den,
   inputs,
+  __findFile ? __findFile,
   ...
 }: {
   den.aspects.system.desktop = {
+    includes = [
+      <system/podman>
+      <system/ccache>
+    ];
+
     nixos = {
       config,
       pkgs,
@@ -21,42 +27,13 @@
       boot.supportedFilesystems = ["ntfs"];
 
       nixpkgs.config = {
-        # allowUnfree + permittedInsecurePackages are set globally
-        # in modules/defaults.nix via den.default.
+        allowUnfree = true;
+        permittedInsecurePackages = [
+          "olm-3.2.16"
+          "libsoup-2.74.3"
+          "electron-39.8.10"
+        ];
       };
-      nix.settings = {
-        trusted-users = ["m00n"];
-        extra-sandbox-paths = [config.programs.ccache.cacheDir];
-      };
-
-      nixpkgs.overlays = [
-        (self: super: {
-          ccacheWrapper = super.ccacheWrapper.override {
-            extraConfig = ''
-              export CCACHE_COMPRESS=1
-              export CCACHE_DIR="${config.programs.ccache.cacheDir}"
-              export CCACHE_UMASK=007
-              export CCACHE_SLOPPINESS=random_seed
-              if [ ! -d "$CCACHE_DIR" ]; then
-                echo "====="
-                echo "Directory '$CCACHE_DIR' does not exist"
-                echo "Please create it with:"
-                echo "  sudo mkdir -m0770 '$CCACHE_DIR'"
-                echo "  sudo chown root:nixbld '$CCACHE_DIR'"
-                echo "====="
-                exit 1
-              fi
-              if [ ! -w "$CCACHE_DIR" ]; then
-                echo "====="
-                echo "Directory '$CCACHE_DIR' is not accessible for user $(whoami)"
-                echo "Please verify its access permissions"
-                echo "====="
-                exit 1
-              fi
-            '';
-          };
-        })
-      ];
 
       boot = {
         kernelPackages = pkgs.linuxPackages_zen;
@@ -82,21 +59,9 @@
       };
 
       environment.systemPackages = with pkgs;
-        [
-          xdg-user-dirs
-
-          papers
-          libreoffice-qt6-fresh
-
-          # bitwarden-desktop
-
-          android-tools
-        ]
-        ++ (
-          if config.security.tpm2.enable
-          then [pkgs.tpm2-tools]
-          else []
-        );
+        if config.security.tpm2.enable
+        then [pkgs.tpm2-tools]
+        else [];
 
       programs.obs-studio = {
         enable = true;
@@ -108,7 +73,6 @@
         enableVirtualCamera = true;
       };
 
-      programs.ccache.enable = true;
       programs.nix-ld = {
         enable = true;
         libraries = with pkgs; [
@@ -196,13 +160,6 @@
 
         pcscd.enable = true;
       };
-    };
-  };
-
-  flake-file.inputs = {
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 }

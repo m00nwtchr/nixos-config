@@ -2,13 +2,34 @@
 # you can edit your config and launch the VM to test stuff
 # instead of having to reboot each time.
 {
-  inputs,
   den,
+  lib,
+  inputs,
+  __findFile ? __findFile,
   ...
 }: {
-  # USER TODO: remove this tty-autologin used for the VM
-  den.aspects.tide.includes = [(den.batteries.tty-autologin "m00n")];
+  den.aspects.vm = {
+    includes = [(<den/tty-autologin> "m00n")];
 
+    nixos = {
+      config,
+      pkgs,
+      ...
+    }: {
+      virtualisation.vmVariant = {
+        boot.loader.systemd-boot.enable = false;
+        system.stateVersion = config.system.nixos.release;
+
+        # fileSystems."/" = {
+        #   fsType = "auto";
+        #   device = "/dev/fake";
+        # };
+        # disko.devices.disk.root.content = lib.mkForce null;
+      };
+    };
+  };
+
+  den.aspects.tide.includes = [den.aspects.vm];
   perSystem = {pkgs, ...}: {
     packages.vm = pkgs.writeShellApplication {
       name = "vm";

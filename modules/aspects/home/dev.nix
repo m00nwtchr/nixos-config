@@ -4,10 +4,30 @@
 {
   den,
   inputs,
-  osConfig,
+  __findFile ? __findFile,
   ...
 }: {
+  flake-file.inputs.alejandra = {
+    url = "github:kamadorueda/alejandra/main";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
+
   den.aspects.home.dev = {
+    includes = [
+      <home/rust>
+      <home/containers>
+      <home/ssh>
+      <home/gpg>
+      <home/autostart>
+      <home/default>
+      <home/wallust>
+      <home/dunst>
+      <home/waybar>
+      <home/uwsm>
+      <home/easyeffects>
+      <home/kubeconfig>
+    ];
+
     homeManager = {pkgs, ...}: {
       home.packages = with pkgs; [
         ansible
@@ -19,6 +39,8 @@
         mold
         lldb
         clang
+
+        arduino-ide
 
         alejandra
 
@@ -43,7 +65,7 @@
         defaultEditor = true;
 
         extraPackages = with pkgs; [
-          nil
+          # nil
           helm-ls
           vscode-langservers-extracted
           yaml-language-server

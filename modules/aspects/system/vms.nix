@@ -11,7 +11,6 @@
 
       virtualisation.libvirtd = {
         enable = true;
-
         qemu = {
           swtpm.enable = true;
         };
@@ -24,6 +23,7 @@
         phodav
       ];
 
+      # networking.bridges.br0.interfaces = ["wlan0"];
       networking.firewall.interfaces.virbr0.allowedUDPPorts = [53 67];
     };
   };

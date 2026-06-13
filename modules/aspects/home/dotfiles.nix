@@ -1,0 +1,17 @@
+{lib, ...}: {
+  den.aspects.home.dotfiles = {
+    homeManager = {config, ...}: {
+      options.dotfiles = {
+        mutable = lib.mkEnableOption "mutable dotfiles";
+
+        path = lib.mkOption {
+          type = lib.types.path;
+          apply = toString;
+          default = "${config.home.homeDirectory}/nixos-config/home";
+          example = "${config.home.homeDirectory}/.dotfiles";
+          description = "Location of the dotfiles working copy";
+        };
+      };
+    };
+  };
+}

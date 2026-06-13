@@ -1,0 +1,20 @@
+# [language-server.nixd]
+# command = "nixd"
+
+# # [language-server.nixd.config.nixpkgs]
+# # expr = "import <nixpkgs> { }"
+
+# # [language-server.nixd.config.formatting]
+# # command = ["nixfmt"]
+
+# [language-server.nixd.config.options.nixos]
+# expr = "(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.tide.options"
+
+# # [language-server.nixd.config.options.den]
+# # expr = "(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.tide.options"
+
+# # [language-server.nixd.config.options.home-manager]
+# # expr = "(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.<name>.options.home-manager.users.type.getSubOptions []"
+
+# # [language-server.nixd.config.diagnostic]
+# # suppress = ["sema-extra-with"]

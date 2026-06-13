@@ -18,79 +18,100 @@
       <home/env>
       <home/dev>
       <home/shell>
-      <home/rust>
-      <home/containers>
-      <home/ssh>
-      <home/gpg>
       <home/rclone>
-      <home/autostart>
       <home/wayland>
-      <home/default>
-      <home/sway>
-      <home/wallust>
-      <home/dunst>
-      <home/waybar>
     ];
 
     homeManager = {pkgs, ...}: {
-      home.packages = [pkgs.htop];
+      home.packages = with pkgs; [
+        htop
+
+        xdg-user-dirs
+
+        papers
+        libreoffice-qt6-fresh
+
+        # bitwarden-desktop
+
+        android-tools
+      ];
     };
 
     # NixOS-side user definition. Source equivalent:
     # legacy/users/m00n.nix (sops + users.users.m00n + extras).
-    provides.to-hosts.nixos = {
-      config,
-      pkgs,
-      ...
-    }: {
-      sops.secrets."passwords/m00n".neededForUsers = true;
+    provides.to-hosts = {host, ...}: {
+      includes = [<system/wayland/sway>];
+      nixos = {
+        config,
+        pkgs,
+        ...
+      }: {
+        nix.settings.trusted-users = ["m00n"];
+        sops.secrets."passwords/m00n".neededForUsers = true;
 
-      users.users.m00n = {
-        isNormalUser = true;
-        uid = 1000;
-        group = "m00n";
+        users.users.m00n = {
+          uid = 1000;
+          group = "m00n";
 
-        hashedPasswordFile = config.sops.secrets."passwords/m00n".path;
-        openssh.authorizedKeys.keyFiles = [
-          (builtins.toString ../../secrets/authorized_keys)
+          hashedPasswordFile = config.sops.secrets."passwords/m00n".path;
+          openssh.authorizedKeys.keyFiles = [
+            (builtins.toString "${inputs.self}/secrets/authorized_keys")
+          ];
+
+          autoSubUidGidRange = true;
+
+          extraGroups =
+            [
+              "wheel"
+              "video"
+              "dialout"
+              "adbusers"
+            ]
+            ++ (
+              if config.security.tpm2.enable
+              then ["tss"]
+              else []
+            );
+        };
+        users.groups.m00n.gid = 1000;
+
+        # memlock unlimited for m00n
+        security.pam.loginLimits = [
+          {
+            domain = "m00n";
+            type = "soft";
+            item = "memlock";
+            value = "unlimited";
+          }
+          {
+            domain = "m00n";
+            type = "hard";
+            item = "memlock";
+            value = "unlimited";
+          }
         ];
 
-        autoSubUidGidRange = true;
+        sops.secrets.atuin_key = {
+          sopsFile = builtins.toString "${inputs.self}/secrets/atuin_key.txt";
+          format = "binary";
+          owner = config.users.users.m00n.name;
+          group = config.users.users.m00n.group;
+        };
+        sops.secrets."atuin/session" = {
+          owner = config.users.users.m00n.name;
+          group = config.users.users.m00n.group;
+        };
 
-        extraGroups =
-          [
-            "wheel"
-            "adbusers"
-            "video"
-          ]
-          ++ (
-            if config.security.tpm2.enable
-            then ["tss"]
-            else []
-          );
-      };
-      users.groups.m00n.gid = 1000;
-
-      sops.secrets.atuin_key = {
-        sopsFile = builtins.toString "${inputs.self}/secrets/atuin_key.txt";
-        format = "binary";
-        owner = config.users.users.m00n.name;
-        group = config.users.users.m00n.group;
-      };
-      sops.secrets."atuin/session" = {
-        owner = config.users.users.m00n.name;
-        group = config.users.users.m00n.group;
-      };
-
-      sops.secrets."proton/password" = {
-        sopsFile = builtins.toString "${inputs.self}/secrets/proton.yaml";
-        owner = config.users.users.m00n.name;
-        group = config.users.users.m00n.group;
-      };
-      sops.secrets."proton/otp_secret_key" = {
-        sopsFile = builtins.toString "${inputs.self}/secrets/proton.yaml";
-        owner = config.users.users.m00n.name;
-        group = config.users.users.m00n.group;
+        sops.secrets."proton/password" = {
+          sopsFile = builtins.toString "${inputs.self}/secrets/proton.yaml";
+          owner = config.users.users.m00n.name;
+          group = config.users.users.m00n.group;
+        };
+        sops.secrets."proton/otp_secret_key" = {
+          sopsFile = builtins.toString "${inputs.self}/secrets/proton.yaml";
+          owner = config.users.users.m00n.name;
+          group = config.users.users.m00n.group;
+        };
       };
     };
   };

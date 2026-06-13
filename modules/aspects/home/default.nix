@@ -9,10 +9,14 @@
   ...
 }: {
   den.aspects.home.default = {
-    homeManager = {pkgs, config, ...}: {
+    homeManager = {
+      pkgs,
+      config,
+      ...
+    }: {
       home.username = "m00n";
       home.homeDirectory = "/home/m00n";
-      home.stateVersion = "26.05";
+      home.stateVersion = "26.11";
 
       home.packages = with pkgs; [
         ungoogled-chromium
@@ -100,7 +104,8 @@
 
       programs.mpv = {
         enable = true;
-        scripts = with pkgs.mpvScripts; with pkgs.mpvScripts.builtins; [
+        scripts = with pkgs.mpvScripts;
+        with pkgs.mpvScripts.builtins; [
           mpris
           modernz
           sponsorblock

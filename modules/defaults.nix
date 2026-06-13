@@ -6,22 +6,10 @@
 }: {
   den.default = {
     nixos = {
-      system.stateVersion = "26.05";
-      nixpkgs.config.allowUnfree = true;
-      nixpkgs.config.permittedInsecurePackages = [
-        "olm-3.2.16"
-        "libsoup-2.74.3"
-        "electron-39.8.10"
-      ];
+      system.stateVersion = "26.11";
     };
     homeManager = {
-      home.stateVersion = "26.05";
-      nixpkgs.config.allowUnfree = true;
-      nixpkgs.config.permittedInsecurePackages = [
-        "olm-3.2.16"
-        "libsoup-2.74.3"
-        "electron-39.8.10"
-      ];
+      home.stateVersion = "26.11";
     };
   };
 
@@ -32,6 +20,11 @@
     <den/hostname>
     <den/define-user>
 
+    <system>
+    <system/sops>
     <hardware/facter>
+    <home-manager>
+
+    <home/dotfiles>
   ];
 }

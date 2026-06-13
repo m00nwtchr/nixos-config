@@ -1,11 +1,8 @@
-# Port of homes/x86_64-linux/m00n/shell.nix — zsh + direnv +
-# atuin + lots of CLI tools.
 {
   config,
   self,
   lib,
   pkgs,
-  osConfig,
   ...
 }: {
   den.aspects.home.shell = {
@@ -67,25 +64,39 @@
           path = "${config.xdg.stateHome}/zsh/history";
         };
 
-        initContent = ''
-          (cat ${config.xdg.cacheHome}/wallust/sequences &)
+        initContent = let
+          p10k = builtins.path {
+            path = ../../../home/m00n/zsh/p10k.zsh;
+            name = "p10k.zsh";
+          };
+        in
+          lib.mkMerge [
+            (lib.mkBefore
+              ''
+                (cat ${config.xdg.cacheHome}/wallust/sequences &)
 
-          eval "$(${lib.getExe pkgs.direnv} hook zsh)"
+                eval "$(${lib.getExe pkgs.direnv} hook zsh)"
 
-          if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
-            source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
-          fi
+                if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
+                  source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
+                fi
+              '')
 
-          function set_window_title() {
-            print -Pn "\e]0;$TERM - %n@%m: %~\a"
-          }
+            ''
+              function set_window_title() {
+                print -Pn "\e]0;$TERM - %n@%m: %~\a"
+              }
 
-          autoload -Uz add-zsh-hook
-          add-zsh-hook chpwd set_window_title
-          set_window_title
+              autoload -Uz add-zsh-hook
+              add-zsh-hook chpwd set_window_title
+              set_window_title
+            ''
 
-          source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-        '';
+            ''
+              source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+              source ${p10k}
+            ''
+          ];
 
         completionInit = ''
           zstyle :compinstall filename "$ZDOTDIR/zshrc"
@@ -96,6 +107,11 @@
         shellAliases = {
           ll = "ls -l";
           update = "sudo nixos-rebuild switch";
+        };
+
+        siteFunctions = {
+          kpatch_all_ns = builtins.readFile ../../../home/m00n/zsh/site-functions/kpatch_all_ns.zsh;
+          _kpatch_all_ns = builtins.readFile ../../../home/m00n/zsh/site-functions/_kpatch_all_ns.zsh;
         };
       };
 
@@ -112,11 +128,6 @@
           sync_frequency = "5m";
           sync_address = "https://atuin.m00nlit.dev";
           search_mode = "fuzzy";
-          # Source used osConfig.sops.secrets.atuin_key.path and
-          # osConfig.sops.secrets."atuin/session".path here. den
-          # doesn't surface osConfig to home aspects; these paths
-          # will be set by the m00n user aspect's `homeManager`
-          # (if/when re-introduced). For now, default locations.
           key_path = "${config.xdg.stateHome}/atuin/key";
           session_path = "${config.xdg.stateHome}/atuin/session";
         };

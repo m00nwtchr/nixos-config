@@ -10,7 +10,12 @@
   ...
 }: {
   den.aspects.system = {
-    nixos = {config, pkgs, lib, ...}: {
+    nixos = {
+      config,
+      pkgs,
+      lib,
+      ...
+    }: {
       nix = {
         settings = {
           experimental-features = [
@@ -78,7 +83,8 @@
 
       environment.systemPackages = with pkgs; [
         helix
-        nil
+        # nil
+        nh
         htop
         wget
         curl
