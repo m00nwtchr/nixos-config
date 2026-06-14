@@ -6,15 +6,6 @@
   inputs,
   ...
 }: {
-  den.aspects.ember.disk = {
-    includes = [
-      <system/disk/swap>
-    ];
-    nixos = {lib, ...}: {
-      boot.kernelParams = ["resume_offset=533760"];
-    };
-  };
-
   den.aspects.ember = {
     includes = [
       <boot/secureboot>
@@ -23,34 +14,102 @@
       <system/vms>
       <system/gaming>
 
-      den.aspects.ember.disk
-      <hardware/framework-16-amd-ai-300-series>
       den.aspects.vm
     ];
 
-    nixos = {pkgs, ...}: {
+    nixos = {pkgs, lib, ...}: {
       system.stateVersion = "26.11";
 
-      environment.systemPackages = with pkgs; [
-        clinfo
-        rocmPackages.clr.icd
-        rocmPackages.rocminfo
+      nixpkgs.config.rocmSupport = true;
+
+      boot.initrd.availableKernelModules = ["asus_wmi"];
+      boot.extraModulePackages = [];
+
+      fileSystems."/" = {
+        device = "/dev/mapper/root";
+        fsType = "btrfs";
+        options = [
+          "subvol=@"
+          "compress=zstd"
+        ];
+      };
+
+      boot.initrd.luks.devices."root" = {
+        device = "/dev/disk/by-uuid/7790403a-8bbc-4cbd-9bf6-252716a9be06";
+        allowDiscards = true;
+        bypassWorkqueues = true;
+        crypttabExtraOpts = [
+          "x-initrd.attach"
+        ];
+      };
+
+      fileSystems."/efi" = {
+        device = "/dev/disk/by-uuid/522B-7F0C";
+        fsType = "vfat";
+        options = [
+          "fmask=0022"
+          "dmask=0022"
+          "umask=0077"
+        ];
+      };
+
+      fileSystems."/home" = {
+        device = "/dev/mapper/root";
+        fsType = "btrfs";
+        options = [
+          "subvol=@home"
+          "compress=zstd"
+        ];
+      };
+
+      fileSystems."/nix" = {
+        device = "/dev/mapper/root";
+        fsType = "btrfs";
+        options = [
+          "subvol=@nix"
+          "compress=zstd"
+        ];
+      };
+
+      fileSystems."/.snapshots" = {
+        device = "/dev/mapper/root";
+        fsType = "btrfs";
+        options = [
+          "subvol=@snapshots"
+          "compress=zstd"
+        ];
+      };
+
+      swapDevices = [
+        {
+          device = "/var/lib/swapfile";
+          size = 6 * 1024;
+        }
       ];
 
-      programs.nix-ld.libraries = with pkgs.rocmPackages; [
-        hipblas
-        rocblas
-
-        pkgs.numactl
-        pkgs.elfutils
+      boot.kernelParams = [
+        "tsc=unstable"
+        "clocksource=hpet"
       ];
+
+      specialisation.noPlymouth.configuration = {
+        boot.plymouth.enable = lib.mkForce false;
+      };
+
+      security.tpm2.enable = true;
+
+      environment.systemPackages = with pkgs; [];
+
+      programs.nix-ld.libraries = [];
 
       services.tailscale.enable = true;
 
       services.ollama = {
-        enable = true;
-        package = pkgs.ollama-vulkan;
-        environmentVariables = {};
+        enable = false;
+        rocmOverrideGfx = "9.0.0";
+        environmentVariables = {
+          OLLAMA_LLM_LIBRARY = "cpu";
+        };
       };
     };
 
