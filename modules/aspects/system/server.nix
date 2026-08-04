@@ -52,14 +52,12 @@
 
         "kernel.panic" = 10;
         "kernel.panic_on_oops" = 1;
-      };
-
-      boot.kernel.sysctl = lib.mkIf config.zramSwap.enable {
+      } // (lib.mkIf config.zramSwap.enable {
         "vm.swappiness" = 180;
         "vm.watermark_boost_factor" = 0;
         "vm.watermark_scale_factor" = 125;
         "vm.page-cluster" = 0;
-      };
+      });
 
       environment.systemPackages = with pkgs; [
         nnn
