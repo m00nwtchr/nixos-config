@@ -17,54 +17,47 @@
   };
 
   den.aspects.system.disk = {
-    esp = {
-      nixos = {...}: {
-        # Shared EFI System Partition. Mounted at /efi with the
-        # standard fmask/dmask/umask vfat mount options used by
-        # every disko-managed host. The disko config declares the
-        # partition inside the root disk's `content.partitions.ESP`
-        # attribute set.
-        disko.devices.disk.root.content.partitions.ESP = {
-          size = "512M";
-          type = "EF00";
-          content = {
-            type = "filesystem";
-            format = "vfat";
-            mountpoint = "/efi";
-            mountOptions = [
-              "fmask=0022"
-              "dmask=0022"
-              "umask=0077"
-            ];
-          };
+    default = {
+      includes = [den.aspects.system.disk.swap den.aspects.system.disk.btrfs];
+    };
+
+    esp.nixos = {
+      # Shared EFI System Partition. Mounted at /efi with the
+      # standard fmask/dmask/umask vfat mount options used by
+      # every disko-managed host. The disko config declares the
+      # partition inside the root disk's `content.partitions.ESP`
+      # attribute set.
+      disko.devices.disk.root.content.partitions.ESP = {
+        size = "512M";
+        type = "EF00";
+        content = {
+          type = "filesystem";
+          format = "vfat";
+          mountpoint = "/efi";
+          mountOptions = [
+            "fmask=0022"
+            "dmask=0022"
+            "umask=0077"
+          ];
         };
       };
     };
 
-    swap = {
-      includes = [
-        den.aspects.system.disk.btrfs
-      ];
-      nixos = {lib, ...}: {
-        boot.resumeDevice = "/dev/mapper/root";
-
-        disko.devices.disk.root.content.partitions.root.content.content.subvolumes."@swap" = {
-          mountpoint = "/.swap";
-          swap.swapfile.size = "32G";
-        };
+    swap.nixos = {
+      boot.resumeDevice = "/dev/mapper/root";
+      disko.devices.disk.root.content.partitions.root.content.content.subvolumes."@swap" = {
+        mountpoint = "/.swap";
+        swap.swapfile.size = "32G";
       };
     };
 
     btrfs = {
       includes = [
+        den.aspects.system.disk
         den.aspects.system.disk.esp
       ];
 
       nixos = {lib, ...}: {
-        imports = [
-          inputs.disko.nixosModules.disko
-        ];
-
         disko.devices.disk.root = {
           device = lib.mkDefault "/dev/nvme0n1";
 
@@ -114,16 +107,11 @@
 
     zfs = {
       includes = [
+        den.aspects.system.disk
         den.aspects.system.disk.esp
       ];
 
       nixos = {lib, ...}: {
-        imports = [
-          inputs.disko.nixosModules.disko
-          inputs.disko-zfs.nixosModules.default
-        ];
-
-        disko.enableConfig = true;
         disko.zfs.enable = true;
 
         # Default rpool layout — the dataset tree every zfs-root
@@ -188,10 +176,12 @@
       };
     };
 
-    nixos = {lib, ...}: {
+    nixos = {
       imports = [
         inputs.disko.nixosModules.disko
+        inputs.disko-zfs.nixosModules.default
       ];
+      disko.enableConfig = true;
     };
   };
 }

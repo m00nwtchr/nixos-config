@@ -8,7 +8,7 @@
 }: {
   den.aspects.tide.disk = {
     includes = [
-      <system/disk/swap>
+      <system/disk/default>
     ];
     nixos = {lib, ...}: {
       boot.kernelParams = ["resume_offset=533760"];
