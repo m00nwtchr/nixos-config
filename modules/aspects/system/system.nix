@@ -38,7 +38,7 @@
         enable = true;
         clean.enable = true;
         clean.extraArgs = "--keep-since 7d --keep 3 --optimise";
-        flake = "/home/m00n/nixos-config";
+        flake = "/etc/nixos";
       };
 
       environment.etc."current-nixos".source = "${inputs.self}";
