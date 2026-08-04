@@ -216,21 +216,26 @@
 
       services.smartd.defaults.monitored = "-a -o on -S on -n standby,q -s (S/../.././02|L/../../7/04) -W 4,45,55 -l error -l xerror -l selftest";
 
-      services.k3s = {
-        enable = lib.mkForce true;
-        role = "server";
-
-        nodeIP = "2a02:a313:43e4:7080::7dc5,192.168.0.10";
-        nodeExternalIP = "2a02:a313:43e4:7080::7dc5";
-        nodeLabel = [
+      services.k3s.node = {
+        podCIDRs = [
           "2001:cafe:42::/64"
           "10.42.0.0/24"
+        ];
+
+        advertisedRoutes = [];
+
+        ips = [
+          "2a02:a313:43e4:7080::7dc5"
+          "192.168.0.10"
+        ];
+
+        externalIPs = [
+          "2a02:a313:43e4:7080::7dc5"
         ];
       };
 
       services.tailscale.extraSetFlags = [
         "--accept-dns=false"
-        "--advertise-routes=2001:cafe:42::/64,10.42.0.0/24"
       ];
     };
   };
