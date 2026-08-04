@@ -11,6 +11,10 @@
   ...
 }: {
   den.aspects.ganymede = {
+    imports = [
+      "${inputs.self}/hosts/ganymede/disk-config.nix"
+    ];
+
     includes = [
       <boot/secureboot>
       <system/server>
@@ -29,10 +33,6 @@
       networking.hostName = "ganymede";
       system.stateVersion = "24.11";
       networking.hostId = lib.mkForce "8504e2ee";
-
-      imports = [
-        "${inputs.self}/hosts/${config.networking.hostName}/disk-config.nix"
-      ];
 
       boot.kernelParams = [];
 
