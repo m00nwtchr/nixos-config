@@ -166,6 +166,13 @@
               recordsize = "16K";
             };
           };
+          containerd = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "none";
+              canmount = "off";
+            };
+          };
         };
       };
 
