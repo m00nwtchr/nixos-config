@@ -6,7 +6,7 @@
   ...
 }: {
   hardware.nvidia = {
-    nixos = {config, ...}:
+    nixos = {config, pkgs, ...}:
       lib.mkIf config.hardware.facter.detected.nvidia {
         nixpkgs.config = {
           nvidia.acceptLicense = true;

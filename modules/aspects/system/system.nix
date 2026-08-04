@@ -7,6 +7,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }: {
   den.aspects.system = {
@@ -31,18 +32,16 @@
             "m00n:kbAQdFU/e4Vec5EnGwobPlNJ98r33SMjwkuWLV/h7lo="
           ];
         };
-
-        gc = {
-          automatic = lib.mkDefault true;
-          dates = lib.mkDefault "weekly";
-          options = lib.mkDefault "--delete-older-than 7d";
-        };
-        optimise.automatic = true;
       };
 
-      # Note: source had `environment.etc."current-nixos".source =
-      # "${inputs.self}"`. In den, we don't have a single inputs.self
-      # at this level. Omitted; cosmetic.
+      programs.nh = {
+        enable = true;
+        clean.enable = true;
+        clean.extraArgs = "--keep-since 7d --keep 3 --optimise";
+        flake = "/home/m00n/nixos-config";
+      };
+
+      environment.etc."current-nixos".source = "${inputs.self}";
 
       boot.tmp.cleanOnBoot = true;
 

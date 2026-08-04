@@ -32,7 +32,13 @@
           options cfg80211 ieee80211_regdom="PL"
         '';
 
-        hardware.bluetooth.powerOnBoot = !config.hardware.facter.detected.isLaptop;
+        hardware.bluetooth = {
+          powerOnBoot = !config.hardware.facter.detected.isLaptop;
+          settings.General = {
+            Experimental = true;
+            KernelExperimental = true;
+          };
+        };
       };
   };
 }

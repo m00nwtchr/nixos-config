@@ -33,6 +33,7 @@
 
         nheko
         element-desktop
+        # sable
         discord
         discover-overlay
         signal-desktop
@@ -75,7 +76,7 @@
       xdg.mimeApps = {
         enable = true;
         defaultApplicationPackages = with pkgs; [
-          # config.programs.librewolf.package  # set in home/librewolf.nix
+          config.programs.librewolf.package # set in home/librewolf.nix
           imv
           papers
           libreoffice-qt6-fresh

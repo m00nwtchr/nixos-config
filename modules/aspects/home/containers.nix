@@ -1,13 +1,11 @@
 # Port of homes/x86_64-linux/m00n/containers.nix — kubectl,
 # helm, k9s, etc. + podman user service.
-{
-  lib,
-  ...
-}: {
+{lib, ...}: {
   den.aspects.home.containers = {
     homeManager = {pkgs, ...}: {
       home.packages = with pkgs; [
         kubectl
+        krew
         kubelogin-oidc
         kubernetes-helm
         k9s

@@ -6,7 +6,12 @@
   ...
 }: {
   den.aspects.home.shell = {
-    homeManager = {pkgs, config, ...}: {
+    homeManager = {
+      pkgs,
+      config,
+      osConfig,
+      ...
+    }: {
       home.packages = with pkgs; [
         zsh-powerlevel10k
 
@@ -75,7 +80,7 @@
               ''
                 (cat ${config.xdg.cacheHome}/wallust/sequences &)
 
-                eval "$(${lib.getExe pkgs.direnv} hook zsh)"
+                eval "$(${lib.getExe pkgs.devenv} hook zsh)"
 
                 if [[ -r "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh" ]]; then
                   source "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh"
@@ -128,8 +133,9 @@
           sync_frequency = "5m";
           sync_address = "https://atuin.m00nlit.dev";
           search_mode = "fuzzy";
-          key_path = "${config.xdg.stateHome}/atuin/key";
-          session_path = "${config.xdg.stateHome}/atuin/session";
+
+          key_path = osConfig.sops.secrets."atuin_key".path;
+          session_path = osConfig.sops.secrets."atuin/session".path;
         };
       };
     };

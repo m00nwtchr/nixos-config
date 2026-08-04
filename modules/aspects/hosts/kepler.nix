@@ -1,12 +1,12 @@
-# Host aspect for ember. Wires together the aspects that make up
-# ember's NixOS configuration.
+# Host aspect for kepler. Wires together the aspects that make up
+# kepler's NixOS configuration.
 {
   den,
   __findFile ? __findFile,
   inputs,
   ...
 }: {
-  den.aspects.ember = {
+  den.aspects.kepler = {
     includes = [
       <boot/secureboot>
       <system/desktop>
@@ -25,6 +25,8 @@
       system.stateVersion = "26.11";
 
       # nixpkgs.config.rocmSupport = true;
+
+      hardware.nvidia.open = true;
 
       boot.initrd.availableKernelModules = ["asus_wmi"];
       boot.extraModulePackages = [];
@@ -117,7 +119,7 @@
       };
     };
 
-    # Provides: ember adds default packages to every user home on
+    # Provides: kepler adds default packages to every user home on
     # this host.
     # provides.to-users.homeManager = {pkgs, ...}: {
     #   home.packages = with pkgs; [

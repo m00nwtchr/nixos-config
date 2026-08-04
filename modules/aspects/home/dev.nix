@@ -226,11 +226,34 @@
         uri = "https://idm.m00nlit.dev"
       '';
 
-      # TODO: port the kubeconfig aspect properly; for now, declare
-      # the bare-bones config here.
-      xdg.configFile."kube/config".text = ''
-        # kustomize build path: kubeconfig managed by m00nlit.kubeconfig
-      '';
+      m00n.kubeconfig = {
+        enable = true;
+        clusters.default = {
+          "insecure-skip-tls-verify" = true;
+          server = "https://ganymede:6443";
+        };
+        users.oidc = {
+          exec = {
+            apiVersion = "client.authentication.k8s.io/v1";
+            command = "kubectl";
+            args = [
+              "oidc-login"
+              "get-token"
+              "--oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
+              "--oidc-client-id=kubernetes"
+              "--oidc-extra-scope=email"
+              "--oidc-extra-scope=groups"
+            ];
+            env = null;
+            interactiveMode = "Never";
+            provideClusterInfo = false;
+          };
+        };
+        contexts.default = {
+          cluster = "default";
+          user = "oidc";
+        };
+      };
     };
   };
 }

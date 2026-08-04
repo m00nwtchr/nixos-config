@@ -59,6 +59,14 @@
             };
           }
         ];
+
+        # WF-1000XM5 profile swap helper is wired below in
+        # programs.xm5-audio-status — see that block. We could not enable
+        # BAP/LC3 here because the running kernel (linuxPackages_zen, no
+        # CONFIG_BT_ISO/CIS support) lacks the ISO socket primitives bluez5
+        # needs for the BAP plugin to initialize. Stick with auto switching
+        # between A2DP-Sink (LDAC) and HFP/HS (mSBC) until a kernel with
+        # CONFIG_BT_ISO/CIS is supplied.
       };
     };
   };

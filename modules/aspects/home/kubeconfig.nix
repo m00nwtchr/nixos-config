@@ -1,11 +1,14 @@
 {
   den,
   lib,
-  pkgs,
   ...
 }: {
   den.aspects.home.kubeconfig = {
-    homeManager = {config, ...}: let
+    homeManager = {
+      config,
+      pkgs,
+      ...
+    }: let
       cfg = config.m00n.kubeconfig;
       yaml = pkgs.formats.yaml {};
     in {

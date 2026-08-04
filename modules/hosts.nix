@@ -2,7 +2,7 @@
 # then config their aspects in as many files you want
 {
   den.hosts.x86_64-linux.tide.users.m00n = {};
-  den.hosts.x86_64-linux.ember.users.m00n = {};
+  den.hosts.x86_64-linux.kepler.users.m00n = {};
   den.homes.x86_64-linux.m00n = {};
 
   # be sure to add nix-darwin input for this:

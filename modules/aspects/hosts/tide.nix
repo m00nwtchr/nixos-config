@@ -42,6 +42,8 @@
 
         pkgs.numactl
         pkgs.elfutils
+
+        mpi
       ];
 
       services.tailscale.enable = true;
@@ -55,13 +57,28 @@
 
     # Provides: tide adds default packages to every user home on
     # this host.
-    # provides.to-users.homeManager = {pkgs, ...}: {
-    #   home.packages = with pkgs; [
-    #     # rocm userspace tools
-    #     clinfo
-    #     rocmPackages.clr.icd
-    #     rocmPackages.rocminfo
-    #   ];
-    # };
+    provides.to-users = {
+      nixos = {
+        # nixpkgs.config.permittedInsecurePackages = [
+        #   # "python3.13-vllm-0.16.0"
+        # ];
+      };
+
+      homeManager = {
+        pkgs,
+        pkgsStable,
+        ...
+      }: {
+        home.packages = with pkgs; [
+          # rocm userspace tools
+          # clinfo
+          # rocmPackages.clr.icd
+          # rocmPackages.rocminfo
+          #
+
+          # pkgsStable.vllm
+        ];
+      };
+    };
   };
 }

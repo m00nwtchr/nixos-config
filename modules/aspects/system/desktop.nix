@@ -30,6 +30,8 @@
         allowUnfree = true;
         permittedInsecurePackages = [
           "olm-3.2.16"
+          "python3.13-vllm-0.16.0"
+
           "libsoup-2.74.3"
           "electron-39.8.10"
         ];

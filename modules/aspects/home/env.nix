@@ -2,10 +2,7 @@
 # Gradle, Cargo, RUSTUP, KUBECONFIG, etc. Declared as a sub-aspect
 # `den.aspects.home.env`; included from the m00n user aspect's
 # `homeManager.imports`.
-{
-  config,
-  ...
-}: {
+{config, ...}: {
   den.aspects.home.env = {
     homeManager = {config, ...}: {
       home.sessionVariables = {
@@ -65,7 +62,8 @@
         APP2UNIT_SLICES = "a=app-graphical.slice b=background-graphical.slice s=session-graphical.slice";
       };
 
-      home.sessionPath = [
+      home.sessionPath = with config.home.sessionVariables; [
+        "${KREW_ROOT}/bin"
         "${config.home.homeDirectory}/.local/bin"
       ];
     };

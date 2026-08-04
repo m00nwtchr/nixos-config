@@ -32,6 +32,7 @@
         libreoffice-qt6-fresh
 
         # bitwarden-desktop
+        calibre
 
         android-tools
       ];

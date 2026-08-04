@@ -43,5 +43,6 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    stable.url = "github:nixos/nixpkgs/nixos-26.05";
   };
 }

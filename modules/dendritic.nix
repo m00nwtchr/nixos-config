@@ -13,11 +13,35 @@
 
   _module.args.__findFile = den.lib.__findFile;
 
+  den.aspects.stable = {
+    nixos = {
+      host,
+      pkgs,
+      config,
+      ...
+    }: {
+      _module.args.pkgsStable = import inputs.stable {
+        inherit (pkgs.stdenv.hostPlatform) system;
+        inherit (config.nixpkgs) config;
+      };
+    };
+
+    provides.to-users.homeManager = {
+      user,
+      osConfig,
+      ...
+    }: {
+      _module.args.pkgsStable = osConfig._module.args.pkgsStable;
+    };
+  };
+  den.default.includes = [den.aspects.stable];
+
   # Meta inputs: the framework plugin (flake-file), the den
   # framework itself, and `home-manager` (used by many home aspects,
   # so kept central). Per the co-location rule, other flake-file
   # inputs are declared at the module/aspect that uses them.
   flake-file.inputs = {
+    stable.url = "github:nixos/nixpkgs/nixos-26.05";
     den.url = "github:denful/den";
     flake-file.url = "github:vic/flake-file";
     home-manager = {
