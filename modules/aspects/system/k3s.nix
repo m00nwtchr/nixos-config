@@ -60,7 +60,7 @@
         node-ip = nodeIPs;
         # node-external-ip = nodeExternalIPs;
 
-        container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
+        container-runtime-endpoint = "unix:///var/run/containerd/containerd.sock";
         etcd-expose-metrics = true;
 
         kubelet-arg = [
@@ -191,7 +191,8 @@
         ];
 
         virtualisation.cri-o = {
-          enable = true;
+          enable = false;
+
           storageDriver = config.virtualisation.containers.storage.settings.storage.driver;
           settings = {
             crio.image = {
@@ -202,17 +203,29 @@
           };
         };
 
+        virtualisation.containers.enable = true;
         virtualisation.containerd = {
-          enable = false;
+          enable = true;
+
           settings = lib.mkForce {
             version = 3;
+
             plugins = {
-              "io.containerd.cri.v1.images" = {
+              # "io.containerd.cri.v1.images" = {
+              # 	snapshotter = "zfs";
+              # };
+              "io.containerd.grpc.v1.cri".containerd = {
                 snapshotter = "zfs";
+                default_runtime_name = "crun";
               };
+
+              "io.containerd.snapshotter.v1.zfs" = {
+                pool_name = "rpool/containerd";
+              };
+
               "io.containerd.cri.v1.runtime" = {
                 cni = {
-                  bin_dir = "/opt/cni/bin";
+                  bin_dirs = ["/opt/cni/bin"];
                   conf_dir = "/etc/cni/net.d/";
                 };
                 containerd = {
