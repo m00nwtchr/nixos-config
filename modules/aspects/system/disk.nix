@@ -171,6 +171,11 @@
                 recordsize = "16K";
               };
             };
+            "var/lib" = {
+              type = "zfs_fs";
+              mountpoint = "/var/lib";
+              options.mountpoint = "legacy";
+            };
           };
         };
       };
