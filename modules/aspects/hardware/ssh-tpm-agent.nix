@@ -4,6 +4,7 @@
 # included unconditionally by the ganymede host aspect, which then
 # forces services.sshTpmAgent.enable = false to match nixold.
 {
+  __findFile ? __findFile,
   config,
   lib,
   pkgs,
