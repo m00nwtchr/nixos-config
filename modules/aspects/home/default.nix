@@ -76,6 +76,7 @@
       xdg.mimeApps = {
         enable = true;
         defaultApplicationPackages = with pkgs; [
+          thunar
           config.programs.librewolf.package # set in home/librewolf.nix
           imv
           papers

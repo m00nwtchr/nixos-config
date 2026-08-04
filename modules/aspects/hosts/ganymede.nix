@@ -126,7 +126,6 @@
 
       services.resolved.enable = false;
       networking.nameservers = ["127.0.0.1" "::1"];
-      services.tailscale.extraSetFlags = ["--accept-dns=false"];
 
       services.unbound = {
         enable = true;
@@ -221,24 +220,18 @@
         enable = lib.mkForce true;
         role = "server";
 
-        node = {
-          podCIDRs = [
-            "2001:cafe:42::/64"
-            "10.42.0.0/24"
-          ];
-
-          advertisedRoutes = [];
-
-          ips = [
-            "2a02:a313:43e4:7080::7dc5"
-            "192.168.0.10"
-          ];
-
-          externalIPs = [
-            "2a02:a313:43e4:7080::7dc5"
-          ];
-        };
+        nodeIP = "2a02:a313:43e4:7080::7dc5,192.168.0.10";
+        nodeExternalIP = "2a02:a313:43e4:7080::7dc5";
+        nodeLabel = [
+          "2001:cafe:42::/64"
+          "10.42.0.0/24"
+        ];
       };
+
+      services.tailscale.extraSetFlags = [
+        "--accept-dns=false"
+        "--advertise-routes=2001:cafe:42::/64,10.42.0.0/24"
+      ];
     };
   };
 }

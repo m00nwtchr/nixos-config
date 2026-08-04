@@ -1,8 +1,10 @@
-# Port of legacy/modules/system/k3s.nix (which imported
-# ./server.nix; both are folded here) — k3s server with dual
-# pod/service CIDRs, OIDC auth via Kanidm, cri-o runtimes (nvidia,
-# kata), tailscale MTU tweak. The host aspect supplies the node
-# ips/podCIDRs/externalIPs and (optionally) advertisedRoutes.
+# k3s aspect — server role with dual-stack pod/service CIDRs, OIDC
+# auth via Kanidm, cri-o runtime, tailscale MTU tweak. The host
+# aspect supplies nodeIP/externalIPs via the standard NixOS k3s
+# module options. The rest of the k3s config is passed via
+# `extraFlags` since the modern NixOS k3s module is a thin wrapper
+# around the k3s binary that exposes a few high-level options and
+# forwards everything else through `extraFlags`.
 {
   __findFile ? __findFile,
   config,
@@ -11,7 +13,6 @@
   inputs,
   ...
 }: let
-  cfg = config.services.k3s;
   yaml = pkgs.formats.yaml {};
 in {
   den.aspects.system.k3s = {
@@ -22,18 +23,6 @@ in {
       inputs,
       ...
     }: let
-      clusterCIDRs = lib.strings.concatStringsSep "," [
-        "2001:cafe:42::/56"
-        "10.42.0.0/16"
-      ];
-      serviceCIDRs = lib.strings.concatStringsSep "," [
-        "2001:cafe:43::/112"
-        "10.43.0.0/16"
-      ];
-      nodeIPs = lib.strings.concatStringsSep "," cfg.node.ips;
-      advertisedRoutes = lib.strings.concatStringsSep "," (
-        builtins.concatLists [cfg.node.podCIDRs cfg.node.advertisedRoutes]
-      );
       authConfig = {
         apiVersion = "apiserver.config.k8s.io/v1";
         kind = "AuthenticationConfiguration";
@@ -56,39 +45,7 @@ in {
           ];
         };
       };
-      k3sConfig = {
-        node-name = "m00nsrv";
-        node-ip = nodeIPs;
-        container-runtime-endpoint = "unix:///var/run/crio/crio.sock";
-        etcd-expose-metrics = true;
-        kubelet-arg = [
-          "make-iptables-util-chains=false"
-          "max-pods=250"
-        ];
-        disable = [
-          "traefik"
-          "metrics-server"
-          "servicelb"
-          "coredns"
-          "local-storage"
-        ];
-        cluster-cidr = clusterCIDRs;
-        service-cidr = serviceCIDRs;
-        advertise-address = builtins.elemAt cfg.node.ips 0;
-        flannel-backend = "none";
-        disable-network-policy = true;
-        disable-kube-proxy = true;
-        tls-san = "k8s.m00nlit.dev";
-        kube-apiserver-arg = let
-          authConfigYaml = yaml.generate "k8s-auth-config" authConfig;
-        in [
-          "authentication-config=${authConfigYaml}"
-          "service-account-issuer=https://k8s.m00nlit.dev"
-          "service-account-jwks-uri=https://k8s.m00nlit.dev/openid/v1/jwks"
-          "feature-gates=MutatingAdmissionPolicy=true"
-          "runtime-config=admissionregistration.k8s.io/v1beta1=true"
-        ];
-      };
+      authConfigYaml = yaml.generate "k8s-auth-config" authConfig;
     in {
       boot.kernel.sysctl = {
         "net.ipv4.ip_local_reserved_ports" = "30000-32767";
@@ -114,7 +71,6 @@ in {
       services.tailscale = {
         enable = true;
         extraSetFlags = [
-          "--advertise-routes=${advertisedRoutes}"
           "--accept-routes"
         ];
       };
@@ -170,13 +126,46 @@ in {
       sops.secrets."k3s/token".sopsFile = "${inputs.self}/secrets/k3s.yaml";
 
       systemd.services.k3s.path = [pkgs.nftables];
+
       services.k3s = {
         enable = true;
         package = pkgs.k3s;
+        role = "server";
         tokenFile = config.sops.secrets."k3s/token".path;
 
         gracefulNodeShutdown.enable = false;
-        configPath = yaml.generate "k3s-config" k3sConfig;
+
+        # Modern NixOS k3s module is a thin wrapper. The k3s binary
+        # accepts ~all settings via CLI flags. The `extraFlags` list
+        # maps directly to k3s command-line arguments. Auth config
+        # and tls-san, dual-CIDR, kubelet args, and disabled
+        # built-ins all flow through this channel.
+        extraFlags = [
+          "--node-name=m00nsrv"
+          "--container-runtime-endpoint=unix:///var/run/crio/crio.sock"
+          "--etcd-expose-metrics=true"
+          "--cluster-cidr=2001:cafe:42::/56,10.42.0.0/16"
+          "--service-cidr=2001:cafe:43::/112,10.43.0.0/16"
+          "--flannel-backend=none"
+          "--disable-network-policy"
+          "--disable-kube-proxy"
+          "--tls-san=k8s.m00nlit.dev"
+          "--kubelet-arg=make-iptables-util-chains=false"
+          "--kubelet-arg=max-pods=250"
+          "--kube-apiserver-arg=authentication-config=${authConfigYaml}"
+          "--kube-apiserver-arg=service-account-issuer=https://k8s.m00nlit.dev"
+          "--kube-apiserver-arg=service-account-jwks-uri=https://k8s.m00nlit.dev/openid/v1/jwks"
+          "--kube-apiserver-arg=feature-gates=MutatingAdmissionPolicy=true"
+          "--kube-apiserver-arg=runtime-config=admissionregistration.k8s.io/v1beta1=true"
+        ]
+        ++ map (d: "--disable=${d}") [
+          "traefik"
+          "metrics-server"
+          "servicelb"
+          "coredns"
+          "local-storage"
+        ];
+
         extraKubeletConfig = {
           memorySwap.swapBehavior = "LimitedSwap";
           imageMaximumGCAge = "12h";

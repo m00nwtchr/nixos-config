@@ -5,32 +5,24 @@
 # ZFS pool hostId.
 {
   __findFile ? __findFile,
-  config,
-  lib,
-  pkgs,
   inputs,
   ...
-}: let
-  hostName = config.networking.hostName;
-  seedPath = "${inputs.self}/hosts/${hostName}/host-seed";
-  seed = builtins.readFile seedPath;
-in {
+}: {
   den.aspects.system.zfs = {
     nixos = {
       config,
       lib,
       pkgs,
-      inputs,
       ...
     }: let
-      seedPath' = "${inputs.self}/hosts/${config.networking.hostName}/host-seed";
+      seedPath = "${inputs.self}/hosts/${config.networking.hostName}/host-seed";
     in {
       virtualisation.containers.storage.settings.storage.driver = lib.mkOverride 999 "zfs";
 
       networking.hostId = builtins.substring 0 8 (
         builtins.hashString "sha256" (
-          if builtins.pathExists seedPath'
-          then builtins.readFile seedPath'
+          if builtins.pathExists seedPath
+          then builtins.readFile seedPath
           else ""
         )
       );
