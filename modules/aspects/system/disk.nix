@@ -17,8 +17,34 @@
   };
 
   den.aspects.system.disk = {
+    esp = {
+      nixos = {...}: {
+        # Shared EFI System Partition. Mounted at /efi with the
+        # standard fmask/dmask/umask vfat mount options used by
+        # every disko-managed host. The disko config declares the
+        # partition inside the root disk's `content.partitions.ESP`
+        # attribute set.
+        disko.devices.disk.root.content.partitions.ESP = {
+          size = "512M";
+          type = "EF00";
+          content = {
+            type = "filesystem";
+            format = "vfat";
+            mountpoint = "/efi";
+            mountOptions = [
+              "fmask=0022"
+              "dmask=0022"
+              "umask=0077"
+            ];
+          };
+        };
+      };
+    };
+
     swap = {
-      includes = [den.aspects.system.disk];
+      includes = [
+        den.aspects.system.disk.btrfs
+      ];
       nixos = {lib, ...}: {
         boot.resumeDevice = "/dev/mapper/root";
 
@@ -29,7 +55,68 @@
       };
     };
 
+    btrfs = {
+      includes = [
+        den.aspects.system.disk.esp
+      ];
+
+      nixos = {lib, ...}: {
+        imports = [
+          inputs.disko.nixosModules.disko
+        ];
+
+        disko.devices.disk.root = {
+          device = lib.mkDefault "/dev/nvme0n1";
+
+          content = {
+            type = "gpt";
+            partitions = {
+              root = {
+                size = "100%";
+                content = {
+                  type = "luks";
+                  name = "root";
+                  askPassword = true;
+                  settings = {
+                    allowDiscards = true;
+                    bypassWorkqueues = true;
+                  };
+                  initrdUnlock = true;
+                  content = {
+                    type = "btrfs";
+                    subvolumes = {
+                      "@" = {
+                        mountpoint = "/";
+                        mountOptions = ["compress=zstd" "noatime"];
+                      };
+                      "@home" = {
+                        mountpoint = "/home";
+                        mountOptions = ["compress=zstd" "noatime"];
+                      };
+                      "@nix" = {
+                        mountpoint = "/nix";
+                        mountOptions = ["compress=zstd" "noatime"];
+                      };
+
+                      "@snapshots" = {
+                        mountpoint = "/.snapshots";
+                        mountOptions = ["compress=zstd" "noatime"];
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+
     zfs = {
+      includes = [
+        den.aspects.system.disk.esp
+      ];
+
       nixos = {lib, ...}: {
         imports = [
           inputs.disko.nixosModules.disko
@@ -105,68 +192,6 @@
       imports = [
         inputs.disko.nixosModules.disko
       ];
-
-      disko.devices = {
-        disk.root = {
-          device = lib.mkDefault "/dev/nvme0n1";
-
-          content = {
-            type = "gpt";
-            partitions = {
-              ESP = {
-                size = "512M";
-                type = "EF00";
-                content = {
-                  type = "filesystem";
-                  format = "vfat";
-                  mountpoint = "/efi";
-                  mountOptions = [
-                    "fmask=0022"
-                    "dmask=0022"
-                    "umask=0077"
-                  ];
-                };
-              };
-
-              root = {
-                size = "100%";
-                content = {
-                  type = "luks";
-                  name = "root";
-                  askPassword = true;
-                  settings = {
-                    allowDiscards = true;
-                    bypassWorkqueues = true;
-                  };
-                  initrdUnlock = true;
-                  content = {
-                    type = "btrfs";
-                    subvolumes = {
-                      "@" = {
-                        mountpoint = "/";
-                        mountOptions = ["compress=zstd" "noatime"];
-                      };
-                      "@home" = {
-                        mountpoint = "/home";
-                        mountOptions = ["compress=zstd" "noatime"];
-                      };
-                      "@nix" = {
-                        mountpoint = "/nix";
-                        mountOptions = ["compress=zstd" "noatime"];
-                      };
-
-                      "@snapshots" = {
-                        mountpoint = "/.snapshots";
-                        mountOptions = ["compress=zstd" "noatime"];
-                      };
-                    };
-                  };
-                };
-              };
-            };
-          };
-        };
-      };
     };
   };
 }

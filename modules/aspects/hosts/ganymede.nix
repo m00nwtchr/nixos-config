@@ -23,10 +23,12 @@
 
       boot.zfs.extraPools = ["rpool" "spark" "vault"];
 
-      # Hardware-specific disk layout for ganymede: NVMe root with
-      # LUKS + ZFS, two-disk spark mirror, encrypted vault. The
-      # rpool dataset tree (root/home/nix/var/var-log) is inherited
-      # from <system/disk/zfs>.
+      # Hardware-specific disk layout for ganymede. The shared ESP
+      # partition and rpool dataset tree are inherited from
+      # <system/disk/zfs>. Here we declare the actual disks and
+      # override the root partition to be ZFS (instead of the
+      # btrfs sub-aspect's default) plus add the spark/vault disks
+      # and pool options.
       disko.devices = {
         disk = {
           root = {
@@ -35,35 +37,18 @@
 
             content = {
               type = "gpt";
-              partitions = {
-                ESP = {
-                  size = "512M";
-                  type = "EF00";
-                  content = {
-                    type = "filesystem";
-                    format = "vfat";
-                    mountpoint = "/efi";
-                    mountOptions = [
-                      "fmask=0022"
-                      "dmask=0022"
-                      "umask=0077"
-                    ];
+              partitions.root = {
+                size = "100%";
+                content = {
+                  type = "luks";
+                  name = "root";
+                  settings = {
+                    allowDiscards = true;
+                    bypassWorkqueues = true;
                   };
-                };
-
-                root = {
-                  size = "100%";
                   content = {
-                    type = "luks";
-                    name = "root";
-                    settings = {
-                      allowDiscards = true;
-                      bypassWorkqueues = true;
-                    };
-                    content = {
-                      type = "zfs";
-                      pool = "rpool";
-                    };
+                    type = "zfs";
+                    pool = "rpool";
                   };
                 };
               };
