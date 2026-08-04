@@ -148,6 +148,7 @@ Create `modules/aspects/hardware/ssh-tpm-agent.nix` with the following content (
 # included unconditionally by the ganymede host aspect, which then
 # forces services.sshTpmAgent.enable = false to match nixold.
 {
+  __findFile ? __findFile,
   config,
   lib,
   pkgs,
@@ -283,6 +284,7 @@ Create `modules/aspects/system/zfs.nix`:
 # overrides the hostId with a fixed value to preserve the legacy
 # ZFS pool hostId.
 {
+  __findFile ? __findFile,
   config,
   lib,
   pkgs,
@@ -362,6 +364,7 @@ Create `modules/aspects/system/chrony.nix`:
 # a makestep 30 3 directive. Used by server hosts (ganymede); not
 # active on desktop hosts (which use systemd-timesyncd).
 {
+  __findFile ? __findFile,
   config,
   lib,
   ...
@@ -422,6 +425,7 @@ Create `modules/aspects/system/ssh.nix`:
 # services.sshTpmAgent skeleton. The ganymede host aspect forces
 # services.sshTpmAgent.enable = false (matching nixold).
 {
+  __findFile ? __findFile,
   pkgs,
   config,
   lib,
@@ -484,6 +488,7 @@ Create `modules/aspects/system/k3s.nix`:
 # kata), tailscale MTU tweak. The host aspect supplies the node
 # ips/podCIDRs/externalIPs and (optionally) advertisedRoutes.
 {
+  __findFile ? __findFile,
   config,
   lib,
   pkgs,
@@ -703,6 +708,7 @@ Create `modules/aspects/system/server.nix`:
 # zram sysctls, kanidm client, smartd defaults, root's authorized
 # keys. Includes <system/ssh> and <system/chrony>.
 {
+  __findFile ? __findFile,
   config,
   pkgs,
   lib,
@@ -849,6 +855,7 @@ Create `modules/aspects/hosts/ganymede.nix`:
 # nixold/systems/x86_64-linux/ganymede/default.nix.
 {
   den,
+  __findFile ? __findFile,
   inputs,
   config,
   lib,
