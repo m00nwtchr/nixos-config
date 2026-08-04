@@ -6,7 +6,11 @@
   ...
 }: {
   den.aspects.home.ssh = {
-    homeManager = {pkgs, config, ...}: {
+    homeManager = {
+      pkgs,
+      config,
+      ...
+    }: {
       home.packages = with pkgs; [
         ssh-tpm-agent
       ];
@@ -25,6 +29,9 @@
             ServerAliveCountMax = 3;
             ForwardAgent = false;
             UserKnownHostsFile = "${config.xdg.stateHome}/ssh/known_hosts";
+          };
+          "ganymede" = {
+            Port = 2222;
           };
         };
       };

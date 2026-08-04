@@ -5,9 +5,6 @@
   den,
   __findFile ? __findFile,
   inputs,
-  config,
-  lib,
-  pkgs,
   ...
 }: {
   den.aspects.ganymede = {
@@ -27,14 +24,40 @@
       config,
       lib,
       pkgs,
-      inputs,
+      pkgsStable,
       ...
     }: {
       networking.hostName = "ganymede";
-      system.stateVersion = "24.11";
+      system.stateVersion = lib.mkForce "24.11";
       networking.hostId = lib.mkForce "8504e2ee";
 
       boot.kernelParams = [];
+
+      fileSystems."/" = {
+        device = "rpool/root";
+        fsType = "zfs";
+      };
+      fileSystems."/nix" = {
+        device = "rpool/nix";
+        fsType = "zfs";
+      };
+      fileSystems."/var/log" = {
+        device = "rpool/var/log";
+        fsType = "zfs";
+      };
+      fileSystems."/var/lib" = {
+        device = "rpool/var/lib";
+        fsType = "zfs";
+      };
+      fileSystems."/efi" = {
+        device = "/dev/disk/by-id/nvme-Micron_7450_MTFDKBA960TFR_24334AA93946-part1";
+        fsType = "vfat";
+        options = [
+          "fmask=0022"
+          "dmask=0022"
+          "umask=0077"
+        ];
+      };
 
       hardware.nvidia = {
         open = false;
@@ -186,8 +209,7 @@
       };
 
       virtualisation.cri-o = let
-        stPkgs = import inputs.stable {inherit (pkgs.stdenv.hostPlatform) system;};
-        crioPackage = stPkgs.cri-o.override {
+        crioPackage = pkgsStable.cri-o.override {
           extraPackages =
             config.virtualisation.cri-o.extraPackages
             ++ lib.optional (config.boot.supportedFilesystems.zfs or false) config.boot.zfs.package;

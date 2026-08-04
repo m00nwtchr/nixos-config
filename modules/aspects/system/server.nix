@@ -3,9 +3,6 @@
 # keys. Includes <system/ssh> and <system/chrony>.
 {
   __findFile ? __findFile,
-  config,
-  pkgs,
-  lib,
   inputs,
   ...
 }: {
@@ -19,7 +16,6 @@
       config,
       pkgs,
       lib,
-      inputs,
       ...
     }: {
       boot.kernel.sysctl = {
@@ -52,12 +48,7 @@
 
         "kernel.panic" = 10;
         "kernel.panic_on_oops" = 1;
-      } // (lib.mkIf config.zramSwap.enable {
-        "vm.swappiness" = 180;
-        "vm.watermark_boost_factor" = 0;
-        "vm.watermark_scale_factor" = 125;
-        "vm.page-cluster" = 0;
-      });
+      };
 
       environment.systemPackages = with pkgs; [
         nnn
@@ -66,7 +57,7 @@
       ];
 
       users.users.root.openssh.authorizedKeys.keyFiles = [
-        "${inputs.self}/secrets/authorized_keys"
+        (toString inputs.self + "/secrets/authorized_keys")
       ];
       services.openssh = {
         authorizedKeysCommand = "/opt/kanidm_ssh_authorizedkeys %u";

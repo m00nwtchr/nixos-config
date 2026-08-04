@@ -8,6 +8,7 @@
 # nixold original.
 {
   __findFile ? __findFile,
+  inputs,
   ...
 }: {
   den.aspects.system.k3s = {
@@ -15,7 +16,6 @@
       config,
       lib,
       pkgs,
-      inputs,
       ...
     }: let
       cfg = config.services.k3s;
@@ -230,7 +230,7 @@
           };
         };
 
-        sops.secrets."k3s/token".sopsFile = "${inputs.self}/secrets/k3s.yaml";
+        sops.secrets."k3s/token".sopsFile = "${toString inputs.self}/secrets/k3s.yaml";
 
         systemd.services.k3s.path = [pkgs.nftables];
 
