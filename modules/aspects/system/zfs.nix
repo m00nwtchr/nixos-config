@@ -17,7 +17,12 @@
     }: let
       seedPath = "${inputs.self}/hosts/${config.networking.hostName}/host-seed";
     in {
-      imports = [inputs.disko-zfs.nixosModules.default];
+      imports = [
+        inputs.disko.nixosModules.disko
+        inputs.disko-zfs.nixosModules.default
+      ];
+
+      disko.enableConfig = true;
 
       virtualisation.containers.storage.settings.storage.driver = lib.mkOverride 999 "zfs";
 

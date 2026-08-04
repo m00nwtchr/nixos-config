@@ -8,10 +8,6 @@
   ...
 }: {
   den.aspects.ganymede = {
-    imports = [
-      "${inputs.self}/hosts/ganymede/disk-config.nix"
-    ];
-
     includes = [
       <boot/secureboot>
       <system/server>
@@ -27,37 +23,15 @@
       pkgsStable,
       ...
     }: {
+      imports = [
+        "${inputs.self}/hosts/ganymede/disk-config.nix"
+      ];
+
       networking.hostName = "ganymede";
       system.stateVersion = lib.mkForce "24.11";
       networking.hostId = lib.mkForce "8504e2ee";
 
       boot.kernelParams = [];
-
-      fileSystems."/" = {
-        device = "rpool/root";
-        fsType = "zfs";
-      };
-      fileSystems."/nix" = {
-        device = "rpool/nix";
-        fsType = "zfs";
-      };
-      fileSystems."/var/log" = {
-        device = "rpool/var/log";
-        fsType = "zfs";
-      };
-      fileSystems."/var/lib" = {
-        device = "rpool/var/lib";
-        fsType = "zfs";
-      };
-      fileSystems."/efi" = {
-        device = "/dev/disk/by-id/nvme-Micron_7450_MTFDKBA960TFR_24334AA93946-part1";
-        fsType = "vfat";
-        options = [
-          "fmask=0022"
-          "dmask=0022"
-          "umask=0077"
-        ];
-      };
 
       hardware.nvidia = {
         open = false;
