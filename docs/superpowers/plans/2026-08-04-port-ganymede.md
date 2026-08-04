@@ -4,7 +4,7 @@
 
 **Goal:** Bring the existing `ganymede` server host into the `~/nixos-config` repository, evaluated through the den aspect pattern alongside `tide`/`kepler`/`ember`.
 
-**Architecture:** Faithful port of the legacy nixold modules into reusable den aspects (`den.aspects.system.{server,ssh,chrony,zfs,k3s}` and `den.aspects.hardware.ssh-tpm-agent`) plus a host aspect (`den.aspects.ganymede`) that combines them and binds hardware-specific settings. The host data dir (`hosts/ganymede/`) holds `facter.json`, `host-seed`, and the disko `disk-config.nix` copied from nixold. The flake inputs are already present in the repo (`disko`, `disko-zfs`, `lanzaboote`, `sops-nix`, `stable`).
+**Architecture:** Faithful port of the legacy nixold modules into reusable den aspects (`system.{server,ssh,chrony,zfs,k3s}` and `hardware.ssh-tpm-agent`) plus a host aspect (`ganymede`) that combines them and binds hardware-specific settings. The host data dir (`hosts/ganymede/`) holds `facter.json`, `host-seed`, and the disko `disk-config.nix` copied from nixold. The flake inputs are already present in the repo (`disko`, `disko-zfs`, `lanzaboote`, `sops-nix`, `stable`). All new aspect files declare their top-level aspect as `system.X = {...}` (or `hardware.X = {...}`) — the namespace-attribute pattern used by every other aspect in the repo, NOT `den.aspects.system.X` (which breaks the den bracket resolver and `<hardware/facter>` lookup).
 
 **Tech Stack:** NixOS modules via den (flake-parts), flake-file for co-located inputs, `nix flake check` / `nix eval` for verification.
 
@@ -154,7 +154,7 @@ Create `modules/aspects/hardware/ssh-tpm-agent.nix` with the following content (
   pkgs,
   ...
 }: {
-  den.aspects.hardware.ssh-tpm-agent = {
+  hardware.ssh-tpm-agent = {
     nixos = {
       config,
       lib,
@@ -295,7 +295,7 @@ Create `modules/aspects/system/zfs.nix`:
   seedPath = "${inputs.self}/hosts/${hostName}/host-seed";
   seed = builtins.readFile seedPath;
 in {
-  den.aspects.system.zfs = {
+  system.zfs = {
     nixos = {
       config,
       lib,
@@ -369,7 +369,7 @@ Create `modules/aspects/system/chrony.nix`:
   lib,
   ...
 }: {
-  den.aspects.system.chrony = {
+  system.chrony = {
     nixos = {...}: {
       networking.timeServers = [
         "time.cloudflare.net"
@@ -431,7 +431,7 @@ Create `modules/aspects/system/ssh.nix`:
   lib,
   ...
 }: {
-  den.aspects.system.ssh = {
+  system.ssh = {
     nixos = {...}: {
       services.sshTpmAgent.enable = true;
 
@@ -498,7 +498,7 @@ Create `modules/aspects/system/k3s.nix`:
   cfg = config.services.k3s;
   yaml = pkgs.formats.yaml {};
 in {
-  den.aspects.system.k3s = {
+  system.k3s = {
     nixos = {
       config,
       lib,
@@ -715,7 +715,7 @@ Create `modules/aspects/system/server.nix`:
   inputs,
   ...
 }: {
-  den.aspects.system.server = {
+  system.server = {
     includes = [
       <system/ssh>
       <system/chrony>

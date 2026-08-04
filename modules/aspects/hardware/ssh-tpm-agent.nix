@@ -10,7 +10,7 @@
   pkgs,
   ...
 }: {
-  den.aspects.hardware.ssh-tpm-agent = {
+  hardware.ssh-tpm-agent = {
     nixos = {
       config,
       lib,
