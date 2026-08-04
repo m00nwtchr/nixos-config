@@ -4,7 +4,7 @@
 
 **Goal:** Bring the existing `ganymede` server host into the `~/nixos-config` repository, evaluated through the den aspect pattern alongside `tide`/`kepler`/`ember`.
 
-**Architecture:** Faithful port of the legacy nixold modules into reusable den aspects (`system.{server,ssh,chrony,zfs,k3s}` and `hardware.ssh-tpm-agent`) plus a host aspect (`ganymede`) that combines them and binds hardware-specific settings. The host data dir (`hosts/ganymede/`) holds `facter.json`, `host-seed`, and the disko `disk-config.nix` copied from nixold. The flake inputs are already present in the repo (`disko`, `disko-zfs`, `lanzaboote`, `sops-nix`, `stable`). All new aspect files declare their top-level aspect as `system.X = {...}` (or `hardware.X = {...}`) — the namespace-attribute pattern used by every other aspect in the repo, NOT `den.aspects.system.X` (which breaks the den bracket resolver and `<hardware/facter>` lookup).
+**Architecture:** Faithful port of the legacy nixold modules into reusable den aspects (`den.aspects.system.{server,ssh,chrony,zfs,k3s}` and `hardware.ssh-tpm-agent`) plus a host aspect (`den.aspects.ganymede`) that combines them and binds hardware-specific settings. The host data dir (`hosts/ganymede/`) holds `facter.json`, `host-seed`, and the disko `disk-config.nix` copied from nixold. The flake inputs are already present in the repo (`disko`, `disko-zfs`, `lanzaboote`, `sops-nix`, `stable`). All new aspect files declare their top-level aspect using the existing repo pattern: `den.aspects.system.X = {...}` for system sub-aspects (matches `sops.nix`, `desktop.nix`, `splash.nix`, `vms.nix`, `gaming.nix`, `podman.nix`, `autologin.nix`, `disk.nix`) and `hardware.X = {...}` for hardware sub-aspects (matches `laptop.nix`, `nvidia.nix`, `facter.nix`, `framework16.nix`, `ppd-auto.nix`, `wireless.nix` — the `hardware` namespace is registered via `den.namespace "hardware" true` in `modules/dendritic.nix`).
 
 **Tech Stack:** NixOS modules via den (flake-parts), flake-file for co-located inputs, `nix flake check` / `nix eval` for verification.
 
@@ -295,7 +295,7 @@ Create `modules/aspects/system/zfs.nix`:
   seedPath = "${inputs.self}/hosts/${hostName}/host-seed";
   seed = builtins.readFile seedPath;
 in {
-  system.zfs = {
+  den.aspects.system.zfs = {
     nixos = {
       config,
       lib,
@@ -369,7 +369,7 @@ Create `modules/aspects/system/chrony.nix`:
   lib,
   ...
 }: {
-  system.chrony = {
+  den.aspects.system.chrony = {
     nixos = {...}: {
       networking.timeServers = [
         "time.cloudflare.net"
@@ -431,7 +431,7 @@ Create `modules/aspects/system/ssh.nix`:
   lib,
   ...
 }: {
-  system.ssh = {
+  den.aspects.system.ssh = {
     nixos = {...}: {
       services.sshTpmAgent.enable = true;
 
@@ -498,7 +498,7 @@ Create `modules/aspects/system/k3s.nix`:
   cfg = config.services.k3s;
   yaml = pkgs.formats.yaml {};
 in {
-  system.k3s = {
+  den.aspects.system.k3s = {
     nixos = {
       config,
       lib,
@@ -715,7 +715,7 @@ Create `modules/aspects/system/server.nix`:
   inputs,
   ...
 }: {
-  system.server = {
+  den.aspects.system.server = {
     includes = [
       <system/ssh>
       <system/chrony>
