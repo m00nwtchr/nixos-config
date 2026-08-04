@@ -5,6 +5,9 @@
   ...
 }: {
   den.aspects.home-manager = {
+    host,
+    user,
+  }: {
     nixos = {
       config,
       lib,
