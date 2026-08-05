@@ -17,6 +17,7 @@
       url = "github:numtide/disko-zfs";
       inputs = {
         disko.follows = "disko";
+        flake-parts.follows = "flake-parts";
         nixpkgs.follows = "nixpkgs";
       };
     };

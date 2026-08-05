@@ -13,12 +13,15 @@
 
     homeManager = {
       pkgs,
+      pkgsStable,
       config,
       osConfig,
       ...
     }: let
+      app2unit = "${pkgs.app2unit}/bin/app2unit";
+
       uwsm-shell = pkgs.writeShellScriptBin "uwsm-shell" ''
-        exec ${pkgs.app2unit}/bin/app2unit -- $(getent passwd $USER | cut -d: -f7)
+        exec ${app2unit} -- $(getent passwd $USER | cut -d: -f7)
       '';
 
       uwsm-game = pkgs.writeShellScriptBin "uwsm-game" (builtins.readFile ../../../home/m00n/bin/uwsm-game.sh);
@@ -48,7 +51,6 @@
         };
 
       home.packages = with pkgs; [
-        app2unit
         uwsm-game
 
         (xdg-utils.overrideAttrs (old: {
@@ -56,7 +58,7 @@
             (old.postFixup or "")
             + ''
               rm $out/bin/xdg-open
-              ln -s ${pkgs.app2unit}/bin/app2unit $out/bin/xdg-open
+              ln -s ${app2unit} $out/bin/xdg-open
             '';
         }))
       ];
