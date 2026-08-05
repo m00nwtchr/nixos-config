@@ -1,32 +1,18 @@
-# Getting Started Guide
+# nixos-config
 
-Steps you can follow after cloning this template:
+My nixos configuration, automatically converted from the version I manually wrote using snowfall lib (`old` branch).
 
-- Be sure to read the [den documentation](https://den.denful.dev)
-
-- Update den input.
-
-```console
-nix flake update den
-```
-
-- Edit [modules/hosts.nix](modules/hosts.nix)
-
-- Build
+## NH / VM
 
 ```console
 # default action is build
-nix run .#igloo
+nix run .#tide
 
 # pass any other nh action
-nix run .#igloo -- switch
+nix run .#tide -- switch
 ```
 
-- Run the VM
-
-We recommend to use a VM develop cycle so you can play with the system before applying to your hardware.
-
-See [modules/vm.nix](modules/vm.nix)
+### Run the VM
 
 ```console
 nix run .#vm
