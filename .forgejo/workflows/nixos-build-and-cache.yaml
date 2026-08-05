@@ -45,7 +45,7 @@ jobs:
 
       - name: Enable QEMU (for aarch64 emulation)
         if: ${{ matrix.emulate }}
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
