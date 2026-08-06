@@ -36,10 +36,7 @@
   };
   den.default.includes = [den.aspects.stable];
 
-  # Meta inputs: the framework plugin (flake-file), the den
-  # framework itself, and `home-manager` (used by many home aspects,
-  # so kept central). Per the co-location rule, other flake-file
-  # inputs are declared at the module/aspect that uses them.
+  flake-file.nixConfig.extra-substituters = ["https://nix-community.cachix.org"];
   flake-file.inputs = {
     stable.url = "github:nixos/nixpkgs/nixos-26.05";
     den.url = "github:denful/den";
@@ -48,11 +45,5 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # TODO: re-add `stable` (nixos-25.11) + a den aspect that injects
-    # `_module.args.pkgsStable` into nixos/homeManager class args,
-    # before un-commenting `package = pkgsStable.librewolf;` in
-    # modules/aspects/users/m00n/home.nix. The source repo injects
-    # it in its top-level flake.nix (see nixos-config/flake.nix).
   };
 }

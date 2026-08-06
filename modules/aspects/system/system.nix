@@ -4,6 +4,7 @@
 # `den.aspects.system` aspect; hosts that include it get the full
 # base config.
 {
+  den,
   config,
   pkgs,
   lib,
@@ -11,38 +12,14 @@
   ...
 }: {
   den.aspects.system = {
+    includes = [den.aspects.nix];
+
     nixos = {
       config,
       pkgs,
       lib,
       ...
     }: {
-      nix = {
-        settings = {
-          experimental-features = [
-            "nix-command"
-            "flakes"
-          ];
-          use-xdg-base-directories = true;
-          download-buffer-size = 524288000; # 500 MiB
-          substituters = [
-            # "https://attic.m00nlit.dev/m00n"
-          ];
-          trusted-public-keys = [
-            "m00n:kbAQdFU/e4Vec5EnGwobPlNJ98r33SMjwkuWLV/h7lo="
-          ];
-        };
-      };
-
-      programs.nh = {
-        enable = true;
-        clean.enable = true;
-        clean.extraArgs = "--keep-since 7d --keep 3 --optimise";
-        flake = "/etc/nixos";
-      };
-
-      environment.etc."current-nixos".source = "${inputs.self}";
-
       boot.tmp.cleanOnBoot = true;
 
       time.timeZone = lib.mkDefault "Europe/Warsaw";

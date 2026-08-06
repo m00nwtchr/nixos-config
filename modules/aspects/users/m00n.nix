@@ -47,7 +47,6 @@
         pkgs,
         ...
       }: {
-        nix.settings.trusted-users = ["m00n"];
         sops.secrets."passwords/m00n".neededForUsers = true;
 
         users.users.m00n = {
