@@ -223,7 +223,7 @@
       };
 
       xdg.configFile."kanidm".text = ''
-        uri = "https://idm.m00nlit.dev"
+        uri = "https://idm.naktis.eu"
       '';
 
       m00n.kubeconfig = {
@@ -239,7 +239,7 @@
             args = [
               "oidc-login"
               "get-token"
-              "--oidc-issuer-url=https://idm.m00nlit.dev/oauth2/openid/kubernetes"
+              "--oidc-issuer-url=https://idm.naktis.eu/oauth2/openid/kubernetes"
               "--oidc-client-id=kubernetes"
               "--oidc-extra-scope=email"
               "--oidc-extra-scope=groups"

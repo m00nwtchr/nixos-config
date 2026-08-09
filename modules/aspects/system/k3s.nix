@@ -20,88 +20,101 @@
     }: let
       cfg = config.services.k3s;
       yaml = pkgs.formats.yaml {};
+
+      domain = "naktis.eu";
     in let
       clusterCIDRs = lib.strings.concatStringsSep "," cfg.clusterCIDRs;
       serviceCIDRs = lib.strings.concatStringsSep "," cfg.serviceCIDRs;
       nodeIPs = lib.strings.concatStringsSep "," cfg.node.ips;
       nodeExternalIPs = lib.strings.concatStringsSep "," cfg.node.externalIPs;
 
-      advertisedRoutes =
-        lib.strings.concatStringsSep "," (
-          builtins.concatLists [
-            cfg.node.podCIDRs
-            cfg.node.advertisedRoutes
-          ]
-        );
+      advertisedRoutes = lib.strings.concatStringsSep "," (
+        builtins.concatLists [
+          cfg.node.podCIDRs
+          cfg.node.advertisedRoutes
+        ]
+      );
 
-      authConfig = {
-        jwt = [{
-          issuer.url = "https://idm.m00nlit.dev/oauth2/openid/kubernetes";
-          issuer.audiences = ["kubernetes"];
-          claimMappings = {
-            username = {claim = "name"; prefix = "oidc:";};
-            groups = {claim = "groups"; prefix = "oidc:";};
+      authConfig =
+        {
+          jwt = [
+            {
+              issuer.url = "https://idm.${domain}/oauth2/openid/kubernetes";
+              issuer.audiences = ["kubernetes"];
+              claimMappings = {
+                username = {
+                  claim = "name";
+                  prefix = "oidc:";
+                };
+                groups = {
+                  claim = "groups";
+                  prefix = "oidc:";
+                };
+              };
+            }
+          ];
+          anonymous = {
+            enabled = true;
+            conditions = [
+              {path = "/livez";}
+              {path = "/readyz";}
+              {path = "/healthz";}
+              {path = "/.well-known/openid-configuration";}
+              {path = "/openid/v1/jwks";}
+            ];
           };
-        }];
-        anonymous = {
-          enabled = true;
-          conditions = [
-            {path = "/livez";}
-            {path = "/readyz";}
-            {path = "/healthz";}
-            {path = "/.well-known/openid-configuration";}
-            {path = "/openid/v1/jwks";}
-          ];
-        };
-      } // cfg.authConfig;
+        }
+        // cfg.authConfig;
 
-      k3sConfig = {
-        node-name = "m00nsrv";
-        node-ip = nodeIPs;
-        # node-external-ip = nodeExternalIPs;
+      k3sConfig =
+        {
+          node-name = "m00nsrv";
+          node-ip = nodeIPs;
+          # node-external-ip = nodeExternalIPs;
 
-        container-runtime-endpoint = "unix:///var/run/containerd/containerd.sock";
-        etcd-expose-metrics = true;
+          container-runtime-endpoint = "unix:///var/run/containerd/containerd.sock";
+          etcd-expose-metrics = true;
 
-        kubelet-arg = [
-          "make-iptables-util-chains=false"
-          "max-pods=250"
-        ];
-      } // (
-        if cfg.role == "server"
-        then {
-          disable = [
-            "traefik"
-            "metrics-server"
-            "servicelb"
-            "coredns"
-            "local-storage"
-          ];
-
-          cluster-cidr = clusterCIDRs;
-          service-cidr = serviceCIDRs;
-
-          advertise-address = builtins.elemAt cfg.node.ips 0;
-
-          flannel-backend = "none";
-          disable-network-policy = true;
-          disable-kube-proxy = true;
-
-          tls-san = "k8s.m00nlit.dev";
-
-          kube-apiserver-arg = let
-            authConfigYaml = yaml.generate "k8s-auth-config" authConfig;
-          in [
-            "authentication-config=${authConfigYaml}"
-            "service-account-issuer=https://k8s.m00nlit.dev"
-            "service-account-jwks-uri=https://k8s.m00nlit.dev/openid/v1/jwks"
-
-            "feature-gates=MutatingAdmissionPolicy=true"
-            "runtime-config=admissionregistration.k8s.io/v1beta1=true"
+          kubelet-arg = [
+            "make-iptables-util-chains=false"
+            "max-pods=250"
           ];
         }
-        else {}
-      );
+        // (
+          if cfg.role == "server"
+          then {
+            disable = [
+              "traefik"
+              "metrics-server"
+              "servicelb"
+              "coredns"
+              "local-storage"
+            ];
+
+            cluster-cidr = clusterCIDRs;
+            service-cidr = serviceCIDRs;
+
+            advertise-address = builtins.elemAt cfg.node.ips 0;
+
+            flannel-backend = "none";
+            disable-network-policy = true;
+            disable-kube-proxy = true;
+
+            tls-san = "k8s.${domain}";
+
+            kube-apiserver-arg = let
+              authConfigYaml = yaml.generate "k8s-auth-config" authConfig;
+            in [
+              "authentication-config=${authConfigYaml}"
+              "service-account-issuer=https://k8s.${domain}"
+              "service-account-jwks-uri=https://k8s.${domain}/openid/v1/jwks"
+
+              "feature-gates=MutatingAdmissionPolicy=true"
+              "runtime-config=admissionregistration.k8s.io/v1beta1=true"
+            ];
+          }
+          else {}
+        );
     in {
       options.services.k3s = {
         clusterCIDRs = lib.mkOption {

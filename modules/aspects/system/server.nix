@@ -74,7 +74,7 @@
       services.kanidm = {
         package = pkgs.kanidm_1_10;
         client.settings = {
-          uri = "https://idm.m00nlit.dev";
+          uri = "https://idm.naktis.eu";
         };
 
         unix.enable = true;
