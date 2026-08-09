@@ -370,8 +370,6 @@
         runtimes = ["${pkgs.crun}/bin/crun"]
       '';
 
-      services.smartd.defaults.monitored = "-a -o on -S on -n standby,q -s (S/../.././02|L/../../7/04) -W 4,45,55 -l error -l xerror -l selftest";
-
       services.k3s.node = {
         podCIDRs = [
           "2001:cafe:42::/64"
