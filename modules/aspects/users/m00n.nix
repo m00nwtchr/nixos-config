@@ -5,6 +5,7 @@
 # user (via `den.hosts.<arch>.<host>.users.<user>`).
 {
   den,
+  lib,
   inputs,
   __findFile ? __findFile,
   ...
@@ -20,6 +21,7 @@
       <home/shell>
       <home/rclone>
       <home/wayland>
+      den.aspects.ai
     ];
 
     homeManager = {pkgs, ...}: {
@@ -33,9 +35,34 @@
 
         # bitwarden-desktop
         calibre
+        opencloud-desktop
 
         android-tools
+        android-studio
       ];
+    };
+
+    user = {config, ...}: {
+      uid = 1000;
+      group = lib.mkForce "m00n";
+      autoSubUidGidRange = true;
+
+      hashedPasswordFile = config.sops.secrets."passwords/m00n".path;
+      openssh.authorizedKeys.keyFiles = [
+        (builtins.toString "${inputs.self}/secrets/authorized_keys")
+      ];
+
+      extraGroups =
+        [
+          "video"
+          "dialout"
+          "adbusers"
+        ]
+        ++ (
+          if config.security.tpm2.enable
+          then ["tss"]
+          else []
+        );
     };
 
     # NixOS-side user definition. Source equivalent:
@@ -48,31 +75,6 @@
         ...
       }: {
         sops.secrets."passwords/m00n".neededForUsers = true;
-
-        users.users.m00n = {
-          uid = 1000;
-          group = "m00n";
-
-          hashedPasswordFile = config.sops.secrets."passwords/m00n".path;
-          openssh.authorizedKeys.keyFiles = [
-            (builtins.toString "${inputs.self}/secrets/authorized_keys")
-          ];
-
-          autoSubUidGidRange = true;
-
-          extraGroups =
-            [
-              "wheel"
-              "video"
-              "dialout"
-              "adbusers"
-            ]
-            ++ (
-              if config.security.tpm2.enable
-              then ["tss"]
-              else []
-            );
-        };
         users.groups.m00n.gid = 1000;
 
         # memlock unlimited for m00n

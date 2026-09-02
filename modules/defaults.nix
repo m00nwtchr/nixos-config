@@ -19,6 +19,7 @@
   den.default.includes = [
     <den/hostname>
     <den/define-user>
+    den.batteries.inputs'
 
     <system>
     <system/sops>

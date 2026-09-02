@@ -15,17 +15,6 @@
             };
           };
         };
-        systemd.network.networks."25-wireless" = {
-          matchConfig.WLANInterfaceType = "station";
-          linkConfig.RequiredForOnline = "routable";
-          networkConfig = {
-            DHCP = "ipv4";
-            IgnoreCarrierLoss = "3s";
-            MulticastDNS = "resolve";
-            IPv6PrivacyExtensions = true;
-            IPv6AcceptRA = true;
-          };
-        };
 
         hardware.wirelessRegulatoryDatabase = true;
         boot.extraModprobeConfig = ''
@@ -40,5 +29,62 @@
           };
         };
       };
+  };
+
+  hardware.network = {
+    includes = [hardware.wireless];
+    nixos = {config, ...}: let
+      bond = true;
+
+      addressConfig = {
+        DHCP = "ipv4";
+        MulticastDNS = "resolve";
+        IPv6PrivacyExtensions = true;
+        IPv6AcceptRA = true;
+      };
+    in {
+      systemd.network.networks."25-wireless" = lib.mkIf config.hardware.facter.detected.wireless {
+        matchConfig.WLANInterfaceType = "station";
+        linkConfig.RequiredForOnline = lib.mkIf (!bond) "routable";
+        networkConfig = (
+          {
+            IgnoreCarrierLoss = "3s";
+          }
+          // (
+            if bond
+            then {
+              Bond = "bond0";
+            }
+            else addressConfig
+          )
+        );
+      };
+      systemd.network.networks."25-ethernet" = lib.mkIf config.hardware.facter.detected.wireless {
+        matchConfig.Name = "en*";
+        networkConfig =
+          if bond
+          then {
+            Bond = "bond0";
+            PrimarySlave = true;
+          }
+          else addressConfig;
+      };
+
+      systemd.network.netdevs."10-bond0" = lib.mkIf bond {
+        netdevConfig.Name = "bond0";
+        netdevConfig.Kind = "bond";
+
+        bondConfig = {
+          Mode = "active-backup";
+          PrimaryReselectPolicy = "always";
+          MIIMonitorSec = "1s";
+        };
+      };
+      systemd.network.networks."30-bond0" = lib.mkIf bond {
+        matchConfig.Name = "bond0";
+        linkConfig.RequiredForOnline = "routable";
+        networkConfig = addressConfig;
+      };
+    };
   };
 }

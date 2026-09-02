@@ -18,10 +18,9 @@
       ...
     }: {
       options.services.sshTpmAgent = {
-        enable =
-          lib.mkEnableOption {
-            default = config.security.tpm2.enable;
-          };
+        enable = lib.mkEnableOption {
+          default = config.security.tpm2.enable;
+        };
         hostKeys = lib.mkEnableOption {};
       };
 

@@ -1,11 +1,12 @@
 # Port of homes/x86_64-linux/m00n/gpg.nix — gpg-agent with
 # Yubikey scdaemon, gpg in $XDG_DATA_HOME/gnupg.
-{
-  config,
-  ...
-}: {
+{config, ...}: {
   den.aspects.home.gpg = {
-    homeManager = {pkgs, config, ...}: {
+    homeManager = {
+      pkgs,
+      config,
+      ...
+    }: {
       services.gpg-agent = {
         enable = true;
         enableSshSupport = false;

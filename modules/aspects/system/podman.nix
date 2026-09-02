@@ -1,7 +1,5 @@
 # Port of legacy/modules/podman.nix — podman + user-delegation.
-{
-  ...
-}: {
+{...}: {
   den.aspects.system.podman = {
     nixos = {
       systemd.services."user@".serviceConfig.Delegate = "yes";

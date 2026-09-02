@@ -2,7 +2,7 @@
 # theme generator. Installs the wallust.toml and templates directory
 # as xdg.configFile entries. The wallust.toml and templates live
 # in home/m00n/wallust/ (copied verbatim from source).
-{ ... }: {
+{...}: {
   den.aspects.home.wallust = {
     homeManager = {config, ...}: {
       xdg.configFile."wallust/wallust.toml".source = ../../../home/m00n/wallust/wallust.toml;

@@ -61,9 +61,14 @@
       };
 
       environment.systemPackages = with pkgs;
-        if config.security.tpm2.enable
-        then [pkgs.tpm2-tools]
-        else [];
+        [
+          ntfs3g
+        ]
+        ++ (
+          if config.security.tpm2.enable
+          then [pkgs.tpm2-tools]
+          else []
+        );
 
       programs.obs-studio = {
         enable = true;

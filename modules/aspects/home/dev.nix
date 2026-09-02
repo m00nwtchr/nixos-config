@@ -4,6 +4,7 @@
 {
   den,
   inputs,
+  lib,
   __findFile ? __findFile,
   ...
 }: {
@@ -28,7 +29,11 @@
       <home/kubeconfig>
     ];
 
-    homeManager = {pkgs, ...}: {
+    homeManager = {
+      pkgs,
+      inputs',
+      ...
+    }: {
       home.packages = with pkgs; [
         ansible
         kanidm_1_10
@@ -41,18 +46,17 @@
         clang
 
         arduino-ide
-
-        alejandra
-
+        android-studio
         jetbrains.idea
         jetbrains.pycharm
-        vale
-
         zed-editor
 
         protobuf
 
         opencode
+
+        alejandra
+        vale
 
         cachix
         devenv
@@ -87,7 +91,7 @@
               ];
             };
             sqls = {
-              command = "${pkgs.sqls}/bin/sqls";
+              command = "${lib.getExe pkgs.sqls}";
             };
           };
 
@@ -102,7 +106,7 @@
               indent = tabIndent;
               formatter = {
                 name = "alejandra";
-                command = "${inputs.alejandra.defaultPackage.${pkgs.stdenv.hostPlatform.system}}/bin/alejandra";
+                command = "${lib.getExe inputs'.alejandra.packages.default}";
               };
               auto-format = true;
             }

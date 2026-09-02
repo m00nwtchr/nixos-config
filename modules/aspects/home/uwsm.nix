@@ -18,7 +18,8 @@
       osConfig,
       ...
     }: let
-      app2unit = "${pkgs.app2unit}/bin/app2unit";
+      app2unitPkg = pkgs.app2unit;
+      app2unit = "${app2unitPkg}/bin/app2unit";
 
       uwsm-shell = pkgs.writeShellScriptBin "uwsm-shell" ''
         exec ${app2unit} -- $(getent passwd $USER | cut -d: -f7)
@@ -51,6 +52,7 @@
         };
 
       home.packages = with pkgs; [
+        app2unitPkg
         uwsm-game
 
         (xdg-utils.overrideAttrs (old: {

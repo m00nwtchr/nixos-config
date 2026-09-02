@@ -3,12 +3,33 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }: {
   den.aspects.system.vms = {
     nixos = {pkgs, ...}: {
-      programs.virt-manager.enable = true;
+      imports = [inputs.microvm.nixosModules.host];
 
+      microvm.host.useNotifySockets = true;
+      # microvm.vms = {
+      #   opencode = {
+      #     autostart = false;
+      #     config = {
+      #       microvm.hypervisor = "cloud-hypervisor";
+      #       microvm.vsock.cid = 42;
+      #       microvm.shares = [
+      #         {
+      #           source = "/nix/store";
+      #           mountPoint = "/nix/.ro-store";
+      #           tag = "ro-store";
+      #           proto = "virtiofs";
+      #         }
+      #       ];
+      #     };
+      #   };
+      # };
+
+      programs.virt-manager.enable = true;
       virtualisation.libvirtd = {
         enable = true;
         qemu = {
@@ -20,7 +41,7 @@
       users.groups.kvm.members = ["m00n"];
 
       environment.systemPackages = with pkgs; [
-        phodav
+        # phodav
       ];
 
       # networking.bridges.br0.interfaces = ["wlan0"];

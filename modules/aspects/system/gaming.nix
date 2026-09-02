@@ -7,7 +7,11 @@
   ...
 }: {
   den.aspects.system.gaming = {
-    nixos = {config, pkgs, ...}: {
+    nixos = {
+      config,
+      pkgs,
+      ...
+    }: {
       hardware.graphics.enable32Bit = true;
 
       programs.steam = {
@@ -60,6 +64,12 @@
       environment.sessionVariables = {
         STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
       };
+    };
+
+    provides.to-users.homeManager = {pkgs, ...}: {
+      xdg.autostart.entries = [
+        "${pkgs.steam}/share/applications/steam.desktop"
+      ];
     };
   };
 }

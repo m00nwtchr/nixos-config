@@ -1,10 +1,17 @@
 # defines all hosts + users + homes.
 # then config their aspects in as many files you want
-{
+{den, ...}: {
   den.hosts.x86_64-linux.tide.users.m00n = {};
   den.hosts.x86_64-linux.kepler.users.m00n = {};
   den.hosts.x86_64-linux.ganymede.users = {};
   den.homes.x86_64-linux.m00n = {};
+
+  # den.hosts.x86_64-linux.tide.microvm.guests = [
+  #   den.hosts.x86_64-linux.opencode-vm
+  # ];
+  # den.hosts.x86_64-linux.opencode-vm = {
+  #   intoAttr = []; # dont produce Guest nixosConfiguration at flake output
+  # };
 
   # be sure to add nix-darwin input for this:
   # den.hosts.aarch64-darwin.apple.users.alice = { };

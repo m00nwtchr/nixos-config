@@ -4,7 +4,53 @@
       pkgs,
       osConfig,
       ...
-    }: {
+    }: let
+      networkStatus = pkgs.writeShellScript "waybar-network-status" ''
+        set -euo pipefail
+
+        bond="bond0"
+        wifi="wlan0"
+
+        if [[ ! -e "/sys/class/net/$bond/bonding/active_slave" ]] ||
+           [[ "$(cat "/sys/class/net/$bond/operstate")" != "up" ]]; then
+          echo '{"alt":"disconnected","text":"Disconnected ⚠","tooltip":"Disconnected"}'
+          exit 0
+        fi
+
+        ip_address="$(${pkgs.iproute2}/bin/ip -4 addr show dev "$bond" |
+          ${pkgs.gawk}/bin/awk '/inet / {print $2; exit}')"
+
+        active_slave="$(<"/sys/class/net/$bond/bonding/active_slave")"
+
+        if [[ "$active_slave" == "$wifi" ]]; then
+          link="$(${pkgs.iw}/bin/iw dev "$wifi" link)"
+
+          ssid="$(printf '%s\n' "$link" |
+            ${pkgs.gawk}/bin/awk -F'SSID: ' '/SSID:/ {print $2}')"
+
+          signal_dbm="$(printf '%s\n' "$link" |
+            ${pkgs.gawk}/bin/awk '/signal:/ {print $2}')"
+
+          # Roughly map -90..-30 dBm to 0..100%.
+          signal_pct=$(( (signal_dbm + 90) * 100 / 60 ))
+
+          (( signal_pct < 0 )) && signal_pct=0
+          (( signal_pct > 100 )) && signal_pct=100
+
+          ${pkgs.coreutils}/bin/printf \
+            '{"alt":"wifi","text":"  %d%%","tooltip":"%s\\n%s (%s dBm)"}\n' \
+            "$signal_pct" "$ip_address" "$ssid" "$signal_dbm"
+
+        elif [[ -n "$active_slave" && "$active_slave" != "None" ]]; then
+          ${pkgs.coreutils}/bin/printf \
+            '{"alt":"ethernet","text":"󰈁 Connected","tooltip":"%s"}\n' \
+            "$ip_address"
+
+        else
+          echo '{"alt":"disconnected","text":"Disconnected ⚠","tooltip":"Disconnected"}'
+        fi
+      '';
+    in {
       programs.waybar.settings.mainBar = {
         "sway/workspaces" = {
           on-click = "activate";
@@ -52,6 +98,13 @@
               ""
             ];
           };
+        };
+
+        "custom/network" = {
+          exec = "${networkStatus}";
+          return-type = "json";
+          interval = 2;
+          format = "{}";
         };
 
         network = {

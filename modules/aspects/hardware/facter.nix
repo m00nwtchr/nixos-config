@@ -70,10 +70,9 @@ in {
     includes = [
       hardware.facter.policies.load-facter
       <hardware/amdgpu>
-      <hardware/wireless>
+      <hardware/network>
       <hardware/laptop>
       <hardware/nvidia>
-      <hardware/ppd-auto>
     ];
   };
 }

@@ -43,13 +43,6 @@
         style = "adwaita-dark";
       };
 
-      xdg = {
-        autostart.enable = true;
-        menus.enable = true;
-        mime.enable = true;
-        icons.enable = true;
-      };
-
       programs.ssh = {
         enableAskPassword = true;
       };
@@ -68,6 +61,10 @@
         udisks2.enable = true;
         tumbler.enable = true;
       };
+    };
+
+    homeManager = {
+      xdg.autostart.enable = true;
     };
   };
 }

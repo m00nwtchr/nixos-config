@@ -1,6 +1,4 @@
-{
-  ...
-}: {
+{...}: {
   den.aspects.home.dunst = {
     homeManager = {pkgs, ...}: {
       services.dunst = {

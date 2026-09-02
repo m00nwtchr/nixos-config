@@ -10,7 +10,8 @@
         "modules-center" = ["sway/window"];
         "modules-right" = [
           "tray"
-          "network"
+          # "network"
+          "custom/network"
           # "memory"
           # "cpu"
           (lib.mkIf osConfig.hardware.bluetooth.enable "bluetooth")

@@ -9,35 +9,61 @@
   ...
 }: {
   den.aspects.vm = {
-    includes = [(<den/tty-autologin> "m00n")];
-
     nixos = {
       config,
+      modulesPath,
       pkgs,
       ...
     }: {
-      virtualisation.vmVariant = {
-        boot.loader.systemd-boot.enable = false;
+      virtualisation.vmVariantWithDisko = {
+        imports = [
+          "${modulesPath}/profiles/qemu-guest.nix"
+        ];
         system.stateVersion = config.system.nixos.release;
+        disko.devices.disk.root.imageSize = "80G";
 
-        # fileSystems."/" = {
-        #   fsType = "auto";
-        #   device = "/dev/fake";
-        # };
-        # disko.devices.disk.root.content = lib.mkForce null;
+        boot.resumeDevice = lib.mkForce "";
+        disko.devices.disk.root.content.partitions.root.content = lib.mkForce {
+          type = "btrfs";
+          subvolumes = {
+            "@" = {
+              mountpoint = "/";
+              mountOptions = ["compress=zstd" "noatime"];
+            };
+            "@home" = {
+              mountpoint = "/home";
+              mountOptions = ["compress=zstd" "noatime"];
+            };
+            "@nix" = {
+              mountpoint = "/nix";
+              mountOptions = ["compress=zstd" "noatime"];
+            };
+
+            "@snapshots" = {
+              mountpoint = "/.snapshots";
+              mountOptions = ["compress=zstd" "noatime"];
+            };
+          };
+        };
       };
     };
   };
 
-  den.aspects.tide.includes = [den.aspects.vm];
+  den.default.includes = [den.aspects.vm];
   perSystem = {pkgs, ...}: {
-    packages.vm = pkgs.writeShellApplication {
-      name = "vm";
-      text = let
-        host = inputs.self.nixosConfigurations.tide.config;
-      in ''
-        ${host.system.build.vm}/bin/run-${host.networking.hostName}-vm "$@"
-      '';
-    };
+    packages =
+      lib.mapAttrs'
+      (
+        name: host: {
+          name = "${name}-vm";
+          value = pkgs.writeShellApplication {
+            name = "${name}-vm";
+            text = ''
+              ${host.config.system.build.vmWithDisko}/bin/disko-vm "$@"
+            '';
+          };
+        }
+      )
+      inputs.self.nixosConfigurations;
   };
 }

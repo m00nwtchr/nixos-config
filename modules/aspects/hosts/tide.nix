@@ -17,6 +17,7 @@
 
   den.aspects.tide = {
     includes = [
+      <system/autologin>
       <boot/secureboot>
       <system/desktop>
       <system/splash>

@@ -6,9 +6,16 @@
   __findFile ? __findFile,
   ...
 }: {
-  flake-file.inputs.nixos-hardware = {
-    url = "github:NixOS/nixos-hardware/master";
-    inputs.nixpkgs.follows = "nixpkgs";
+  flake-file.inputs = {
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    fw16-uleds = {
+      url = "github:m00nwtchr/fw16-uleds";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
   };
 
   hardware.framework-16-amd-ai-300-series = {
@@ -18,6 +25,7 @@
     nixos = {pkgs, ...}: {
       imports = [
         inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series
+        inputs.fw16-uleds.nixosModules.default
       ];
 
       boot.extraModprobeConfig = "blacklist sp5100_tco";
@@ -27,6 +35,26 @@
       hardware.amdgpu.dynamicVram = {
         enable = true;
         vramGiB = 30;
+      };
+
+      services.fw16-uleds = {
+        enable = true;
+        pollMs = 1000;
+      };
+
+      # https://linrunner.de/tlp/faq/ppd.html#why-does-framework-recommend-power-profiles-daemon-over-tlp-for-its-amd-models
+      services.power-profiles-daemon.enable = lib.mkForce false;
+      services.tlp.settings = {
+        CPU_ENERGY_PERF_POLICY_ON_AC = lib.mkForce "";
+        CPU_ENERGY_PERF_POLICY_ON_BAT = lib.mkForce "";
+        CPU_ENERGY_PERF_POLICY_ON_SAV = lib.mkForce "";
+
+        PLATFORM_PROFILE_ON_AC = lib.mkForce "performance";
+        PLATFORM_PROFILE_ON_BAT = lib.mkForce "balanced";
+        PLATFORM_PROFILE_ON_SAV = lib.mkForce "low-power";
+
+        RUNTIME_PM_ON_AC = lib.mkForce "";
+        RUNTIME_PM_ON_BAT = lib.mkForce "";
       };
 
       services.pipewire.wireplumber.extraConfig = {

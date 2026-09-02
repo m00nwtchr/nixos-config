@@ -3,9 +3,13 @@
 # alacritty, fuzzel, eww, swayidle, gammastep, cliphist, mpris.
 # Imports the sway/waybar/wallust/dunst sub-aspects (defined in
 # the home dir) and the bin/uwsm-game.sh script.
-{ pkgs, ... }: {
+{pkgs, ...}: {
   den.aspects.home.wayland = {
-    homeManager = {pkgs, config, ...}: {
+    homeManager = {
+      pkgs,
+      config,
+      ...
+    }: {
       home.packages = with pkgs; [
         wl-clipboard
         usbguard-notifier
@@ -148,6 +152,47 @@
         provider = "manual";
         latitude = 51.9;
         longitude = 15.5;
+      };
+
+      services.wluma = {
+        enable = true;
+        settings = {
+          als.iio = {
+            path = "/sys/bus/iio/devices";
+
+            thresholds = {
+              "0" = "night";
+              "20" = "dark";
+              "250" = "normal";
+              "500" = "bright";
+              "80" = "dim";
+              "800" = "outdoors";
+            };
+          };
+
+          output.backlight = [
+            {
+              name = "eDP-1";
+              path = "/sys/class/backlight/amdgpu_bl1";
+            }
+          ];
+
+          keyboard = [
+            {
+              name = "framework";
+              path = "/sys/class/leds/framework::kbd_backlight";
+            }
+          ];
+
+          idle = {
+            enabled = true;
+            timeout = 120;
+            brightness = 30;
+
+            ac.timeout = 300;
+            battery.brightness = 20;
+          };
+        };
       };
 
       services.cliphist.enable = true;

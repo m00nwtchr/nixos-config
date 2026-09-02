@@ -112,6 +112,7 @@
         shellAliases = {
           ll = "ls -l";
           update = "sudo nixos-rebuild switch";
+          k9s = "sofka";
         };
 
         siteFunctions = {
