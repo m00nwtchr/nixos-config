@@ -1,15 +1,19 @@
 # DO-NOT-EDIT. This file was auto-generated using github:vic/flake-file.
 # Use `nix run .#write-flake` to regenerate it.
 {
-  outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 
   nixConfig = {
-    extra-substituters = ["https://nix-community.cachix.org"];
+    extra-substituters = [ "https://nix-community.cachix.org" ];
   };
 
   inputs = {
     alejandra = {
       url = "github:kamadorueda/alejandra/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    codebase-memory-mcp = {
+      url = "github:DeusData/codebase-memory-mcp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     den.url = "github:denful/den";

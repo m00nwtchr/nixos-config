@@ -31,7 +31,6 @@
         xdg-user-dirs
 
         papers
-        libreoffice-qt6-fresh
 
         # bitwarden-desktop
         calibre

@@ -59,6 +59,8 @@
 
         wineWow64Packages.staging
         winetricks
+
+        pcsx2
       ];
 
       environment.sessionVariables = {

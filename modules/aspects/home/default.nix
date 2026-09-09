@@ -45,6 +45,7 @@
         file-roller
         inkscape
 
+        libreoffice-qt-stable
         gnome-calculator
         obsidian
 
@@ -80,7 +81,7 @@
           config.programs.librewolf.package # set in home/librewolf.nix
           imv
           papers
-          libreoffice-qt6-fresh
+          libreoffice-qt-stable
         ];
       };
 
