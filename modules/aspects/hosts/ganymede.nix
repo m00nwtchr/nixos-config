@@ -19,10 +19,11 @@
           # <volume-name> <encrypted-device> [key-file] [options]
           vault-0 UUID=45507ea6-cda1-4ca3-9c49-008b84b0f10f /root/keys/vault.key
           vault-1 UUID=ba443578-0641-421a-ba9a-f22db66d46fc /root/keys/vault.key
+          attic-0 UUID=554fd50d-6aac-41ca-8dfd-82da37c55ba9 /root/keys/attic.key
         '';
       };
 
-      boot.zfs.extraPools = ["rpool" "spark" "vault"];
+      boot.zfs.extraPools = ["rpool" "spark" "vault" "attic"];
 
       # Hardware-specific disk layout for ganymede. The shared ESP
       # partition and rpool dataset tree are inherited from
@@ -103,6 +104,21 @@
               };
             };
           };
+
+          attic-0 = {
+            type = "disk";
+            device = "/dev/disk/by-id/wwn-0x5000c500c49bb447";
+
+            content = {
+              type = "luks";
+              name = "attic-0";
+              initrdUnlock = false;
+              content = {
+                type = "zfs";
+                pool = "attic";
+              };
+            };
+          };
         };
 
         zpool = {
@@ -150,25 +166,27 @@
             };
 
             datasets = {
-              data = {
-                type = "zfs_fs";
-                options = {
-                  mountpoint = "none";
-                  canmount = "off";
-                  atime = "off";
-                  compression = "zstd";
-                };
-              };
+              # storage = {
+              #   type = "zfs_fs";
+              #   options = {
+              #     mountpoint = "none";
+              #     canmount = "off";
+              #     atime = "off";
+              #     compression = "zstd";
+              #   };
+              # };
+            };
+          };
 
-              "data/media" = {
-                type = "zfs_fs";
-                options = {
-                  mountpoint = "legacy";
-                  recordsize = "1M";
-                  primarycache = "metadata";
-                };
-              };
+          attic = {
+            options = {
+              mountpoint = "/attic";
+              autotrim = "off";
+              acltype = "posixacl";
+              xattr = "sa";
+            };
 
+            datasets = {
               media = {
                 type = "zfs_fs";
                 options = {
