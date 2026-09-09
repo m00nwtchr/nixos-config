@@ -18,6 +18,7 @@
         text = ''
           # <volume-name> <encrypted-device> [key-file] [options]
           vault-0 UUID=45507ea6-cda1-4ca3-9c49-008b84b0f10f /root/keys/vault.key
+          vault-1 UUID=ba443578-0641-421a-ba9a-f22db66d46fc /root/keys/vault.key
         '';
       };
 
@@ -81,6 +82,20 @@
             content = {
               type = "luks";
               name = "vault-0";
+              initrdUnlock = false;
+              content = {
+                type = "zfs";
+                pool = "vault";
+              };
+            };
+          };
+          vault-1 = {
+            type = "disk";
+            device = "/dev/disk/by-id/wwn-0x5000c500dbafa36f";
+
+            content = {
+              type = "luks";
+              name = "vault-1";
               initrdUnlock = false;
               content = {
                 type = "zfs";
