@@ -48,7 +48,27 @@
             '';
         in {
           # tailscaled.wantedBy = lib.mkForce [];
+
+          # Don't start tlp-pd automatically at boot.
+          tlp-pd.wantedBy = lib.mkForce [];
+          tlp-pd.serviceConfig = {
+            Type = lib.mkForce "dbus";
+            BusName = "org.freedesktop.UPower.PowerProfiles";
+          };
         };
+
+        # D-Bus activation entry.
+        services.dbus.packages = [
+          (pkgs.writeTextFile {
+            name = "tlp-pd-dbus-service";
+            destination = "/share/dbus-1/system-services/org.freedesktop.UPower.PowerProfiles.service";
+            text = ''
+              [D-BUS Service]
+              Name=org.freedesktop.UPower.PowerProfiles
+              SystemdService=tlp-pd.service
+            '';
+          })
+        ];
 
         services.udev.extraRules = ''
           # ACTION=="change", SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_TYPE}=="Mains", TAG+="systemd", \
@@ -130,12 +150,17 @@
 
           tlp = {
             enable = true;
+            pd.enable = true;
             settings = {
               START_CHARGE_THRESH_BAT0 = 40;
               STOP_CHARGE_THRESH_BAT0 = 80;
+
+              DEVICES_TO_ENABLE_ON_AC = "bluetooth";
+              DEVICES_TO_DISABLE_ON_BAT_NOT_IN_USE = "bluetooth";
             };
           };
         };
+        hardware.bluetooth.powerOnBoot = !config.hardware.facter.detected.isLaptop;
       };
     };
   };

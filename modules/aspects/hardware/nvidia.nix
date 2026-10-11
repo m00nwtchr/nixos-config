@@ -74,12 +74,14 @@
           ];
         };
 
-        programs.sway.extraOptions = ["--unsupported-gpu"];
-
         services.xserver = {
           enable = lib.mkDefault false;
           videoDrivers = ["nvidia"];
         };
       };
+
+    provides.to-users.homeManager = {
+      wayland.windowManager.sway.extraOptions = ["--unsupported-gpu"];
+    };
   };
 }

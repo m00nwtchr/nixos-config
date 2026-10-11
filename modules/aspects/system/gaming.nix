@@ -20,6 +20,7 @@
         remotePlay.openFirewall = true;
         localNetworkGameTransfers.openFirewall = true;
 
+        protontricks.enable = true;
         gamescopeSession.enable = true;
       };
 
@@ -50,11 +51,24 @@
 
       programs.java.enable = true;
 
-      environment.systemPackages = with pkgs; [
+      environment.sessionVariables = {
+        STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+      };
+    };
+
+    provides.to-users.homeManager = {
+      pkgs,
+      osConfig,
+      ...
+    }: {
+      xdg.autostart.entries = [
+        "${osConfig.programs.steam.package}/share/applications/steam.desktop"
+      ];
+
+      home.packages = with pkgs; [
         mangohud
         protonup-ng
 
-        prismlauncher
         heroic
 
         wineWow64Packages.staging
@@ -63,15 +77,20 @@
         pcsx2
       ];
 
-      environment.sessionVariables = {
-        STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+      programs.prismlauncher = {
+        enable = true;
+        settings.JavaPath = lib.getExe pkgs.openjdk25;
+        settings.IconTheme = "pe_dark";
       };
-    };
 
-    provides.to-users.homeManager = {pkgs, ...}: {
-      xdg.autostart.entries = [
-        "${pkgs.steam}/share/applications/steam.desktop"
-      ];
+      programs.lutris = {
+        enable = true;
+        protonPackages = with pkgs; [
+          proton-ge-bin
+        ];
+        defaultWinePackage = pkgs.proton-ge-bin;
+        steamPackage = osConfig.programs.steam.package;
+      };
     };
   };
 }

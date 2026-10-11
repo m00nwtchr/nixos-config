@@ -68,7 +68,10 @@
     nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
     sofka = {
       url = "github:nklmilojevic/sofka";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        home-manager.follows = "home-manager";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";

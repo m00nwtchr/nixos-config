@@ -30,8 +30,27 @@
   };
 
   den.aspects.ai = {
+    provides.to-hosts = {host, ...}: {
+      nixos = {
+        config,
+        pkgs,
+        ...
+      }: {
+        environment.systemPackages = with pkgs; [
+          onnxruntime
+        ];
+
+        sops.secrets."context7_api_key" = {
+          sopsFile = builtins.toString "${inputs.self}/secrets/mcp.yaml";
+          owner = config.users.users.m00n.name;
+          group = config.users.users.m00n.group;
+        };
+      };
+    };
+
     homeManager = {
       config,
+      osConfig,
       pkgs,
       inputs',
       ...
@@ -40,6 +59,10 @@
         inputs'.codebase-memory-mcp.packages.default
       ];
 
+      programs.zsh.envExtra = ''
+        export CONTEXT7_API_KEY="$(cat ${osConfig.sops.secrets."context7_api_key".path})"
+      '';
+
       programs.mcp = {
         enable = true;
         servers = {
@@ -47,11 +70,20 @@
             enabled = false;
             url = "https://mcp.m00nlit.dev";
           };
+          "kguardian" = {
+            enabled = false;
+            url = "http://localhost:8080/mcp";
+            headers.Authorization = "Bearer {env:KGUARDIAN_TOKEN}";
+          };
           "somatic" = {
+            enabled = false;
             url = "http://localhost:8080/mcp";
             headers.Authorization = "Bearer {env:SOMATIC_TOKEN}";
           };
-          context7.url = "https://mcp.context7.com/mcp";
+          context7 = {
+            url = "https://mcp.context7.com/mcp";
+            headers.Authorization = "Bearer {env:CONTEXT7_API_KEY}";
+          };
           nixos.command = "${lib.getExe inputs'.mcp-nixos.packages.default}";
           devenv = {
             command = lib.getExe pkgs.devenv;

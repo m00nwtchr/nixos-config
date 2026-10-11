@@ -490,16 +490,19 @@
     },
     "sofka": {
       "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1788347284,
-        "narHash": "sha256-xpwj89qaqPR/rDv3qxf/FqsdVC4cLSVRfAvlU1I28H8=",
+        "lastModified": 1791656432,
+        "narHash": "sha256-Iw6PS6e3nRQcTAFaoBmcqKc7K+6Ow4rQLrDNFaTWym0=",
         "owner": "nklmilojevic",
         "repo": "sofka",
-        "rev": "90a7f9ebb321cc2a952914b4d268a37ba1494507",
+        "rev": "9035686a37980c0b07e60c1d6ce9feaca32d1257",
         "type": "github"
       },
       "original": {

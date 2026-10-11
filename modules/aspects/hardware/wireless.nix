@@ -10,9 +10,11 @@
         networking.wireless.iwd = {
           enable = true;
           settings = {
-            Network = {
-              EnableIPv6 = true;
+            General = {
+              AddressRandomization = "network";
+              AddressRandomizationRange = "full";
             };
+            Network.EnableIPv6 = true;
           };
         };
 
@@ -21,12 +23,9 @@
           options cfg80211 ieee80211_regdom="PL"
         '';
 
-        hardware.bluetooth = {
-          powerOnBoot = !config.hardware.facter.detected.isLaptop;
-          settings.General = {
-            Experimental = true;
-            KernelExperimental = true;
-          };
+        hardware.bluetooth.settings.General = {
+          Experimental = true;
+          KernelExperimental = true;
         };
       };
   };
@@ -77,6 +76,7 @@
         bondConfig = {
           Mode = "active-backup";
           PrimaryReselectPolicy = "always";
+          FailOverMACPolicy = "active";
           MIIMonitorSec = "1s";
         };
       };

@@ -22,5 +22,16 @@
       in
         lib.mkIf (builtins.pathExists defaultSopsPath) defaultSopsPath;
     };
+
+    provides.to-users.homeManager = {
+      pkgs,
+      config,
+      ...
+    }: {
+      imports = [
+        inputs.sops-nix.homeManagerModules.sops
+      ];
+      sops.gnupg.home = "${config.xdg.dataHome}/gnupg";
+    };
   };
 }

@@ -18,11 +18,8 @@
       osConfig,
       ...
     }: let
-      app2unitPkg = pkgs.app2unit;
-      app2unit = "${app2unitPkg}/bin/app2unit";
-
       uwsm-shell = pkgs.writeShellScriptBin "uwsm-shell" ''
-        exec ${app2unit} -- $(getent passwd $USER | cut -d: -f7)
+        exec ${lib.getExe pkgs.app2unit} -- $(getent passwd $USER | cut -d: -f7)
       '';
 
       uwsm-game = pkgs.writeShellScriptBin "uwsm-game" (builtins.readFile ../../../home/m00n/bin/uwsm-game.sh);
@@ -52,7 +49,7 @@
         };
 
       home.packages = with pkgs; [
-        app2unitPkg
+        app2unit
         uwsm-game
 
         (xdg-utils.overrideAttrs (old: {
@@ -60,7 +57,7 @@
             (old.postFixup or "")
             + ''
               rm $out/bin/xdg-open
-              ln -s ${app2unit} $out/bin/xdg-open
+              ln -s ${lib.getExe pkgs.app2unit} $out/bin/xdg-open
             '';
         }))
       ];

@@ -49,9 +49,9 @@
         CPU_ENERGY_PERF_POLICY_ON_BAT = lib.mkForce "";
         CPU_ENERGY_PERF_POLICY_ON_SAV = lib.mkForce "";
 
-        PLATFORM_PROFILE_ON_AC = lib.mkForce "performance";
-        PLATFORM_PROFILE_ON_BAT = lib.mkForce "balanced";
-        PLATFORM_PROFILE_ON_SAV = lib.mkForce "low-power";
+        PLATFORM_PROFILE_ON_AC = lib.mkDefault "performance";
+        PLATFORM_PROFILE_ON_BAT = lib.mkDefault "balanced";
+        PLATFORM_PROFILE_ON_SAV = lib.mkDefault "low-power";
 
         RUNTIME_PM_ON_AC = lib.mkForce "";
         RUNTIME_PM_ON_BAT = lib.mkForce "";

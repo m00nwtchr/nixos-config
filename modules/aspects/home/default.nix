@@ -9,6 +9,12 @@
   ...
 }: {
   den.aspects.home.default = {
+    # nixos = {
+    #   nixpkgs.config.permittedInsecurePackages = [
+    #     "olm-3.2.16"
+    #   ];
+    # };
+
     homeManager = {
       pkgs,
       config,
@@ -31,7 +37,7 @@
 
         deskflow
 
-        nheko
+        # nheko
         element-desktop
         # sable
         discord
@@ -58,7 +64,6 @@
         age-plugin-yubikey
 
         qbittorrent
-        protontricks
         qdirstat
 
         spotify

@@ -20,9 +20,11 @@
     <den/hostname>
     <den/define-user>
     den.batteries.inputs'
+    den.batteries.self'
 
     <system>
     <system/sops>
+    # <system/vpn>
     <hardware/facter>
     <home-manager>
 
