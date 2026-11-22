@@ -7,7 +7,7 @@
   den.aspects.home.rust = {
     homeManager = {pkgs, ...}: {
       home.packages = with pkgs; [
-        jetbrains.rust-rover
+        # jetbrains.rust-rover
       ];
 
       home.sessionVariables = {

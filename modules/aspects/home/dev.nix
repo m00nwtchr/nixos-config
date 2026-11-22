@@ -8,10 +8,7 @@
   __findFile ? __findFile,
   ...
 }: {
-  flake-file.inputs.alejandra = {
-    url = "github:kamadorueda/alejandra/main";
-    inputs.nixpkgs.follows = "nixpkgs";
-  };
+  flake-file.inputs.alejandra.url = "github:kamadorueda/alejandra/main";
 
   den.aspects.home.dev = {
     includes = [
@@ -27,6 +24,7 @@
       <home/uwsm>
       <home/easyeffects>
       <home/kubeconfig>
+      <dev/unity>
     ];
 
     homeManager = {
@@ -36,7 +34,7 @@
     }: {
       home.packages = with pkgs; [
         ansible
-        kanidm_1_10
+        kanidm_1_11
 
         gh
         git-filter-repo
@@ -46,7 +44,9 @@
         clang
 
         arduino-ide
-        android-studio
+        # android-studio
+        android-tools
+
         jetbrains.idea
         jetbrains.pycharm
         zed-editor
@@ -74,6 +74,14 @@
           vscode-langservers-extracted
           yaml-language-server
           bash-language-server
+          sqls
+          inputs'.alejandra.packages.default
+
+          markdown-oxide
+
+          tinymist
+          # vale-ls
+          harper
         ];
         settings = {
           theme = "ayu_dark";
@@ -91,7 +99,16 @@
               ];
             };
             sqls = {
-              command = "${lib.getExe pkgs.sqls}";
+              command = "sqls";
+            };
+
+            # vale.command = "vale-ls";
+            harper = {
+              command = "harper-ls";
+              args = ["--stdio"];
+              config.harper-ls = {
+                dialect = "British";
+              };
             };
           };
 
@@ -102,11 +119,22 @@
             };
           in [
             {
+              name = "typst";
+              language-servers = ["tinymist" "harper"];
+              auto-format = true;
+            }
+            {
+              name = "markdown";
+              language-servers = ["marksman" "markdown-oxide" "harper"];
+              auto-format = true;
+            }
+
+            {
               name = "nix";
               indent = tabIndent;
               formatter = {
                 name = "alejandra";
-                command = "${lib.getExe inputs'.alejandra.packages.default}";
+                command = "alejandra";
               };
               auto-format = true;
             }
@@ -119,79 +147,8 @@
             }
 
             {
-              name = "cpp";
-              indent = tabIndent;
-              auto-format = true;
-            }
-
-            {
-              name = "html";
-              indent = tabIndent;
-              formatter = {
-                name = "prettier";
-                command = "${pkgs.prettier}/bin/prettier";
-                args = ["--parser" "html"];
-              };
-              auto-format = true;
-            }
-            {
               name = "json";
-              indent = tabIndent;
-              formatter = {
-                name = "prettier";
-                command = "${pkgs.prettier}/bin/prettier";
-                args = ["--parser" "json"];
-              };
-              auto-format = true;
-            }
-            {
-              name = "css";
-              indent = tabIndent;
-              formatter = {
-                name = "prettier";
-                command = "${pkgs.prettier}/bin/prettier";
-                args = ["--parser" "css"];
-              };
-              auto-format = true;
-            }
-            {
-              name = "javascript";
-              indent = tabIndent;
-              formatter = {
-                name = "prettier";
-                command = "${pkgs.prettier}/bin/prettier";
-                args = ["--parser" "typescript"];
-              };
-              auto-format = true;
-            }
-            {
-              name = "typescript";
-              indent = tabIndent;
-              formatter = {
-                name = "prettier";
-                command = "${pkgs.prettier}/bin/prettier";
-                args = ["--parser" "typescript"];
-              };
-              auto-format = true;
-            }
-            {
-              name = "tsx";
-              indent = tabIndent;
-              formatter = {
-                name = "prettier";
-                command = "${pkgs.prettier}/bin/prettier";
-                args = ["--parser" "typescript"];
-              };
-              auto-format = true;
-            }
-            {
-              name = "astro";
-              indent = tabIndent;
-              formatter = {
-                name = "prettier";
-                command = "${pkgs.prettier}/bin/prettier";
-                args = ["--parser" "astro"];
-              };
+              # indent = tabIndent;
               auto-format = true;
             }
           ];
@@ -243,6 +200,7 @@
             args = [
               "oidc-login"
               "get-token"
+              "--token-cache-storage=keyring"
               "--oidc-issuer-url=https://idm.naktis.eu/oauth2/openid/kubernetes"
               "--oidc-client-id=kubernetes"
               "--oidc-extra-scope=email"
