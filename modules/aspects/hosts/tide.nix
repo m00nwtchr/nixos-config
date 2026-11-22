@@ -24,6 +24,8 @@
       <system/vms>
       <system/gaming>
 
+      <hardware/mindrove>
+
       den.aspects.tide.disk
       <hardware/framework-16-amd-ai-300-series>
     ];
@@ -65,19 +67,13 @@
         # ];
       };
 
-      homeManager = {
-        pkgs,
-        pkgsStable,
-        ...
-      }: {
+      homeManager = {pkgs, ...}: {
         home.packages = with pkgs; [
           # rocm userspace tools
           # clinfo
           # rocmPackages.clr.icd
           # rocmPackages.rocminfo
           #
-
-          # pkgsStable.vllm
         ];
       };
     };
