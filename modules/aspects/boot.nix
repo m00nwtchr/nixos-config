@@ -10,8 +10,6 @@
   };
 
   den.aspects.boot.nixos = {
-    boot.initrd.systemd.enable = true;
-
     boot.loader.efi.efiSysMountPoint = "/efi";
     boot.loader.efi.canTouchEfiVariables = true;
 
@@ -37,7 +35,7 @@
 
       boot.loader.systemd-boot = {
         enable = lib.mkForce false;
-        configurationLimit = lib.mkForce 8;
+        configurationLimit = lib.mkForce 4;
       };
       boot.lanzaboote = {
         enable = true;

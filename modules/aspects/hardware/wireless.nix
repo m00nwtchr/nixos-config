@@ -58,8 +58,8 @@
           )
         );
       };
-      systemd.network.networks."25-ethernet" = lib.mkIf config.hardware.facter.detected.wireless {
-        matchConfig.Name = "en*";
+      systemd.network.networks."24-ethernet" = lib.mkIf config.hardware.facter.detected.wireless {
+        matchConfig.Name = "enpsomething";
         networkConfig =
           if bond
           then {
@@ -67,6 +67,11 @@
             PrimarySlave = true;
           }
           else addressConfig;
+      };
+
+      systemd.network.networks."25-ethernet" = {
+        matchConfig.Name = "en*";
+        networkConfig = addressConfig;
       };
 
       systemd.network.netdevs."10-bond0" = lib.mkIf bond {
