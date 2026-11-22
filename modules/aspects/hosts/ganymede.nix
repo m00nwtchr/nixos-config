@@ -217,7 +217,7 @@
       config,
       lib,
       pkgs,
-      pkgsStable,
+      mv,
       ...
     }: {
       networking.hostName = "ganymede";
@@ -376,7 +376,7 @@
       };
 
       virtualisation.cri-o = let
-        crioPackage = pkgsStable.cri-o.override {
+        crioPackage = (mv.at "26.05").cri-o.override {
           extraPackages =
             config.virtualisation.cri-o.extraPackages
             ++ lib.optional (config.boot.supportedFilesystems.zfs or false) config.boot.zfs.package;

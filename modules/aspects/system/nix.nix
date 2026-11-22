@@ -5,6 +5,24 @@
   inputs,
   ...
 }: {
+  flake-file.nixConfig = {
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+      "https://numtide.cachix.org"
+      "https://comfyui.cachix.org"
+      "https://nix-amd-ai.cachix.org"
+      "https://nkl-sofka.cachix.org"
+    ];
+
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
+      "nix-amd-ai.cachix.org-1:F4OU4vw/lV2oiG6SBHZ+nqjl4EFJuqI4X9A7pvaBmhQ="
+      "comfyui.cachix.org-1:33mf9VzoIjzVbp0zwj+fT51HG0y31ZTK3nzYZAX0rec="
+      "nkl-sofka.cachix.org-1:hLg9frFNJynrxe7SSBb/p6pbawlpZmG10bw+wLsTufw="
+    ];
+  };
+
   den.aspects.nix = {
     nixos = {
       nix.settings = {
@@ -16,14 +34,20 @@
         download-buffer-size = 524288000; # 500 MiB
         accept-flake-config = true;
         trusted-users = ["m00n"];
-        trusted-substituters = [
+        substituters = [
           "https://nix-community.cachix.org"
           "https://numtide.cachix.org"
-          "https://attic.m00nlit.dev/m00n"
+          "https://nix-amd-ai.cachix.org"
+          "https://comfyui.cachix.org"
+          "https://nkl-sofka.cachix.org"
+          # "https://attic.m00nlit.dev/m00n"
         ];
         trusted-public-keys = [
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
           "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
+          "nix-amd-ai.cachix.org-1:F4OU4vw/lV2oiG6SBHZ+nqjl4EFJuqI4X9A7pvaBmhQ="
+          "comfyui.cachix.org-1:33mf9VzoIjzVbp0zwj+fT51HG0y31ZTK3nzYZAX0rec="
+          "nkl-sofka.cachix.org-1:hLg9frFNJynrxe7SSBb/p6pbawlpZmG10bw+wLsTufw="
           "m00n:kbAQdFU/e4Vec5EnGwobPlNJ98r33SMjwkuWLV/h7lo="
         ];
       };

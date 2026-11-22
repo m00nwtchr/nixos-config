@@ -20,10 +20,7 @@
       config,
       ...
     }: {
-      _module.args.pkgsStable = import inputs.stable {
-        inherit (pkgs.stdenv.hostPlatform) system;
-        inherit (config.nixpkgs) config;
-      };
+      _module.args.mv = inputs.multiverse.multiverse.${pkgs.stdenv.hostPlatform};
     };
 
     provides.to-users.homeManager = {
@@ -31,14 +28,14 @@
       osConfig,
       ...
     }: {
-      _module.args.pkgsStable = osConfig._module.args.pkgsStable;
+      _module.args.mv = osConfig._module.args.mv;
     };
   };
   den.default.includes = [den.aspects.stable];
 
-  flake-file.nixConfig.extra-substituters = ["https://nix-community.cachix.org"];
   flake-file.inputs = {
-    stable.url = "github:nixos/nixpkgs/nixos-26.05";
+    multiverse.url = "github:fzakaria/nixpkgs-multiverse";
+
     den.url = "github:denful/den";
     flake-file.url = "github:vic/flake-file";
     home-manager = {

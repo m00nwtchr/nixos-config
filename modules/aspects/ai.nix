@@ -8,15 +8,24 @@
   __findFile ? __findFile,
   ...
 }: {
+  flake-file.inputs.comfyui-nix = {
+    url = "github:utensils/comfyui-nix";
+    inputs.flake-parts.follows = "flake-parts";
+  };
+
+  flake-file.inputs.nix-amd-ai = {
+    url = "github:noamsto/nix-amd-ai";
+    inputs.flake-parts.follows = "flake-parts";
+  };
+
   flake-file.inputs.mcp-nixos = {
     url = "github:utensils/mcp-nixos";
-    inputs.nixpkgs.follows = "nixpkgs";
+    inputs.nixpkgs.follows = "nixpkgs"; # no binary cache
     inputs.flake-parts.follows = "flake-parts";
   };
 
   flake-file.inputs.codebase-memory-mcp = {
     url = "github:DeusData/codebase-memory-mcp";
-    inputs.nixpkgs.follows = "nixpkgs";
   };
 
   den.aspects.opencode-vm = {
@@ -36,12 +45,33 @@
         pkgs,
         ...
       }: {
+        imports = [inputs.nix-amd-ai.nixosModules.default];
+        nixpkgs.overlays = [inputs.comfyui-nix.overlays.default];
+
+        hardware.amd-npu = {
+          enable = true;
+          enableFastFlowLM = true; # LLM inference on NPU (requires enableNPU)
+          enableLemonade = true; # OpenAI-compatible API server
+          enableROCm = false; # ROCm GPU backends (llamacpp + sd-cpp)
+          enableVulkan = true; # Vulkan GPU backends (llamacpp + whispercpp)
+          enableImageGen = false; # default true; set false to drop sd-cpp from closure
+          lemonade.user = "m00n";
+        };
+        users.users.m00n.extraGroups = ["render"];
+
         environment.systemPackages = with pkgs; [
           onnxruntime
+          llama-cpp-vulkan
         ];
 
         sops.secrets."context7_api_key" = {
-          sopsFile = builtins.toString "${inputs.self}/secrets/mcp.yaml";
+          sopsFile = toString "${inputs.self}/secrets/mcp.yaml";
+          owner = config.users.users.m00n.name;
+          group = config.users.users.m00n.group;
+        };
+
+        sops.secrets."memini_api_key" = {
+          sopsFile = toString "${inputs.self}/secrets/mcp.yaml";
           owner = config.users.users.m00n.name;
           group = config.users.users.m00n.group;
         };
@@ -54,21 +84,28 @@
       pkgs,
       inputs',
       ...
-    }: {
-      home.packages = with pkgs; [
-        inputs'.codebase-memory-mcp.packages.default
+    }: let
+      codebase-memory-mcp = pkgs.codebase-memory-mcp;
+      # codebase-memory-mcp = inputs'.codebase-memory-mcp.packages.default;
+    in {
+      home.packages = [
+        # codebase-memory-mcp
+        # inputs'.letta-code.packages.default
+
+        # pkgs.comfy-ui-rocm
       ];
 
       programs.zsh.envExtra = ''
         export CONTEXT7_API_KEY="$(cat ${osConfig.sops.secrets."context7_api_key".path})"
+        export MEMINI_API_KEY="$(cat ${osConfig.sops.secrets."memini_api_key".path})"
       '';
 
       programs.mcp = {
         enable = true;
         servers = {
-          "m00nlit.dev" = {
+          "naktis.eu" = {
             enabled = false;
-            url = "https://mcp.m00nlit.dev";
+            url = "https://mcp.naktis.eu/mcp";
           };
           "kguardian" = {
             enabled = false;
@@ -108,7 +145,7 @@
             command = lib.getExe pkgs.fluxcd-operator-mcp;
             args = ["serve"];
           };
-          codebase-memory-mcp.command = lib.getExe inputs'.codebase-memory-mcp.packages.default;
+          codebase-memory-mcp.command = lib.getExe codebase-memory-mcp;
         };
       };
 
@@ -119,7 +156,15 @@
           # plugin = ["@honcho-ai/opencode-honcho"];
         };
         settings = {
-          plugin = ["superpowers@git+https://github.com/obra/superpowers.git#v6.3.0"];
+          plugin = [
+            # "superpowers@git+https://github.com/obra/superpowers.git#v7.0.0"
+            # [
+            #   "@eleboucher/opencode-memini"
+            #   {
+            #     base_url = "https://memini.naktis.eu";
+            #   }
+            # ]
+          ];
 
           provider.lmstudio = {
             name = "LM Studio";
