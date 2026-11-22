@@ -13,7 +13,6 @@
 
     homeManager = {
       pkgs,
-      pkgsStable,
       config,
       osConfig,
       ...

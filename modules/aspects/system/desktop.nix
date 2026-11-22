@@ -122,7 +122,10 @@
         enable = true;
         pinentryPackage = pkgs.pinentry-gnome3;
       };
-      services.dbus.packages = [pkgs.gcr];
+      services.dbus.packages = [pkgs.gcr_4];
+
+      services.oo7.enable = true;
+      security.pam.services.login.oo7.enable = true;
 
       security.tpm2 = {
         pkcs11.enable = true;

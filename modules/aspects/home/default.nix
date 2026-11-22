@@ -8,6 +8,11 @@
   osConfig,
   ...
 }: {
+  flake-file.inputs.sable = {
+    url = "git+https://git.sable.moe/SableClient/sable-next";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
+
   den.aspects.home.default = {
     # nixos = {
     #   nixpkgs.config.permittedInsecurePackages = [
@@ -18,6 +23,7 @@
     homeManager = {
       pkgs,
       config,
+      inputs',
       ...
     }: {
       home.username = "m00n";
@@ -33,13 +39,14 @@
 
         yubioath-flutter
         yubikey-manager
-        keepassxc
+        # keepassxc
 
         deskflow
 
         # nheko
+        inputs'.sable.packages.sable-desktop
         element-desktop
-        # sable
+
         discord
         discover-overlay
         signal-desktop
@@ -70,9 +77,10 @@
 
         recoll
         thunderbird
-        jellyfin-desktop
+        # jellyfin-desktop
+        jellyfin-mpv-shim
         lmstudio
-        zotero
+        # zotero
       ];
 
       xdg.configFile."Yubico/u2f_keys".text = ''

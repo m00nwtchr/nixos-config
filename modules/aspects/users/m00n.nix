@@ -33,11 +33,8 @@
         papers
 
         # bitwarden-desktop
-        calibre
+        # calibre
         opencloud-desktop
-
-        android-tools
-        android-studio
       ];
     };
 
@@ -56,6 +53,7 @@
           "video"
           "dialout"
           "adbusers"
+          "podman"
         ]
         ++ (
           if config.security.tpm2.enable

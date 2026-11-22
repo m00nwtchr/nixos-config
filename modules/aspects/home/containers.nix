@@ -8,7 +8,6 @@
 }: {
   flake-file.inputs.sofka = {
     url = "github:nklmilojevic/sofka";
-    inputs.nixpkgs.follows = "nixpkgs";
     inputs.home-manager.follows = "home-manager";
   };
 
@@ -68,10 +67,31 @@
             exit 0
           fi
 
+          ${pkgs.podman}/bin/podman start WinBoat || exit 1
+
+          port="$(${pkgs.podman}/bin/podman port WinBoat 5930/tcp)"
+          port="''${port##*:}"
+
+          ready=false
+          for ((i = 0; i < 120; i++)); do
+            if ${pkgs.podman}/bin/podman exec WinBoat \
+              sh -c 'ss -H -ltn "sport = :5930" | grep -q .' \
+              2>/dev/null; then
+              ready=true
+              break
+            fi
+            ${pkgs.coreutils}/bin/sleep 1
+          done
+
+          if ! "$ready"; then
+            echo "Timed out waiting for QEMU's SPICE listener" >&2
+            exit 1
+          fi
+
           ${pkgs.looking-glass-client}/bin/looking-glass-client \
-            -f /dev/kvmfr0 -c 127.0.0.1 -p $(podman port WinBoat | grep "5930" | awk -F: '{print $2}') \
+            -f /dev/kvmfr0 -c 127.0.0.1 -p $port \
             win:appId="looking-glass-windows" \
-            input:escapeKey=KEY_LEFTCTRL
+            input:escapeKey=KEY_RIGHTALT
 
           if ${pkgs.sway}/bin/swaymsg -t get_workspaces |
             ${pkgs.jq}/bin/jq -e 'any(.[]; .focused and .name == "windows")' >/dev/null; then
@@ -80,7 +100,7 @@
         '';
       in {
         extraConfig = ''
-          bindsym ${mod}+Shift+w workspace windows; exec ${windowsWorkspace}
+          bindsym ${mod}+Shift+w exec ${windowsWorkspace}
           assign [app_id="looking-glass-windows"] workspace windows
           for_window [app_id="looking-glass-windows"] fullscreen enable
         '';
@@ -112,7 +132,7 @@
 
         docker-compose
 
-        lens
+        # lens
       ];
 
       programs.sofka = {

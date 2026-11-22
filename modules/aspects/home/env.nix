@@ -4,67 +4,73 @@
 # `homeManager.imports`.
 {config, ...}: {
   den.aspects.home.env = {
-    homeManager = {config, ...}: {
+    homeManager = {config, ...}: let
+      inherit (config.home) homeDirectory;
+      inherit (config.xdg) cacheHome configHome dataHome stateHome;
+    in {
       home.sessionVariables = {
-        XDG_STATE_HOME = "${config.xdg.stateHome}";
-        XDG_BIN_HOME = "${config.home.homeDirectory}/.local/bin";
+        # XDG base directories
+        XDG_BIN_HOME = "${homeDirectory}/.local/bin";
+        XDG_STATE_HOME = stateHome;
 
-        _JAVA_OPTIONS = "-Djava.util.prefs.userRoot=${config.xdg.configHome}/java";
+        # Development toolchains
+        ANDROID_USER_HOME = "${dataHome}/android";
+        ARDUINO_DIRECTORIES_DATA = "${dataHome}/arduino";
+        CARGO_HOME = "${dataHome}/cargo";
+        CUDA_CACHE_PATH = "${cacheHome}/nvidia";
+        EM_CACHE = "${cacheHome}/emscripten/";
+        EM_CONFIG = "${configHome}/emscripten/config";
+        EM_PORTS = "${dataHome}/emscripten/";
+        GOPATH = "${dataHome}/go";
+        GRADLE_USER_HOME = "${dataHome}/gradle";
+        NPM_CONFIG_USERCONFIG = "${configHome}/npm/npmrc";
+        NVM_DIR = "${dataHome}/nvm";
+        PNPM_HOME = "${dataHome}/pnpm";
+        RUSTUP_HOME = "${dataHome}/rustup";
+        _JAVA_OPTIONS = "-Djava.util.prefs.userRoot=${configHome}/java";
 
-        NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm/npmrc";
-
-        WGETRC = "${config.xdg.configHome}/wgetrc";
-
-        GRADLE_USER_HOME = "${config.xdg.dataHome}/gradle";
-        CARGO_HOME = "${config.xdg.dataHome}/cargo";
-        RUSTUP_HOME = "${config.xdg.dataHome}/rustup";
-        NVM_DIR = "${config.xdg.dataHome}/nvm";
-
-        IPFS_PATH = "${config.xdg.dataHome}/ipfs";
-        GOPATH = "${config.xdg.dataHome}/go";
-
-        PNPM_HOME = "${config.xdg.dataHome}/pnpm";
-
-        KUBECONFIG = "${config.xdg.configHome}/kube/config";
-        KUBECACHEDIR = "${config.xdg.cacheHome}/kube";
-        KREW_ROOT = "${config.xdg.stateHome}/krew";
-
-        ANSIBLE_HOME = "${config.xdg.cacheHome}/ansible";
-        EM_CONFIG = "${config.xdg.configHome}/emscripten/config";
-        EM_CACHE = "${config.xdg.cacheHome}/emscripten/";
-        EM_PORTS = "${config.xdg.dataHome}/emscripten/";
-
-        MC_CONFIG_DIR = "${config.xdg.configHome}/mc";
-
-        WINEPREFIX = "${config.xdg.dataHome}/wineprefixes/default";
-
-        RENPY_PATH_TO_SAVES = "${config.home.homeDirectory}/Documents/Games/RenPy";
-
-        MYSQL_HISTFILE = "${config.xdg.stateHome}/mysql_history";
-        NODE_REPL_HISTORY = "${config.xdg.stateHome}/node_repl_history";
-        PYTHONHISTFILE = "${config.xdg.stateHome}/python_history";
-        SQLITE_HISTORY = "${config.xdg.stateHome}/sqlite_history";
-
-        CUDA_CACHE_PATH = "${config.xdg.cacheHome}/nvidia";
-
-        SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/ssh-agent.socket";
-
-        TPM2_PKCS_STORE = "${config.xdg.stateHome}/tpm2_pkcs11";
-
-        DEBUGINFOD_PROGRESS = "1";
-
+        # Infrastructure and networking
+        ANSIBLE_HOME = "${cacheHome}/ansible";
+        DOCKER_CONFIG = "${configHome}/docker";
         IPFS_GATEWAY = "http://localhost:8080";
+        IPFS_PATH = "${dataHome}/ipfs";
+        KREW_ROOT = "${stateHome}/krew";
+        KUBECACHEDIR = "${cacheHome}/kube";
+        KUBECONFIG = "${configHome}/kube/config";
+        SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/ssh-agent.socket";
+        TALOSCONFIG = "${configHome}/talos/config";
+        TPM2_PKCS_STORE = "${stateHome}/tpm2_pkcs11";
 
+        # Application configuration and data
+        IPYTHONDIR = "${configHome}/ipython";
+        JUPYTER_CONFIG_DIR = "${configHome}/jupyter";
+        MC_CONFIG_DIR = "${configHome}/mc";
+        RECOLL_CONFDIR = "${stateHome}/recoll";
+        RENPY_PATH_TO_SAVES = "${homeDirectory}/Documents/Games/RenPy";
+        WGETRC = "${configHome}/wgetrc";
+        WINEPREFIX = "${dataHome}/wineprefixes/default";
+
+        # Interactive histories
+        MYSQL_HISTFILE = "${stateHome}/mysql_history";
+        NODE_REPL_HISTORY = "${stateHome}/node_repl_history";
+        PYTHONHISTFILE = "${stateHome}/python_history";
+        PSQL_HISTORY = "${stateHome}/psql_history";
+        SQLITE_HISTORY = "${stateHome}/sqlite_history";
+        VALKEYCLI_HISTFILE = "${stateHome}/valkeycli_history";
+
+        # Desktop integration
+        APP2UNIT_SLICES = "a=app-graphical.slice b=background-graphical.slice s=session-graphical.slice";
         BROWSER = "librewolf";
         CALCULATOR = "gnome-calculator";
 
-        RECOLL_CONFDIR = "${config.xdg.stateHome}/recoll";
-        APP2UNIT_SLICES = "a=app-graphical.slice b=background-graphical.slice s=session-graphical.slice";
+        # Diagnostics
+        DEBUGINFOD_PROGRESS = "1";
       };
 
       home.sessionPath = with config.home.sessionVariables; [
+        "${CARGO_HOME}/bin"
         "${KREW_ROOT}/bin"
-        "${config.home.homeDirectory}/.local/bin"
+        "${XDG_BIN_HOME}"
       ];
     };
   };
