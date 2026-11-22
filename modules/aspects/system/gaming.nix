@@ -58,6 +58,7 @@
 
     provides.to-users.homeManager = {
       pkgs,
+      self',
       osConfig,
       ...
     }: {
@@ -75,6 +76,7 @@
         winetricks
 
         pcsx2
+        # self'.packages.duckstation
       ];
 
       programs.prismlauncher = {
