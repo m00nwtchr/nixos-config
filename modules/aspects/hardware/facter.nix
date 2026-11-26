@@ -25,12 +25,17 @@ in {
 
     policies.load-facter = {host, ...}: let
       facterPath = ../../../hosts/${host.hostName}/facter.json;
-    in (lib.optionals
-      (builtins.pathExists facterPath)
+      hasReport = builtins.pathExists facterPath;
+    in
       [
         (resolve {
-          facter = builtins.fromJSON (builtins.readFile facterPath);
+          facter =
+            if hasReport
+            then builtins.fromJSON (builtins.readFile facterPath)
+            else {};
         })
+      ]
+      ++ lib.optionals hasReport [
         (include (
           {
             host,
@@ -65,7 +70,7 @@ in {
             };
           }
         ))
-      ]);
+      ];
 
     includes = [
       hardware.facter.policies.load-facter
