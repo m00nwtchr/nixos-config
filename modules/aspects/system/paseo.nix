@@ -108,36 +108,84 @@
       };
 
       programs.nix-ld.enable = true;
+
       environment.systemPackages = with pkgs; [
+        # Agents
         opencode
+
+        # General-purpose scripting
+        python3
+        uv
+        nodejs_22
+        pnpm
+        bashInteractive
+
+        # Version control
         git
         git-lfs
         gh
-        openssh
-        rsync
-        bashInteractive
-        jq
-        yq-go
+        lefthook
+
+        # Search and data processing
         ripgrep
         fd
+        jq
+        yq-go
+        sqlite
+        tree
+
+        # General utilities
+        curl
+        wget
+        openssh
+        rsync
         tmux
-        unzip
         file
+        zip
+        unzip
+        xz
+        zstd
+        gum
+        just
+
+        # Kubernetes and GitOps
+        kubectl
+        kubernetes-helm
+        helmfile
+        kustomize
+        fluxcd
+        kubeconform
+        talosctl
+        sops
+        age
+
+        # Native compilation
         gcc
-        clang
         gnumake
-        cmake
-        ninja
         pkg-config
-        rustup
-        nodejs_22
-        pnpm
-        python3
-        uv
-        go
+
+        # Documents and media
+        poppler-utils
+        imagemagick
+        ffmpeg
+        pandoc
+        typst
+
+        # Diagnostics
+        htop
+        strace
+        lsof
+        procps
+        dnsutils
+
+        # Security
+        zizmor
+
+        # Nix
         devenv
         nil
         alejandra
+        nix-output-monitor
       ];
     };
   };
@@ -170,7 +218,6 @@
 
   den.aspects.paseo-vm = {
     includes = [<system/paseo>];
-    excludes = [den.aspects.vm];
 
     microvm = {
       autostart = true;
