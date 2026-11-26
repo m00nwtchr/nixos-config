@@ -73,6 +73,7 @@
       # <system/gaming>
 
       <system/server>
+      <system/paseo-tap>
       <hardware/ssh-tpm-agent>
 
       # den.aspects.vm

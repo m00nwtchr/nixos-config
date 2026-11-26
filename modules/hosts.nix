@@ -6,6 +6,14 @@
   den.hosts.x86_64-linux.ganymede.users = {};
   den.homes.x86_64-linux.m00n = {};
 
+  den.hosts.x86_64-linux.kepler.microvm.guests = [
+    den.hosts.x86_64-linux.paseo-vm
+  ];
+  den.hosts.x86_64-linux.paseo-vm = {
+    intoAttr = [];
+    users = {};
+  };
+
   # den.hosts.x86_64-linux.tide.microvm.guests = [
   #   den.hosts.x86_64-linux.opencode-vm
   # ];

@@ -166,6 +166,15 @@
             # ]
           ];
 
+          provider.kepler = {
+            name = "Kepler";
+            npm = "@ai-sdk/openai-compatible";
+            options.baseURL = "https://kepler.tail096cd8.ts.net:9931/v1";
+            models = {
+              "lfm3:1.7b".name = "LFM3 1.7B";
+            };
+          };
+
           provider.lmstudio = {
             name = "LM Studio";
             npm = "@ai-sdk/openai-compatible";
