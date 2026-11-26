@@ -82,6 +82,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
+    paseo = {
+      url = "github:getpaseo/paseo";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sable = {
       url = "git+https://git.sable.moe/SableClient/sable-next";
       inputs.nixpkgs.follows = "nixpkgs";

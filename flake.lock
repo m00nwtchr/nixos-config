@@ -593,6 +593,26 @@
         "type": "github"
       }
     },
+    "paseo": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795719357,
+        "narHash": "sha256-JGS26tHnmIvMUrRyI2sqcXZZegOWjYmzbXmm4hk73M0=",
+        "owner": "getpaseo",
+        "repo": "paseo",
+        "rev": "74c33b03d34f348af7d9da8f2771da92bbc4eeca",
+        "type": "github"
+      },
+      "original": {
+        "owner": "getpaseo",
+        "repo": "paseo",
+        "type": "github"
+      }
+    },
     "pre-commit": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -635,6 +655,7 @@
         "nix-amd-ai": "nix-amd-ai",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_5",
+        "paseo": "paseo",
         "sable": "sable",
         "sofka": "sofka",
         "sops-nix": "sops-nix"

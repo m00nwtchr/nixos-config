@@ -4,7 +4,10 @@
   __findFile ? __findFile,
   ...
 }: {
-  flake-file.inputs.paseo.url = "github:getpaseo/paseo";
+  flake-file.inputs.paseo = {
+    url = "github:getpaseo/paseo";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
 
   den.aspects.system.paseo = {
     nixos = {
