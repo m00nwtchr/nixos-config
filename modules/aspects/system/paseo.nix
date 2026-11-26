@@ -218,6 +218,7 @@
 
   den.aspects.paseo-vm = {
     includes = [<system/paseo>];
+    excludes = [den.aspects.vm];
 
     microvm = {
       autostart = true;
